@@ -85,12 +85,6 @@ encodeName: function (p3) {
     }
   }
 
-  localStorage.setItem("wm_cliente_NOMBRE", p3);
-
-WM_send("user:update", WM_snapshot({
-  cliente_NOMBRE: p3
-}));
-
   return p3 + " ".repeat(27 - p3.length) + String.fromCharCode(
     this.encodeOffset + eyesId,
     this.encodeOffset + mouthId,
@@ -200,28 +194,8 @@ Z.setPId = function (p9, p10, p11) {
     this.saveLocal();
   }
 
-(p10 === "SKIN" ? this.zSkin : this.zWear)
-  .html("ID: " + ("00" + p9).slice(-3));
-
-WM_send("user:update", WM_snapshot({
-  strogdata: {
-    propertyIds: this.locals.propertyIds,
-    skinId: this.locals.propertyIds.skinId || 21,
-    hatId: this.locals.propertyIds.hatId || 0,
-    eyesId: this.locals.propertyIds.eyesId || 0,
-    mouthId: this.locals.propertyIds.mouthId || 0,
-    glassesId: this.locals.propertyIds.glassesId || 0
-  }
-}));
-
-WM_send("storage:update", {
-  propertyIds: this.locals.propertyIds,
-  skinId: this.locals.propertyIds.skinId || 21,
-  hatId: this.locals.propertyIds.hatId || 0,
-  eyesId: this.locals.propertyIds.eyesId || 0,
-  mouthId: this.locals.propertyIds.mouthId || 0,
-  glassesId: this.locals.propertyIds.glassesId || 0
-});
+  (p10 === "SKIN" ? this.zSkin : this.zWear)
+    .html("ID: " + ("00" + p9).slice(-3));
 };
 
 (function restoreWormatrixSelectedSkin() {
@@ -385,128 +359,16 @@ function _typeof(p19) {
   })(p19);
 }
 
-var WM_DATA_URL = "https://data-wm.wormy.online";
-var WM_WS_URL = "wss://data-wm.wormy.online/";
-var WM_SOCKET = null;
-var WM_READY = false;
-var WM_PLAYER_ID = localStorage.getItem("wm_cliente_ID") || ("gg_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8));
-
-localStorage.setItem("wm_cliente_ID", WM_PLAYER_ID);
-
 let clientes = {
   clientesVencidos: [],
   clientesActivos: [],
   todos: []
 };
 
+var BMW_WS_URL = "wss://wormatrix-ws.ii7modysmp.workers.dev";
+
 async function loadUsers() {
-  try {
-    const r = await fetch(WM_DATA_URL + "/admin/panel/userdata", { cache: "no-store" });
-    const data = await r.json();
-
-    clientes.todos = data.Users || [];
-    clientes.clientesActivos = clientes.todos.filter(u => Number(u.status) === 1);
-    clientes.clientesVencidos = clientes.todos.filter(u => Number(u.status) !== 1);
-
-    return clientes;
-  } catch (e) {
-    console.error("WM loadUsers error:", e);
-    return clientes;
-  }
-}
-
-function WM_send(type, data) {
-  try {
-    if (!WM_SOCKET || WM_SOCKET.readyState !== 1) return;
-
-    data = data || {};
-
-    if (type === "user:update") {
-      WM_SOCKET.send(JSON.stringify({
-        type: "player_update",
-        user: data
-      }));
-      return;
-    }
-
-    if (type === "storage:update") {
-      WM_SOCKET.send(JSON.stringify({
-        type: "store_update",
-        cliente_ID: WM_PLAYER_ID,
-        data: data
-      }));
-      return;
-    }
-
-    WM_SOCKET.send(JSON.stringify({
-      type: type,
-      ...data
-    }));
-  } catch (e) {
-    console.error("WM send error:", e);
-  }
-}
-
-function WM_snapshot(extra) {
-  Z.locals.propertyIds = Z.locals.propertyIds || {};
-
-  return Object.assign({
-    id: WM_PLAYER_ID,
-    cliente_ID: WM_PLAYER_ID,
-    cliente_NOMBRE: localStorage.getItem("wm_cliente_NOMBRE") || "",
-    Level: Number(localStorage.getItem("wm_Level") || 0),
-    HeadShot: Number((Z.locals.hs && (Z.locals.hs.t || Z.locals.hs.g)) || 0),
-    Kill: Number((Z.locals.kills && (Z.locals.kills.t || Z.locals.kills.g)) || 0),
-    Login_Date: new Date().toISOString(),
-    Avatar_Url: localStorage.getItem("wm_Avatar_Url") || "",
-    status: 1,
-    strogdata: {
-      propertyIds: Z.locals.propertyIds,
-      skinId: Z.locals.propertyIds.skinId || 21,
-      hatId: Z.locals.propertyIds.hatId || 0,
-      eyesId: Z.locals.propertyIds.eyesId || 0,
-      mouthId: Z.locals.propertyIds.mouthId || 0,
-      glassesId: Z.locals.propertyIds.glassesId || 0
-    }
-  }, extra || {});
-}
-
-function WM_connect() {
-  try {
-    if (WM_SOCKET && (WM_SOCKET.readyState === 0 || WM_SOCKET.readyState === 1)) return;
-
-    WM_SOCKET = new WebSocket(WM_WS_URL);
-
-    WM_SOCKET.onopen = function () {
-      WM_READY = true;
-      console.log("WM WebSocket connected");
-
-      WM_send("user:update", WM_snapshot());
-      WM_send("storage:update", WM_snapshot().strogdata);
-    };
-
-    WM_SOCKET.onmessage = function (ev) {
-      let msg;
-      try { msg = JSON.parse(ev.data); } catch (e) { return; }
-
-      if (msg.type === "storage:sync" && msg.data && msg.data.propertyIds) {
-        Z.locals.propertyIds = msg.data.propertyIds;
-        Z.saveLocal();
-      }
-    };
-
-    WM_SOCKET.onclose = function () {
-      WM_READY = false;
-      setTimeout(WM_connect, 3000);
-    };
-
-    WM_SOCKET.onerror = function () {
-      WM_READY = false;
-    };
-  } catch (e) {
-    console.error("WM connect error:", e);
-    setTimeout(WM_connect, 3000);
-  }
+  return clientes;
 }
 
 var GoogleAuth;
@@ -530,13 +392,11 @@ var GoogleAuth;
     return v11;
   };
 
- window.addEventListener("load", function () {
-  WM_connect();
-
-  var vGameWrap = document.getElementById("game-wrap");
-  if (vGameWrap) {
-    vGameWrap.style.display = "block";
-  }
+  window.addEventListener("load", function () {
+    var vGameWrap = document.getElementById("game-wrap");
+    if (vGameWrap) {
+      vGameWrap.style.display = "block";
+    }
 
     if (
       !function () {
@@ -10134,7 +9994,7 @@ function f102(p761, p762) {
 
 // --- KESİNTİSİZ AFK ENGELLEYİCİ ---
 (function() {
-    console.log(".frffsaf334ff");
+    console.log(".frff4ff");
 
     const SINYAL_HIZI = 2000; // 100ms (Saniyede 10 paket - Durmadan gönderir)
     
