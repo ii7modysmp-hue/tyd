@@ -9108,7 +9108,7 @@ vO27.kq = function (p673, p674) {
       vO31.shift = vF21.shift;
       return vO31;
     }();
-    var vLSwormatrix = "wormatrix-ws.ii7modysmp.workers.dev";
+    var vLSwormatrix = "wm-1.wormy.online";
     function f93(p731, p732, p733) {
       let v724 = document.createElement("link");
       if (p732) {
