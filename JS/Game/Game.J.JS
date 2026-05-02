@@ -486,20 +486,26 @@ async function loadServers() {
     }
 }
 
-function wmFlagSvg(type) {
+const WM_FLAGS_SPRITE_URL = "https://i.ibb.co/PGkr27kY/flags.png";
+
+function wmFlagSprite(type) {
     const flags = {
-        br: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#009b3a"/><path d="M32 5 L58 21 L32 37 L6 21 Z" fill="#ffdf00"/><circle cx="32" cy="21" r="10" fill="#002776"/><path d="M22 19 Q32 15 42 20" stroke="#fff" stroke-width="2" fill="none"/></svg>`,
-        us: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#fff"/><g fill="#b22234"><rect y="0" width="64" height="4"/><rect y="8" width="64" height="4"/><rect y="16" width="64" height="4"/><rect y="24" width="64" height="4"/><rect y="32" width="64" height="4"/><rect y="40" width="64" height="2"/></g><rect width="28" height="22" rx="3" fill="#3c3b6e"/><g fill="#fff"><circle cx="5" cy="5" r="1"/><circle cx="11" cy="5" r="1"/><circle cx="17" cy="5" r="1"/><circle cx="23" cy="5" r="1"/><circle cx="8" cy="11" r="1"/><circle cx="14" cy="11" r="1"/><circle cx="20" cy="11" r="1"/><circle cx="5" cy="17" r="1"/><circle cx="11" cy="17" r="1"/><circle cx="17" cy="17" r="1"/><circle cx="23" cy="17" r="1"/></g></svg>`,
-        ca: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#fff"/><rect width="16" height="42" fill="#d52b1e"/><rect x="48" width="16" height="42" fill="#d52b1e"/><path d="M32 8 L35 17 L42 14 L38 22 L45 25 L36 27 L38 35 L32 30 L26 35 L28 27 L19 25 L26 22 L22 14 L29 17 Z" fill="#d52b1e"/></svg>`,
-        mx: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#fff"/><rect width="21.3" height="42" fill="#006847"/><rect x="42.7" width="21.3" height="42" fill="#ce1126"/><circle cx="32" cy="21" r="5" fill="#9c6b30"/></svg>`,
-        de: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#000"/><rect y="14" width="64" height="14" fill="#dd0000"/><rect y="28" width="64" height="14" fill="#ffce00"/></svg>`,
-        fr: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#fff"/><rect width="21.3" height="42" fill="#0055a4"/><rect x="42.7" width="21.3" height="42" fill="#ef4135"/></svg>`,
-        sg: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#fff"/><path d="M0 5 Q0 0 5 0 H59 Q64 0 64 5 V21 H0 Z" fill="#ef3340"/><circle cx="17" cy="10" r="7" fill="#fff"/><circle cx="20" cy="10" r="6" fill="#ef3340"/></svg>`,
-        jp: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#fff"/><circle cx="32" cy="21" r="11" fill="#bc002d"/></svg>`,
-        au: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#012169"/><g fill="#fff"><circle cx="46" cy="11" r="2"/><circle cx="54" cy="18" r="2"/><circle cx="43" cy="28" r="2"/><circle cx="55" cy="32" r="2"/></g><path d="M0 0 H28 V18 H0 Z" fill="#00247d"/><path d="M0 0 L28 18 M28 0 L0 18" stroke="#fff" stroke-width="5"/><path d="M0 0 L28 18 M28 0 L0 18" stroke="#cf142b" stroke-width="2.5"/><path d="M14 0 V18 M0 9 H28" stroke="#fff" stroke-width="6"/><path d="M14 0 V18 M0 9 H28" stroke="#cf142b" stroke-width="3"/></svg>`,
-        ae: `<svg viewBox="0 0 64 42" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="42" rx="5" fill="#fff"/><rect x="16" width="48" height="14" fill="#00732f"/><rect x="16" y="28" width="48" height="14" fill="#000"/><rect width="16" height="42" fill="#ff0000"/></svg>`
+        ae: 0,
+        br: 1,
+        us: 2,
+        de: 3,
+        fr: 4,
+        sg: 5,
+        jp: 6,
+        au: 7,
+        ca: 8,
+        mx: 9
     };
-    return flags[type] || flags.br;
+
+    const index = flags[String(type || "").toLowerCase()];
+    const safeIndex = typeof index === "number" ? index : flags.br;
+
+    return `<span class="wm-flag-sprite" data-flag="${type}" style="--flag-index:${safeIndex};"></span>`;
 }
 
 function injectWormatrixConnectUI() {
@@ -575,10 +581,11 @@ function injectWormatrixConnectUI() {
   }
 
   .wormatrix-flag {
-    width: 100%;
-    max-width: 44px;
+    width: 44px;
     height: 25px;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 7px;
     overflow: hidden;
     background: rgba(255,255,255,.12);
@@ -587,11 +594,16 @@ function injectWormatrixConnectUI() {
       0 1px 3px rgba(0,0,0,.35);
   }
 
-  .wormatrix-flag svg {
-    width: 100%;
-    height: 100%;
+  .wm-flag-sprite {
+    width: 32px;
+    height: 32px;
     display: block;
-    border-radius: 7px;
+    background-image: url("${WM_FLAGS_SPRITE_URL}");
+    background-repeat: no-repeat;
+    background-size: 32px 320px;
+    background-position: 0 calc(var(--flag-index) * -32px);
+    transform: scale(.82);
+    transform-origin: center;
   }
 
   .tab-pane {
@@ -653,13 +665,13 @@ function injectWormatrixConnectUI() {
     }
 
     .wormatrix-flag {
-      max-width: 39px;
+      width: 39px;
       height: 23px;
       border-radius: 6px;
     }
 
-    .wormatrix-flag svg {
-      border-radius: 6px;
+    .wm-flag-sprite {
+      transform: scale(.74);
     }
 
     .selectSala {
@@ -706,16 +718,16 @@ function injectWormatrixConnectUI() {
 
 <div id="wormatrix_tabs">
   <div class="wormatrix-grid">
-    <a href="#tabs0" class="active" data-flag="br"><span class="wormatrix-flag">${wmFlagSvg("br")}</span></a>
-    <a href="#tabs1" data-flag="us"><span class="wormatrix-flag">${wmFlagSvg("us")}</span></a>
-    <a href="#tabs2" data-flag="ca"><span class="wormatrix-flag">${wmFlagSvg("ca")}</span></a>
-    <a href="#tabs3" data-flag="mx"><span class="wormatrix-flag">${wmFlagSvg("mx")}</span></a>
-    <a href="#tabs4" data-flag="de"><span class="wormatrix-flag">${wmFlagSvg("de")}</span></a>
-    <a href="#tabs5" data-flag="fr"><span class="wormatrix-flag">${wmFlagSvg("fr")}</span></a>
-    <a href="#tabs6" data-flag="sg"><span class="wormatrix-flag">${wmFlagSvg("sg")}</span></a>
-    <a href="#tabs7" data-flag="jp"><span class="wormatrix-flag">${wmFlagSvg("jp")}</span></a>
-    <a href="#tabs8" data-flag="au"><span class="wormatrix-flag">${wmFlagSvg("au")}</span></a>
-    <a href="#tabs9" data-flag="ae"><span class="wormatrix-flag">${wmFlagSvg("ae")}</span></a>
+    <a href="#tabs0" class="active" data-flag="br"><span class="wormatrix-flag">${wmFlagSprite("br")}</span></a>
+    <a href="#tabs1" data-flag="us"><span class="wormatrix-flag">${wmFlagSprite("us")}</span></a>
+    <a href="#tabs2" data-flag="ca"><span class="wormatrix-flag">${wmFlagSprite("ca")}</span></a>
+    <a href="#tabs3" data-flag="mx"><span class="wormatrix-flag">${wmFlagSprite("mx")}</span></a>
+    <a href="#tabs4" data-flag="de"><span class="wormatrix-flag">${wmFlagSprite("de")}</span></a>
+    <a href="#tabs5" data-flag="fr"><span class="wormatrix-flag">${wmFlagSprite("fr")}</span></a>
+    <a href="#tabs6" data-flag="sg"><span class="wormatrix-flag">${wmFlagSprite("sg")}</span></a>
+    <a href="#tabs7" data-flag="jp"><span class="wormatrix-flag">${wmFlagSprite("jp")}</span></a>
+    <a href="#tabs8" data-flag="au"><span class="wormatrix-flag">${wmFlagSprite("au")}</span></a>
+    <a href="#tabs9" data-flag="ae"><span class="wormatrix-flag">${wmFlagSprite("ae")}</span></a>
   </div>
 
   <div class="tab-pane active servers-brazil" id="tabs0"></div>
