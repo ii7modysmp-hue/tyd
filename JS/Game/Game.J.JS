@@ -9870,61 +9870,76 @@ function f102(p761, p762) {
   }
 
   function vApplyRegistry(p763) {
-    try {
-      if (!p763 || typeof p763 !== "object") {
-        vSafeKe();
-        return;
-      }
-
-      vNormalizeObjectAssets(p763);
-
-      for (let v748 in p763) {
-        if (!Object.prototype.hasOwnProperty.call(p763, v748)) {
-          continue;
-        }
-
-        if (v748 !== "propertyList" && v748 !== "visibleSkin") {
-          if (Array.isArray(p763[v748])) {
-            p761[v748] = Array.isArray(p761[v748])
-              ? p761[v748].concat(p763[v748])
-              : p763[v748].slice();
-          } else if (p763[v748] && typeof p763[v748] === "object") {
-            p761[v748] = {
-              ...((p761[v748] && typeof p761[v748] === "object") ? p761[v748] : {}),
-              ...p763[v748]
-            };
-          } else {
-            p761[v748] = p763[v748];
-          }
-        }
-      }
-
-      if (Array.isArray(p763.visibleSkin)) {
-        p761.visibleSkin = vMergeUniqueArray(p761.visibleSkin, p763.visibleSkin);
-
-        if (typeof wormatrixObjects !== "undefined" && wormatrixObjects) {
-          wormatrixObjects.visibleSkin = p761.visibleSkin;
-        }
-      }
-
-      if (
-        Array.isArray(p763.propertyList) &&
-        typeof wormatrixObjects !== "undefined" &&
-        wormatrixObjects
-      ) {
-        wormatrixObjects.pL = p763.propertyList;
-      }
-
-      if (
-        Array.isArray(p763.skinArrayDict) &&
-        typeof wormatrixObjects !== "undefined" &&
-        wormatrixObjects
-      ) {
-        wormatrixObjects.idSkin = p763.skinArrayDict;
-      }
-    } catch (e) {
-      console.error("vApplyRegistry error:", e);
+  try {
+    if (!p763 || typeof p763 !== "object") {
+      vSafeKe();
+      return;
     }
+
+    vNormalizeObjectAssets(p763);
+
+    var protectedGameKeys = {
+      portionDict: 1,
+      portionUnknown: 1,
+      abilityDict: 1,
+      abilityUnknown: 1,
+      teamDict: 1,
+      teamUnknown: 1
+    };
+
+    for (let v748 in p763) {
+      if (!Object.prototype.hasOwnProperty.call(p763, v748)) {
+        continue;
+      }
+
+      if (protectedGameKeys[v748]) {
+        continue;
+      }
+
+      if (v748 === "propertyList" || v748 === "visibleSkin") {
+        continue;
+      }
+
+      if (Array.isArray(p763[v748])) {
+        p761[v748] = Array.isArray(p761[v748])
+          ? p761[v748].concat(p763[v748])
+          : p763[v748].slice();
+      } else if (p763[v748] && typeof p763[v748] === "object") {
+        p761[v748] = {
+          ...((p761[v748] && typeof p761[v748] === "object") ? p761[v748] : {}),
+          ...p763[v748]
+        };
+      } else {
+        p761[v748] = p763[v748];
+      }
+    }
+
+    if (Array.isArray(p763.visibleSkin)) {
+      p761.visibleSkin = vMergeUniqueArray(p761.visibleSkin, p763.visibleSkin);
+
+      if (typeof wormatrixObjects !== "undefined" && wormatrixObjects) {
+        wormatrixObjects.visibleSkin = p761.visibleSkin;
+      }
+    }
+
+    if (
+      Array.isArray(p763.propertyList) &&
+      typeof wormatrixObjects !== "undefined" &&
+      wormatrixObjects
+    ) {
+      wormatrixObjects.pL = p763.propertyList;
+    }
+
+    if (
+      Array.isArray(p763.skinArrayDict) &&
+      typeof wormatrixObjects !== "undefined" &&
+      wormatrixObjects
+    ) {
+      wormatrixObjects.idSkin = p763.skinArrayDict;
+    }
+  } catch (e) {
+    console.error("vApplyRegistry error:", e);
+  }
 
     vSafeKe();
   }
