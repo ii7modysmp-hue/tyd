@@ -59,30 +59,45 @@ encodeName: function (p3) {
   this.locals.propertyIds = this.locals.propertyIds || {};
   var propertyIds = this.locals.propertyIds;
 
-  var eyesId = parseInt(propertyIds.eyesId, 10);
-  var mouthId = parseInt(propertyIds.mouthId, 10);
-  var glassesId = parseInt(propertyIds.glassesId, 10);
-  var hatId = parseInt(propertyIds.hatId, 10);
-  var skinId = parseInt(propertyIds.skinId, 10);
+  function getSavedId(key, def, skinOnly) {
+    var a = parseInt(propertyIds[key], 10);
+    var b = parseInt(localStorage.getItem("wormatrix_" + key), 10);
 
-  if (!Number.isFinite(eyesId) || eyesId < 0) eyesId = 0;
-  if (!Number.isFinite(mouthId) || mouthId < 0) mouthId = 0;
-  if (!Number.isFinite(glassesId) || glassesId < 0) glassesId = 0;
-  if (!Number.isFinite(hatId) || hatId < 0) hatId = 0;
-
-  if (!Number.isFinite(skinId) || skinId <= 0) {
-    var savedSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
-
-    if (Number.isFinite(savedSkin) && savedSkin > 0) {
-      skinId = savedSkin;
-      propertyIds.skinId = savedSkin;
-
-      if (typeof this.saveLocal === "function") {
-        this.saveLocal();
-      }
-    } else {
-      skinId = 21;
+    if (Number.isFinite(a) && a >= 0) return a;
+    if (Number.isFinite(b) && b >= 0) {
+      propertyIds[key] = b;
+      return b;
     }
+
+    if (skinOnly) {
+      var oldSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
+      if (Number.isFinite(oldSkin) && oldSkin > 0) {
+        propertyIds[key] = oldSkin;
+        localStorage.setItem("wormatrix_skinId", String(oldSkin));
+        return oldSkin;
+      }
+    }
+
+    propertyIds[key] = def;
+    return def;
+  }
+
+  var eyesId = getSavedId("eyesId", 0, false);
+  var mouthId = getSavedId("mouthId", 0, false);
+  var glassesId = getSavedId("glassesId", 0, false);
+  var hatId = getSavedId("hatId", 0, false);
+  var skinId = getSavedId("skinId", 21, true);
+
+  if (!Number.isFinite(skinId) || skinId <= 0) skinId = 21;
+
+  propertyIds.eyesId = eyesId;
+  propertyIds.mouthId = mouthId;
+  propertyIds.glassesId = glassesId;
+  propertyIds.hatId = hatId;
+  propertyIds.skinId = skinId;
+
+  if (typeof this.saveLocal === "function") {
+    this.saveLocal();
   }
 
   return p3 + " ".repeat(27 - p3.length) + String.fromCharCode(
@@ -109,48 +124,95 @@ decodeName: function (p5) {
 },
 
 loadLocals: function () {
-  let v2 = localStorage.getItem("zLocals");
-  let v3 = typeof v2 !== "undefined" && v2 !== null ? JSON.parse(v2) : {};
+  var saved = {};
 
-  for (let v4 in v3) {
-    this.locals[v4] = v3[v4];
+  try {
+    saved = JSON.parse(localStorage.getItem("zLocals") || "{}") || {};
+  } catch (e) {
+    saved = {};
+  }
+
+  for (var k in saved) {
+    if (Object.prototype.hasOwnProperty.call(saved, k)) {
+      this.locals[k] = saved[k];
+    }
   }
 
   this.locals.propertyIds = this.locals.propertyIds || {};
+
+  var keys = ["skinId", "hatId", "eyesId", "mouthId", "glassesId"];
+
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var v1 = parseInt(localStorage.getItem("wormatrix_" + key), 10);
+    var v2 = parseInt(this.locals.propertyIds[key], 10);
+
+    if (Number.isFinite(v1) && v1 >= 0) {
+      this.locals.propertyIds[key] = v1;
+    } else if (Number.isFinite(v2) && v2 >= 0) {
+      this.locals.propertyIds[key] = v2;
+      localStorage.setItem("wormatrix_" + key, String(v2));
+    }
+  }
+
+  var oldSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
+  if (Number.isFinite(oldSkin) && oldSkin > 0) {
+    this.locals.propertyIds.skinId = oldSkin;
+    localStorage.setItem("wormatrix_skinId", String(oldSkin));
+  }
+
+  this.saveLocal();
 },
 
 saveLocal: function () {
   this.locals.propertyIds = this.locals.propertyIds || {};
+
+  var keys = ["skinId", "hatId", "eyesId", "mouthId", "glassesId"];
+
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var val = parseInt(this.locals.propertyIds[key], 10);
+
+    if (Number.isFinite(val) && val >= 0) {
+      localStorage.setItem("wormatrix_" + key, String(val));
+      if (key === "skinId" && val > 0) {
+        localStorage.setItem("wormatrix_selected_skin", String(val));
+      }
+    }
+  }
+
   localStorage.setItem("zLocals", JSON.stringify(this.locals));
 }
 };
 
 Z.loadLocals();
-Z.localsLoded = false;
 
-(function restoreWormatrixAppearance() {
-  try {
-    Z.locals.propertyIds = Z.locals.propertyIds || {};
+Z.locals.propertyIds = Z.locals.propertyIds || {};
 
-    ["skinId", "hatId", "eyesId", "mouthId", "glassesId"].forEach(function (key) {
-      var saved = parseInt(localStorage.getItem("wormatrix_" + key), 10);
+(function forceRestoreAll() {
+  var keys = ["skinId", "hatId", "eyesId", "mouthId", "glassesId"];
 
-      if (Number.isFinite(saved) && saved >= 0) {
-        Z.locals.propertyIds[key] = saved;
-      }
-    });
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
 
-    var oldSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
-    if (Number.isFinite(oldSkin) && oldSkin > 0) {
-      Z.locals.propertyIds.skinId = oldSkin;
-      localStorage.setItem("wormatrix_skinId", String(oldSkin));
+    var saved = parseInt(localStorage.getItem("wormatrix_" + key), 10);
+
+    if (Number.isFinite(saved) && saved >= 0) {
+      Z.locals.propertyIds[key] = saved;
     }
+  }
 
+  var oldSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
+  if (Number.isFinite(oldSkin) && oldSkin > 0) {
+    Z.locals.propertyIds.skinId = oldSkin;
+  }
+
+  if (typeof Z.saveLocal === "function") {
     Z.saveLocal();
-  } catch (e) {
-    console.error("restore appearance error:", e);
   }
 })();
+
+Z.localsLoded = true;
 
 Object.defineProperty(Object.prototype, "dig", {
   value: function (..._0x9f75x6) {
@@ -186,16 +248,21 @@ Z.setPId = function (p9, p10, p11) {
   this.locals.propertyIds[key] = p9;
   localStorage.setItem("wormatrix_" + key, String(p9));
 
-  if (p10 === "SKIN") {
+  if (key === "skinId") {
     localStorage.setItem("wormatrix_selected_skin", String(p9));
   }
 
-  if (typeof this.saveLocal === "function") {
-    this.saveLocal();
-  }
+  this.saveLocal();
 
-  (p10 === "SKIN" ? this.zSkin : this.zWear)
-    .html("ID: " + ("00" + p9).slice(-3));
+  if (p10 === "SKIN") {
+    if (this.zSkin && this.zSkin.length) {
+      this.zSkin.html("ID: " + ("00" + p9).slice(-3));
+    }
+  } else {
+    if (this.zWear && this.zWear.length) {
+      this.zWear.html("ID: " + ("00" + p9).slice(-3));
+    }
+  }
 };
 
 (function restoreWormatrixSelectedSkin() {
