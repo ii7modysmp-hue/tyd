@@ -3456,7 +3456,7 @@ var v142 = vIsFullUrl ? vPath : (vBase + vPath);
           this.container_count.addChild(this.tKlVal);
           this.container_count.addChild(this.value_server);
 
-          this.imgServerbase = PIXI.Texture.fromImage("https://i.imgur.com/EkbSd65.png");
+          this.imgServerbase = PIXI.Texture.fromImage("https://wormy.wormatrix.fun/images/fl-g.png");
 
 
           this.containerImgS = new PIXI.Sprite(this.imgServerbase);
