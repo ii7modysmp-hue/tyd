@@ -486,7 +486,7 @@ async function loadServers() {
     }
 }
 
-const WM_FLAGS_SPRITE_URL = "https://i.ibb.co/PGkr27kY/flags.png";
+const WM_FLAGS_SPRITE_URL = "https://wormy.wormatrix.fun/images/Wormatrix.png";
 
 function wmFlagSprite(type) {
     const flags = {
@@ -709,7 +709,7 @@ function injectWormatrixConnectUI() {
     line-height:20px;
     white-space:nowrap;
   ">
-    <img src="https://i.ibb.co/xSB36qjs/icon128.png" width="20" align="center" alt="" />
+    <img src="https://wormy.wormatrix.fun/images/logo.png" width="20" align="center" alt="" />
     Worm Matrix Connect
   </div>
 </div>
@@ -9622,13 +9622,13 @@ $("body").append(
 if ($("#mm-store").length) {
     $("#mm-store").after(
         "<div id=\"z-setting\" style=\"float:right;margin-right:10px;position:relative;z-index:5;\">" +
-            "<img alt=\"\" src=\"https://i.ibb.co/xSB36qjs/icon128.png\" width=\"20\"> Settings" +
+            "<img alt=\"\" src=\"https://wormy.wormatrix.fun/images/logo.png\" width=\"20\"> Settings" +
         "</div>"
     );
 } else {
     $("body").append(
         "<div id=\"z-setting\" style=\"position:fixed;top:20px;right:20px;z-index:99997;\">" +
-            "<img alt=\"\" src=\"https://i.ibb.co/xSB36qjs/icon128.png\" width=\"20\"> Settings" +
+            "<img alt=\"\" src=\"https://wormy.wormatrix.fun/images/logo.png\" width=\"20\"> Settings" +
         "</div>"
     );
 }
