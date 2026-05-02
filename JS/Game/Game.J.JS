@@ -497,8 +497,8 @@ function wmFlagSprite(type) {
         fr: 4,
         sg: 5,
         jp: 6,
-        au: 7,
         ca: 8,
+        au: 7,
         mx: 9
     };
 
@@ -682,7 +682,6 @@ function injectWormatrixConnectUI() {
 </style>
 
 <div id="load_page_apoiador" style="position:relative;">
-
   <div style="
     position:absolute;
     top:-35px;
@@ -713,24 +712,24 @@ function injectWormatrixConnectUI() {
     <img src="https://i.ibb.co/xSB36qjs/icon128.png" width="20" align="center" alt="" />
     Worm Matrix Connect
   </div>
-
 </div>
 
 <div id="wormatrix_tabs">
   <div class="wormatrix-grid">
-    <a href="#tabs0" class="active" data-flag="br"><span class="wormatrix-flag">${wmFlagSprite("br")}</span></a>
+    <a href="#tabs9" class="active" data-flag="ae"><span class="wormatrix-flag">${wmFlagSprite("ae")}</span></a>
+    <a href="#tabs0" data-flag="br"><span class="wormatrix-flag">${wmFlagSprite("br")}</span></a>
     <a href="#tabs1" data-flag="us"><span class="wormatrix-flag">${wmFlagSprite("us")}</span></a>
-    <a href="#tabs2" data-flag="ca"><span class="wormatrix-flag">${wmFlagSprite("ca")}</span></a>
-    <a href="#tabs3" data-flag="mx"><span class="wormatrix-flag">${wmFlagSprite("mx")}</span></a>
     <a href="#tabs4" data-flag="de"><span class="wormatrix-flag">${wmFlagSprite("de")}</span></a>
     <a href="#tabs5" data-flag="fr"><span class="wormatrix-flag">${wmFlagSprite("fr")}</span></a>
+
     <a href="#tabs6" data-flag="sg"><span class="wormatrix-flag">${wmFlagSprite("sg")}</span></a>
     <a href="#tabs7" data-flag="jp"><span class="wormatrix-flag">${wmFlagSprite("jp")}</span></a>
+    <a href="#tabs2" data-flag="ca"><span class="wormatrix-flag">${wmFlagSprite("ca")}</span></a>
     <a href="#tabs8" data-flag="au"><span class="wormatrix-flag">${wmFlagSprite("au")}</span></a>
-    <a href="#tabs9" data-flag="ae"><span class="wormatrix-flag">${wmFlagSprite("ae")}</span></a>
+    <a href="#tabs3" data-flag="mx"><span class="wormatrix-flag">${wmFlagSprite("mx")}</span></a>
   </div>
 
-  <div class="tab-pane active servers-brazil" id="tabs0"></div>
+  <div class="tab-pane servers-brazil" id="tabs0"></div>
   <div class="tab-pane servers-eeuu" id="tabs1"></div>
   <div class="tab-pane servers-canada" id="tabs2"></div>
   <div class="tab-pane servers-mexico" id="tabs3"></div>
@@ -739,7 +738,7 @@ function injectWormatrixConnectUI() {
   <div class="tab-pane servers-singapore" id="tabs6"></div>
   <div class="tab-pane servers-japan" id="tabs7"></div>
   <div class="tab-pane servers-australia" id="tabs8"></div>
-  <div class="tab-pane servers-ae" id="tabs9"></div>
+  <div class="tab-pane active servers-ae" id="tabs9"></div>
 </div>
 </div>
 `);
