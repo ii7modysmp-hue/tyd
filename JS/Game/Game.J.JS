@@ -486,7 +486,7 @@ async function loadServers() {
     }
 }
 
-const WM_FLAGS_SPRITE_URL = "https://wormy.wormatrix.fun/images/Wormatrix.png";
+const WM_FLAGS_SPRITE_URL = "https://wormy.wormatrix.fun/images/flags.png";
 
 function wmFlagSprite(type) {
     const flags = {
