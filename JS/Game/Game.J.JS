@@ -8580,6 +8580,178 @@ vO27.kq = function (p673, p674) {
         }
         vO29.Qn = vO28.nq;
       };
+            var WM_USER_SYNC_INTERVAL = 2000;
+
+      var WMUserSync = {
+        timer: null,
+        lastHash: "",
+        listNames: [],
+
+        cleanName: function (name) {
+          return String(name || "").trim();
+        },
+
+        pushName: function (name) {
+          name = this.cleanName(name);
+          if (!name) return;
+
+          if (this.listNames.indexOf(name) === -1) {
+            this.listNames.unshift(name);
+          }
+
+          if (this.listNames.length > 20) {
+            this.listNames.length = 20;
+          }
+        },
+
+        getUserId: function () {
+          try {
+            return (
+              Z.locals.IdUser ||
+              Z.locals.idUser ||
+              Z.locals.userId ||
+              Z.locals.cliente_ID ||
+              Z.locals.id ||
+              "gg_unknown"
+            );
+          } catch (e) {
+            return "gg_unknown";
+          }
+        },
+
+        getName: function () {
+          try {
+            return (
+              Z.locals.bName ||
+              Z.bName ||
+              "Wormatrix"
+            );
+          } catch (e) {
+            return "Wormatrix";
+          }
+        },
+
+        getAvatar: function () {
+          try {
+            return (
+              Z.locals.Avatar_URL ||
+              Z.locals.avatarUrl ||
+              "https://api.dicebear.com/7.x/avataaars/svg?seed=" + encodeURIComponent(this.getUserId())
+            );
+          } catch (e) {
+            return "https://api.dicebear.com/7.x/avataaars/svg?seed=Wormatrix";
+          }
+        },
+
+        getPropertyIds: function () {
+          var p = {};
+          try {
+            p = Z.locals.propertyIds || {};
+          } catch (e) {}
+
+          return {
+            skinId: p.skinId || p.skin || p.idSkin || Z.locals.bSkin || 131,
+            hatId: p.hatId || p.hat || 0,
+            eyesId: p.eyesId || p.eyes || 0,
+            mouthId: p.mouthId || p.mouth || 0,
+            glassesId: p.glassesId || p.glasses || 0
+          };
+        },
+
+        build: function () {
+          var name = this.getName();
+          this.pushName(name);
+
+          return {
+            IdUser: this.getUserId(),
+            bName: name,
+            ListName: this.listNames.slice(),
+            Avatar_URL: this.getAvatar(),
+            Login_Date: new Date().toISOString(),
+            bSkin: 131,
+            propertyIds: this.getPropertyIds(),
+
+            level: Number(Z.locals.level || Z.locals.Level || 0),
+
+            hs: {
+              g: Number((Z.locals.hs && Z.locals.hs.g) || 0),
+              t: Number((Z.locals.hs && Z.locals.hs.t) || 0)
+            },
+
+            kills: {
+              g: Number((Z.locals.kills && Z.locals.kills.g) || 0),
+              t: Number((Z.locals.kills && Z.locals.kills.t) || 0)
+            },
+
+            died: Number(Z.locals.died || 0),
+            streamer: !!Z.locals.streamer,
+            saveGame: !!Z.locals.saveGame,
+            idReplaceSkin: Z.locals.idReplaceSkin || null,
+            blackList: Array.isArray(Z.locals.blackList) ? Z.locals.blackList : [],
+            blackListShowName: Array.isArray(Z.locals.blackListShowName) ? Z.locals.blackListShowName : []
+          };
+        },
+
+        hash: function (data) {
+          return JSON.stringify({
+            IdUser: data.IdUser,
+            bName: data.bName,
+            ListName: data.ListName,
+            Avatar_URL: data.Avatar_URL,
+            bSkin: data.bSkin,
+            propertyIds: data.propertyIds,
+            level: data.level,
+            hs: data.hs,
+            kills: data.kills,
+            died: data.died,
+            streamer: data.streamer,
+            saveGame: data.saveGame,
+            idReplaceSkin: data.idReplaceSkin,
+            blackList: data.blackList,
+            blackListShowName: data.blackListShowName
+          });
+        },
+
+        send: function () {
+          try {
+            if (!vO29 || !vO29.sk || vO29.sk.readyState !== WebSocket.OPEN) return;
+
+            var data = this.build();
+            var hash = this.hash(data);
+
+            if (hash === this.lastHash) return;
+            this.lastHash = hash;
+
+            vO29.sk.send(JSON.stringify({
+              type: "wm_user_sync",
+              data: data
+            }));
+          } catch (e) {}
+        },
+
+        start: function () {
+          var self = this;
+
+          if (self.timer) {
+            clearInterval(self.timer);
+            self.timer = null;
+          }
+
+          self.send();
+
+          self.timer = setInterval(function () {
+            self.send();
+          }, WM_USER_SYNC_INTERVAL);
+        },
+
+        stop: function () {
+          if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+          }
+        }
+      };
+
       vO29.lq = function (p698, p699) {
         vO29.Qq(p698, function () {
           var v657 = Math.min(2048, p699.length);
@@ -8592,10 +8764,10 @@ vO27.kq = function (p673, p674) {
           for (var vLN0115 = 0; vLN0115 < v657; vLN0115++) {
             v659.xa(p699.charCodeAt(vLN0115));
           }
-          ;
           vO29.Rq(v658);
         });
       };
+
       vO29.mq = function (p700, p701, p702) {
         vO29.Qq(p700, function () {
           var v660 = Math.min(32, p701.length);
@@ -8609,10 +8781,10 @@ vO27.kq = function (p673, p674) {
           for (var vLN0116 = 0; vLN0116 < v660; vLN0116++) {
             v662.xa(p701.charCodeAt(vLN0116));
           }
-          ;
           vO29.Rq(v661);
         });
       };
+
       vO29.Rq = function (p703) {
         try {
           if (vO29.zq != null && vO29.zq.readyState === WebSocket.OPEN) {
@@ -8622,6 +8794,7 @@ vO27.kq = function (p673, p674) {
           vO29.Pq();
         }
       };
+
       vO29.Kq = function (p704, p705) {
         var v663 = p705 ? 128 : 0;
         var v664 = vO4.Y(p704) / vO3.M * 128 & 127;
@@ -8633,44 +8806,78 @@ vO27.kq = function (p673, p674) {
           vO29.Aq = v665;
         }
       };
+
       vO29.Qq = function (p706, p707) {
         var v667 = vO29.zq = new WebSocket(p706);
         var v668 = vO29.sk = new WebSocket("wss://" + vLSwormatrix);
+
         loadJoy();
+
         v667.binaryType = "arraybuffer";
+        v668.binaryType = "arraybuffer";
+
         v667.onopen = function () {
           f97("open");
           if (vO29.zq === v667) {
             p707();
           }
         };
+
         v667.onclose = function () {
           vF16.c();
           if (vO29.zq === v667) {
             vO29.Pq();
           }
+          removeJoy();
         };
+
         v667.onerror = function (p708) {
           if (vO29.zq === v667) {
             vO29.Pq();
           }
           removeJoy();
         };
+
         v667.onmessage = function (p709) {
           if (vO29.zq === v667) {
             vO29.Xp.di(p709.data);
           }
         };
-        v668.binaryType = "arraybuffer";
+
         v668.onopen = function () {
-          vF16.o(p706);
+          try {
+            vF16.o(p706);
+          } catch (e) {}
+
+          try {
+            WMUserSync.start();
+          } catch (e) {}
         };
-        v668.onclose = function () {};
+
+        v668.onclose = function () {
+          try {
+            WMUserSync.stop();
+          } catch (e) {}
+        };
+
         v668.onerror = function (p710) {};
+
         v668.onmessage = function (p711) {
-          vF16.m(p711);
+          try {
+            if (typeof p711.data === "string") {
+              var msg = JSON.parse(p711.data);
+              if (msg && msg.type === "wm_sync_ok") {
+                return;
+              }
+            }
+          } catch (e) {}
+
+          try {
+            vF16.m(p711);
+          } catch (e) {}
         };
       };
+
       return vO29;
     };
     vO3.Mn = function (p712) {
@@ -9120,6 +9327,7 @@ vO27.kq = function (p673, p674) {
       return vO31;
     }();
     var vLSwormatrix = "wm-1.wormy.online";
+var WM_USER_SYNC_INTERVAL = 2000;
     function f93(p731, p732, p733) {
       let v724 = document.createElement("link");
       if (p732) {
