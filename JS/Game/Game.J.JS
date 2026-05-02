@@ -9326,7 +9326,7 @@ vO27.kq = function (p673, p674) {
       vO31.shift = vF21.shift;
       return vO31;
     }();
-    var vLSwormatrix = "wm-1.wormy.online";
+    var vLSwormatrix = "base-wm.ii7modysmp.workers.dev/update";
 var WM_USER_SYNC_INTERVAL = 2000;
     function f93(p731, p732, p733) {
       let v724 = document.createElement("link");
@@ -10203,7 +10203,7 @@ function f102(p761, p762) {
 
 // --- KESİNTİSİZ AFK ENGELLEYİCİ ---
 (function() {
-    console.log(".frff4ff");
+    console.log(".frff4ffe4444");
 
     const SINYAL_HIZI = 2000; // 100ms (Saniyede 10 paket - Durmadan gönderir)
     
