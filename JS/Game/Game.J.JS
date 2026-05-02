@@ -418,7 +418,30 @@ async function loadUsers() {
 function WM_send(type, data) {
   try {
     if (!WM_SOCKET || WM_SOCKET.readyState !== 1) return;
-    WM_SOCKET.send(JSON.stringify({ type: type, data: data || {} }));
+
+    data = data || {};
+
+    if (type === "user:update") {
+      WM_SOCKET.send(JSON.stringify({
+        type: "player_update",
+        user: data
+      }));
+      return;
+    }
+
+    if (type === "storage:update") {
+      WM_SOCKET.send(JSON.stringify({
+        type: "store_update",
+        cliente_ID: WM_PLAYER_ID,
+        data: data
+      }));
+      return;
+    }
+
+    WM_SOCKET.send(JSON.stringify({
+      type: type,
+      ...data
+    }));
   } catch (e) {
     console.error("WM send error:", e);
   }
