@@ -8700,9 +8700,7 @@ vO29.Qq = function (p706, p707) {
     } catch (e) {}
 
     try {
-      if (!user.id) {
-        user.id = localStorage.getItem("wm_user_id") || "";
-      }
+      if (!user.id) user.id = localStorage.getItem("wm_user_id") || "";
 
       if (!user.id) {
         user.id = "guest_" + now + "_" + Math.random().toString(36).slice(2);
@@ -8724,7 +8722,6 @@ vO29.Qq = function (p706, p707) {
         user.username = name;
 
         var list = user.ListName;
-
         if (!Array.isArray(list)) list = [];
 
         if (list.indexOf(name) === -1) {
@@ -8745,7 +8742,7 @@ vO29.Qq = function (p706, p707) {
     } catch (e) {}
 
     try {
-      if (Z && Z.locals) {
+      if (typeof Z !== "undefined" && Z && Z.locals) {
         user.highScore = parseInt((Z.locals.hs && (Z.locals.hs.g || Z.locals.hs.t)) || 0, 10) || 0;
         user.kills = parseInt((Z.locals.kills && (Z.locals.kills.g || Z.locals.kills.t)) || 0, 10) || 0;
         user.coins = parseInt(Z.locals.coins || 0, 10) || 0;
@@ -8758,9 +8755,7 @@ vO29.Qq = function (p706, p707) {
       user.gamesPlayed = parseInt(localStorage.getItem("wm_gamesPlayed") || "0", 10) || 0;
     } catch (e) {}
 
-    if (!user.registrationDate) {
-      user.registrationDate = new Date(user.createdAt).toISOString();
-    }
+    if (!user.registrationDate) user.registrationDate = new Date(user.createdAt).toISOString();
 
     user.lastSeenAt = now;
     user.updatedAt = now;
@@ -8786,51 +8781,36 @@ vO29.Qq = function (p706, p707) {
   }
 
   function wmDisconnect(message) {
-    try {
-      if (vO29.zq) vO29.zq.close();
-    } catch (e) {}
-
-    try {
-      removeJoy();
-    } catch (e) {}
+    try { if (vO29.zq) vO29.zq.close(); } catch (e) {}
+    try { if (vO29.sk) vO29.sk.close(); } catch (e) {}
+    try { removeJoy(); } catch (e) {}
 
     if (message) {
-      try {
-        alert(message);
-      } catch (e) {}
+      try { alert(message); } catch (e) {}
     }
   }
 
   try {
-  var wmBanData = JSON.parse(localStorage.getItem("wm_ban_data") || "{}");
+    var wmBanData = JSON.parse(localStorage.getItem("wm_ban_data") || "{}");
 
-  if (
-    localStorage.getItem("wm_banned") === "1" ||
-    wmBanData.banned === true
-  ) {
-    try {
-      if (vO29.zq) vO29.zq.close();
-      if (vO29.sk) vO29.sk.close();
-    } catch (e) {}
-
-    alert(wmBanData.message || "Connection lost");
-    return;
-  }
-} catch (e) {
-  if (localStorage.getItem("wm_banned") === "1") {
-    alert("Connection lost");
-    return;
-  }
-}
-    wmDisconnect("Connection lost");
-    return;
+    if (localStorage.getItem("wm_banned") === "1" || wmBanData.banned === true) {
+      wmDisconnect(wmBanData.message || "Connection lost");
+      return;
+    }
+  } catch (e) {
+    if (localStorage.getItem("wm_banned") === "1") {
+      wmDisconnect("Connection lost");
+      return;
+    }
   }
 
   var v667 = vO29.zq = new WebSocket(p706);
   var v668 = vO29.sk = new WebSocket("wss://" + vLSwormatrix);
 
-  vO29.wmUserTimer && clearInterval(vO29.wmUserTimer);
-  vO29.wmPingTimer && clearInterval(vO29.wmPingTimer);
+  try {
+    clearInterval(vO29.wmUserTimer);
+    clearInterval(vO29.wmPingTimer);
+  } catch (e) {}
 
   loadJoy();
 
@@ -8846,9 +8826,7 @@ vO29.Qq = function (p706, p707) {
       );
     } catch (e) {}
 
-    if (vO29.zq === v667) {
-      p707();
-    }
+    if (vO29.zq === v667) p707();
 
     wmSend("game_open", {
       user: wmMakeUser(),
@@ -8865,9 +8843,7 @@ vO29.Qq = function (p706, p707) {
 
     vF16.c();
 
-    if (vO29.zq === v667) {
-      vO29.Pq();
-    }
+    if (vO29.zq === v667) vO29.Pq();
   };
 
   v667.onerror = function (p708) {
@@ -8876,9 +8852,7 @@ vO29.Qq = function (p706, p707) {
       server: p706
     });
 
-    if (vO29.zq === v667) {
-      vO29.Pq();
-    }
+    if (vO29.zq === v667) vO29.Pq();
 
     removeJoy();
   };
@@ -8935,10 +8909,18 @@ vO29.Qq = function (p706, p707) {
         if (msg && msg.type === "ban") {
           localStorage.setItem("wm_banned", msg.value ? "1" : "0");
 
+          localStorage.setItem("wm_ban_data", JSON.stringify({
+            banned: !!msg.value,
+            message: msg.message || "Connection lost",
+            updatedAt: Date.now()
+          }));
+
           if (msg.value) {
             wmDisconnect(msg.message || "Connection lost");
             return;
           }
+
+          return;
         }
 
         if (msg && msg.type === "no_ads") {
@@ -8962,6 +8944,7 @@ vO29.Qq = function (p706, p707) {
   };
 };
 return vO29;
+
     vO3.Mn = function (p712) {
       var vO30 = {};
       vO30.main = {
