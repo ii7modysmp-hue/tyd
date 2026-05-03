@@ -10021,140 +10021,98 @@ function vApplyRegistry(p763) {
 
     vNormalizeObjectAssets(p763);
 
+    function wmObj(v) {
+      return v && typeof v === "object" && !Array.isArray(v) ? v : {};
+    }
+
     function wmArr(v) {
       return Array.isArray(v) ? v : [];
     }
 
-    function wmMergeById(oldArr, newArr) {
-      var map = {};
+    function wmMergeObject(a, b) {
+      return Object.assign({}, wmObj(a), wmObj(b));
+    }
+
+    function wmMergeUnique(a, b) {
       var out = [];
+      var seen = {};
 
-      wmArr(oldArr).concat(wmArr(newArr)).forEach(function (item) {
-        if (!item || typeof item !== "object") return;
-
-        var id = parseInt(item.id, 10);
+      wmArr(a).concat(wmArr(b)).forEach(function (x) {
+        var id = parseInt(x, 10);
         if (!Number.isFinite(id) || id <= 0) return;
-
-        item.id = id;
-        map[id] = item;
+        if (seen[id]) return;
+        seen[id] = true;
+        out.push(id);
       });
-
-      Object.keys(map)
-        .map(function (id) { return parseInt(id, 10); })
-        .sort(function (a, b) { return a - b; })
-        .forEach(function (id) {
-          out.push(map[id]);
-        });
 
       return out;
     }
 
-    function wmMergeObject(oldObj, newObj) {
-      return Object.assign(
-        {},
-        oldObj && typeof oldObj === "object" ? oldObj : {},
-        newObj && typeof newObj === "object" ? newObj : {}
-      );
-    }
+    function wmMergeSkinArray(baseArr, customArr) {
+      var map = {};
+      var out = [];
 
-    function wmAddVisibleFromSkins() {
-      p761.visibleSkin = wmArr(p761.visibleSkin);
-
-      wmArr(p761.skinArrayDict).forEach(function (skin) {
-        var id = parseInt(skin && skin.id, 10);
-        if (Number.isFinite(id) && id > 0 && p761.visibleSkin.indexOf(id) === -1) {
-          p761.visibleSkin.push(id);
-        }
+      wmArr(baseArr).forEach(function (skin) {
+        if (!skin || typeof skin !== "object") return;
+        var id = parseInt(skin.id, 10);
+        if (!Number.isFinite(id) || id <= 0) return;
+        map[id] = skin;
       });
-    }
 
-    function wmFixSkinObjects() {
-      p761.skinArrayDict = wmArr(p761.skinArrayDict).map(function (skin) {
-        if (!skin || typeof skin !== "object") return skin;
+      wmArr(customArr).forEach(function (skin) {
+        if (!skin || typeof skin !== "object") return;
 
-        skin.id = parseInt(skin.id, 10);
+        var id = parseInt(skin.id, 10);
+        if (!Number.isFinite(id) || id <= 0) return;
+
+        skin.id = id;
 
         if (!Array.isArray(skin.base)) skin.base = [];
         if (!Array.isArray(skin.glow)) skin.glow = [];
 
-        if (typeof skin.guest === "undefined") skin.guest = true;
+        skin.guest = true;
         skin.nonbuyable = false;
         skin.nonbuyableCause = "";
         skin.price = 0;
         skin.priceBefore = 0;
 
-        return skin;
-      }).filter(function (skin) {
-        return skin &&
-          typeof skin === "object" &&
-          Number.isFinite(parseInt(skin.id, 10)) &&
-          parseInt(skin.id, 10) > 0;
+        map[id] = skin;
       });
+
+      Object.keys(map).forEach(function (id) {
+        out.push(map[id]);
+      });
+
+      return out;
     }
 
-    var protectedGameKeys = {
-      portionDict: 1,
-      portionUnknown: 1,
-      abilityDict: 1,
-      abilityUnknown: 1,
-      teamDict: 1,
-      teamUnknown: 1
-    };
+    p761.textureDict = wmMergeObject(p761.textureDict, p763.textureDict);
+    p761.colorDict = wmMergeObject(p761.colorDict, p763.colorDict);
+    p761.regionDict = wmMergeObject(p761.regionDict, p763.regionDict);
 
-    for (var key in p763) {
-      if (!Object.prototype.hasOwnProperty.call(p763, key)) continue;
-      if (protectedGameKeys[key]) continue;
+    p761.eyesDict = wmMergeObject(p761.eyesDict, p763.eyesDict);
+    p761.mouthDict = wmMergeObject(p761.mouthDict, p763.mouthDict);
+    p761.hatDict = wmMergeObject(p761.hatDict, p763.hatDict);
+    p761.glassesDict = wmMergeObject(p761.glassesDict, p763.glassesDict);
 
-      if (key === "propertyList") {
-        continue;
-      }
+    p761.eyesVariantArray = wmArr(p761.eyesVariantArray).concat(wmArr(p763.eyesVariantArray));
+    p761.mouthVariantArray = wmArr(p761.mouthVariantArray).concat(wmArr(p763.mouthVariantArray));
+    p761.hatVariantArray = wmArr(p761.hatVariantArray).concat(wmArr(p763.hatVariantArray));
+    p761.glassesVariantArray = wmArr(p761.glassesVariantArray).concat(wmArr(p763.glassesVariantArray));
 
-      if (key === "visibleSkin") {
-        p761.visibleSkin = vMergeUniqueArray(p761.visibleSkin, p763.visibleSkin);
-        continue;
-      }
+    p761.skinArrayDict = wmMergeSkinArray(p761.skinArrayDict, p763.skinArrayDict);
+    p761.skinGroupArrayDict = wmArr(p761.skinGroupArrayDict).concat(wmArr(p763.skinGroupArrayDict));
 
-      if (key === "skinArrayDict") {
-        p761.skinArrayDict = wmMergeById(p761.skinArrayDict, p763.skinArrayDict);
-        continue;
-      }
-
-      if (
-        key === "textureDict" ||
-        key === "colorDict" ||
-        key === "regionDict" ||
-        key === "eyesDict" ||
-        key === "mouthDict" ||
-        key === "hatDict" ||
-        key === "glassesDict"
-      ) {
-        p761[key] = wmMergeObject(p761[key], p763[key]);
-        continue;
-      }
-
-      if (Array.isArray(p763[key])) {
-        p761[key] = Array.isArray(p761[key])
-          ? p761[key].concat(p763[key])
-          : p763[key].slice();
-      } else if (p763[key] && typeof p763[key] === "object") {
-        p761[key] = wmMergeObject(p761[key], p763[key]);
-      } else {
-        p761[key] = p763[key];
-      }
-    }
-
-    wmFixSkinObjects();
-    wmAddVisibleFromSkins();
+    p761.visibleSkin = wmMergeUnique(p761.visibleSkin, p763.visibleSkin);
 
     if (typeof wormatrixObjects !== "undefined" && wormatrixObjects) {
       wormatrixObjects.visibleSkin = p761.visibleSkin;
-      wormatrixObjects.idSkin = p761.skinArrayDict;
+      wormatrixObjects.idSkin = wmArr(p763.skinArrayDict);
 
       if (Array.isArray(p763.propertyList)) {
         wormatrixObjects.pL = p763.propertyList;
       }
     }
-
   } catch (e) {
     console.error("vApplyRegistry error:", e);
   }
