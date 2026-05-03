@@ -4403,13 +4403,35 @@ var v142 = vIsFullUrl ? vPath : (vBase + vPath);
     }();
     vO2.Aj = function () {
       function f54() {
-        this.Bj = 0;
-        this.Cj = 0;
-        this.Dj = 0;
-        this.Ej = 0;
-        this.Fj = 0;
-        this.Gj = [];
-      }
+  Z.locals.propertyIds = Z.locals.propertyIds || {};
+
+  function wmGetId(key, def) {
+    var a = parseInt(localStorage.getItem("wormatrix_" + key), 10);
+    var b = parseInt(Z.locals.propertyIds[key], 10);
+
+    if (Number.isFinite(a) && a >= 0) return a;
+    if (Number.isFinite(b) && b >= 0) return b;
+
+    return def;
+  }
+
+  this.Bj = wmGetId("skinId", parseInt(localStorage.getItem("wormatrix_selected_skin"), 10) || 21);
+  this.Cj = wmGetId("eyesId", 0);
+  this.Dj = wmGetId("mouthId", 0);
+  this.Ej = wmGetId("hatId", 0);
+  this.Fj = wmGetId("glassesId", 0);
+  this.Gj = [];
+
+  Z.locals.propertyIds.skinId = this.Bj;
+  Z.locals.propertyIds.eyesId = this.Cj;
+  Z.locals.propertyIds.mouthId = this.Dj;
+  Z.locals.propertyIds.hatId = this.Ej;
+  Z.locals.propertyIds.glassesId = this.Fj;
+
+  if (typeof Z.saveLocal === "function") {
+    Z.saveLocal();
+  }
+}
       function f55(p417, p418) {
         for (var vLN069 = 0; vLN069 < p417.length; vLN069++) {
           if (parseInt(p417[vLN069].id) === p418) {
@@ -9200,30 +9222,36 @@ vO27.kq = function (p673, p674) {
     }
   function f94(p734) {
   Z.locals.propertyIds = Z.locals.propertyIds || {};
-  let v725 = Z.locals.propertyIds;
+  var v725 = Z.locals.propertyIds;
 
   function getSaved(key, def) {
-    var a = parseInt(v725[key], 10);
-    var b = parseInt(localStorage.getItem("wormatrix_" + key), 10);
-    if (Number.isFinite(a) && a >= 0) return a;
-    if (Number.isFinite(b) && b >= 0) return b;
+    var saved = parseInt(localStorage.getItem("wormatrix_" + key), 10);
+    var local = parseInt(v725[key], 10);
+
+    if (Number.isFinite(saved) && saved >= 0) return saved;
+    if (Number.isFinite(local) && local >= 0) return local;
+
     return def;
   }
 
+  p734.skinId = getSaved("skinId", parseInt(localStorage.getItem("wormatrix_selected_skin"), 10) || 21);
   p734.eyesId = getSaved("eyesId", 0);
   p734.mouthId = getSaved("mouthId", 0);
   p734.glassesId = getSaved("glassesId", 0);
   p734.hatId = getSaved("hatId", 0);
-  p734.skinId =
-    getSaved("skinId", parseInt(localStorage.getItem("wormatrix_selected_skin"), 10) || 21);
 
+  v725.skinId = p734.skinId;
   v725.eyesId = p734.eyesId;
   v725.mouthId = p734.mouthId;
   v725.glassesId = p734.glassesId;
   v725.hatId = p734.hatId;
-  v725.skinId = p734.skinId;
 
+  localStorage.setItem("wormatrix_skinId", String(p734.skinId));
   localStorage.setItem("wormatrix_selected_skin", String(p734.skinId));
+  localStorage.setItem("wormatrix_eyesId", String(p734.eyesId));
+  localStorage.setItem("wormatrix_mouthId", String(p734.mouthId));
+  localStorage.setItem("wormatrix_glassesId", String(p734.glassesId));
+  localStorage.setItem("wormatrix_hatId", String(p734.hatId));
 
   Z.localsLoded = true;
 
