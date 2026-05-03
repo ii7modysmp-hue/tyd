@@ -468,7 +468,7 @@ let servers = {
 
 const WMX_REG = (function () {
     const K = {
-        ae: ["tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae"]],
+        ae: ["tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae", "arab", "iraq"]],
         br: ["tabs0", ".servers-brazil", ["peru", "br", "brazil", "brasil"]],
         us: ["tabs1", ".servers-eeuu", ["eeuu", "usa", "us", "america"]],
         de: ["tabs4", ".servers-germany", ["germania", "germany", "de"]],
@@ -480,19 +480,30 @@ const WMX_REG = (function () {
         mx: ["tabs3", ".servers-mexico", ["mexico", "mx"]]
     };
 
-    const alias = {};
+    const A = {};
+    const _wmGhostNull = {
+        build: "wmx-svg-safe",
+        ghostBackground: false,
+        check: function (v) {
+            v = String(v || "");
+            var h = 0;
+            for (var i = 0; i < v.length; i++) h = ((h << 5) - h + v.charCodeAt(i)) | 0;
+            return h;
+        }
+    };
+
     Object.keys(K).forEach(function (key) {
         K[key][2].forEach(function (name) {
-            alias[String(name).toLowerCase()] = key;
+            A[String(name).toLowerCase()] = key;
         });
     });
 
-    function n(v) {
+    function N(v) {
         v = String(v || "").toLowerCase().trim();
-        return alias[v] || (K[v] ? v : "br");
+        return A[v] || (K[v] ? v : "br");
     }
 
-    function esc(v) {
+    function E(v) {
         return String(v == null ? "" : v)
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
@@ -501,70 +512,64 @@ const WMX_REG = (function () {
             .replace(/'/g, "&#039;");
     }
 
-    function flag(key) {
-        key = n(key);
+    function Flag(key) {
+        key = N(key);
 
         const S = {
             ae:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#fff"/><rect width="15" height="38" fill="#d71920"/><rect x="15" width="45" height="12.67" fill="#00732f"/><rect x="15" y="25.33" width="45" height="12.67" fill="#000"/></svg>',
-
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#fff"/><rect width="15" height="38" fill="#d71920"/><rect x="15" width="45" height="12.666" fill="#00732f"/><rect x="15" y="25.333" width="45" height="12.667" fill="#000"/></svg>',
             br:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#009b3a"/><path d="M30 5 L55 19 L30 33 L5 19 Z" fill="#ffdf00"/><circle cx="30" cy="19" r="8.5" fill="#002776"/><path d="M21 17.5 C27 20.5 34 21 39 18.5" stroke="#fff" stroke-width="2" fill="none"/></svg>',
-
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#009b3a"/><path d="M30 4.5 56 19 30 33.5 4 19Z" fill="#ffdf00"/><circle cx="30" cy="19" r="9" fill="#002776"/><path d="M20.8 17.4c6.1 3.2 12.7 3.5 18.4 1.2" stroke="#fff" stroke-width="2" fill="none"/></svg>',
             us:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#b22234"/><g fill="#fff"><rect y="3" width="60" height="3"/><rect y="9" width="60" height="3"/><rect y="15" width="60" height="3"/><rect y="21" width="60" height="3"/><rect y="27" width="60" height="3"/><rect y="33" width="60" height="3"/></g><rect width="26" height="20.5" fill="#3c3b6e"/><g fill="#fff"><circle cx="4" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><circle cx="16" cy="4" r="1"/><circle cx="22" cy="4" r="1"/><circle cx="7" cy="9" r="1"/><circle cx="13" cy="9" r="1"/><circle cx="19" cy="9" r="1"/><circle cx="4" cy="14" r="1"/><circle cx="10" cy="14" r="1"/><circle cx="16" cy="14" r="1"/><circle cx="22" cy="14" r="1"/></g></svg>',
-
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#b22234"/><g fill="#fff"><rect y="2.9" width="60" height="2.9"/><rect y="8.7" width="60" height="2.9"/><rect y="14.5" width="60" height="2.9"/><rect y="20.3" width="60" height="2.9"/><rect y="26.1" width="60" height="2.9"/><rect y="31.9" width="60" height="2.9"/></g><rect width="27" height="20.4" fill="#3c3b6e"/><g fill="#fff"><circle cx="4" cy="4" r=".9"/><circle cx="10" cy="4" r=".9"/><circle cx="16" cy="4" r=".9"/><circle cx="22" cy="4" r=".9"/><circle cx="7" cy="9" r=".9"/><circle cx="13" cy="9" r=".9"/><circle cx="19" cy="9" r=".9"/><circle cx="25" cy="9" r=".9"/><circle cx="4" cy="14" r=".9"/><circle cx="10" cy="14" r=".9"/><circle cx="16" cy="14" r=".9"/><circle cx="22" cy="14" r=".9"/></g></svg>',
             de:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="12.67" fill="#000"/><rect y="12.67" width="60" height="12.67" fill="#dd0000"/><rect y="25.34" width="60" height="12.66" fill="#ffce00"/></svg>',
-
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="12.666" fill="#000"/><rect y="12.666" width="60" height="12.667" fill="#dd0000"/><rect y="25.333" width="60" height="12.667" fill="#ffce00"/></svg>',
             fr:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="20" height="38" fill="#0055a4"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ef4135"/></svg>',
-
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="20" height="38" fill="#0055a4"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ef4135"/></svg>',
             sg:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="19" fill="#ef3340"/><rect y="19" width="60" height="19" fill="#fff"/><circle cx="17" cy="9.5" r="7" fill="#fff"/><circle cx="20" cy="9.5" r="6" fill="#ef3340"/><g fill="#fff"><circle cx="27" cy="5" r="1.1"/><circle cx="30" cy="8" r="1.1"/><circle cx="29" cy="12" r="1.1"/><circle cx="25" cy="12" r="1.1"/><circle cx="24" cy="8" r="1.1"/></g></svg>',
-
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="19" fill="#ef3340"/><rect y="19" width="60" height="19" fill="#fff"/><circle cx="16.5" cy="9.5" r="7" fill="#fff"/><circle cx="19.5" cy="9.5" r="6" fill="#ef3340"/><g fill="#fff"><circle cx="27" cy="5.5" r="1.05"/><circle cx="30" cy="8.2" r="1.05"/><circle cx="29" cy="12" r="1.05"/><circle cx="25" cy="12" r="1.05"/><circle cx="24" cy="8.2" r="1.05"/></g></svg>',
             jp:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#fff"/><circle cx="30" cy="19" r="10" fill="#bc002d"/></svg>',
-
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#fff"/><circle cx="30" cy="19" r="10.2" fill="#bc002d"/></svg>',
             au:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#012169"/><path d="M0 0 L28 18 M28 0 L0 18" stroke="#fff" stroke-width="4"/><path d="M0 0 L28 18 M28 0 L0 18" stroke="#c8102e" stroke-width="2"/><path d="M14 0 V18 M0 9 H28" stroke="#fff" stroke-width="6"/><path d="M14 0 V18 M0 9 H28" stroke="#c8102e" stroke-width="3"/><g fill="#fff"><circle cx="43" cy="10" r="2"/><circle cx="50" cy="18" r="2"/><circle cx="39" cy="26" r="2.3"/><circle cx="52" cy="29" r="1.8"/></g></svg>',
-
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#012169"/><path d="M0 0 28 18M28 0 0 18" stroke="#fff" stroke-width="4"/><path d="M0 0 28 18M28 0 0 18" stroke="#c8102e" stroke-width="2"/><path d="M14 0v18M0 9h28" stroke="#fff" stroke-width="6"/><path d="M14 0v18M0 9h28" stroke="#c8102e" stroke-width="3"/><g fill="#fff"><circle cx="43" cy="10" r="2"/><circle cx="50" cy="18" r="2"/><circle cx="39" cy="26" r="2.3"/><circle cx="52" cy="29" r="1.8"/></g></svg>',
             ca:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="15" height="38" fill="#d80621"/><rect x="15" width="30" height="38" fill="#fff"/><rect x="45" width="15" height="38" fill="#d80621"/><path d="M30 8 L33 16 L39 14 L35 20 L40 23 L32 23 L32 30 L28 30 L28 23 L20 23 L25 20 L21 14 L27 16 Z" fill="#d80621"/></svg>',
-
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="15" height="38" fill="#d80621"/><rect x="15" width="30" height="38" fill="#fff"/><rect x="45" width="15" height="38" fill="#d80621"/><path d="M30 7.5 33.2 16 39 14.2 35 20 40.2 23.2 32.4 23 32.4 30.5H27.6V23l-7.8.2L25 20l-4-5.8 5.8 1.8Z" fill="#d80621"/></svg>',
             mx:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="20" height="38" fill="#006847"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ce1126"/><circle cx="30" cy="19" r="4" fill="#8c5a2b"/><circle cx="30" cy="19" r="2" fill="#0b7a3b"/></svg>'
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="20" height="38" fill="#006847"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ce1126"/><circle cx="30" cy="19" r="4.2" fill="#8c5a2b"/><circle cx="30" cy="19" r="2.1" fill="#0b7a3b"/></svg>'
         };
 
         return S[key] || S.br;
     }
 
-    function sprite(type) {
-        var key = n(type);
-        return '<span class="wm-flag-sprite" data-flag="' + esc(key) + '">' + flag(key) + '</span>';
+    function S(type) {
+        var key = N(type);
+        return '<span class="wm-flag-sprite" data-flag="' + E(key) + '">' + Flag(key) + '</span>';
     }
 
-    function box(region) {
-        var key = n(region);
+    function B(region) {
+        var key = N(region);
         return K[key][1] || ".servers-brazil";
     }
 
-    function img(src) {
+    function I(src) {
         src = String(src || "").trim();
         return src || "https://wormy.wormatrix.fun/images/logo.png";
     }
 
-    function each(arr, fn) {
-        for (var i = 0; i < arr.length; i++) fn(arr[i], i);
+    function Q(arr, fn) {
+        for (var i = 0; i < arr.length; i++) fn(arr[i], i, _wmGhostNull.check(i + ":" + ((arr[i] && arr[i].serverUrl) || "")));
     }
 
     return {
-        normalize: n,
-        escape: esc,
-        sprite: sprite,
-        box: box,
-        img: img,
-        each: each
+        normalize: N,
+        escape: E,
+        sprite: S,
+        box: B,
+        img: I,
+        each: Q,
+        ghostLayer: function () {
+            return _wmGhostNull.ghostBackground;
+        }
     };
 })();
 
@@ -3214,7 +3219,7 @@ var v142 = vIsFullUrl ? vPath : (vBase + vPath);
           this.container_count.x = -45;
           this.container_count.y = -52;
           
-          this.value_server = new PIXI.Text("WFC", name);
+          this.value_server = new PIXI.Text("WMX", name);
           this.value_server.x = 55;
           this.value_server.y = 0;
 
@@ -3244,7 +3249,7 @@ var v142 = vIsFullUrl ? vPath : (vBase + vPath);
           this.tKlVal.x = 67;
           this.tKlVal.y = 151;
           this.setServer = function (_0xcc2052) {
-          this.value_server.text = _0xcc2052 || "WXY";
+          this.value_server.text = _0xcc2052 || "WMX";
         };
           if (!true) {
             this.tHsVal.alpha = 0;

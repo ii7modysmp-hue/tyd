@@ -4833,29 +4833,6 @@ input[type="color"]::-moz-color-swatch {
 
 
 
-/* ========================================================================
-     Ø§Ù„ØªØ­ÙƒÙ… ÙÙŠ Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ù…ÙˆØ¬ÙˆØ¯Ù‡ ÙÙˆÙ‚ Ø§Ù„Ø§ÙØ§ØªØ±  
-======================================================================== */
-.player-crown {
-    position: absolute;
-    top: -24px;
-    left: 0%; /* ØªØ­Ø±ÙŠÙƒ Ø§Ù„ØµÙˆØ±Ø© Ø¯Ø§Ø¦Ù…Ù‹Ø§ Ø¥Ù„Ù‰ Ø§Ù„ÙŠØ³Ø§Ø± */
-    transform: translateX(-2%);
-    width: 51px;
-    height: auto;
-    z-index: 100;
-}
-
-.player-crown.large {
-    width: 60px;
-    top: -50px;
-}
-
-.player-crown.small {
-    width: 40px;
-    top: -50px;
-}
-
 #load_page_apoiador {
   position: relative;
   width: 100%;
@@ -4916,8 +4893,8 @@ input[type="color"]::-moz-color-swatch {
 .wormatrix-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 3px;
-  padding: 3px;
+  gap: 4px;
+  padding: 4px;
   margin-bottom: 6px;
   border-bottom: 1px solid rgba(127,176,46,.65);
   background: rgba(0,0,0,.22);
@@ -4935,6 +4912,7 @@ input[type="color"]::-moz-color-swatch {
   border-radius: 7px;
   padding: 1px;
   background: transparent !important;
+  background-image: none !important;
   box-shadow: none !important;
   box-sizing: border-box;
   overflow: hidden;
@@ -4945,27 +4923,37 @@ input[type="color"]::-moz-color-swatch {
 .wormatrix-grid a:hover {
   transform: translateY(-1px);
   background: transparent !important;
+  background-image: none !important;
   box-shadow: none !important;
 }
 
 .wormatrix-grid a.active {
   border: 2px solid #ff2424 !important;
   background: transparent !important;
+  background-image: none !important;
   box-shadow: none !important;
 }
 
 .wm-flag-sprite {
-  width: 40px;
-  height: 25px;
+  width: 42px;
+  height: 27px;
   display: block;
-  border-radius: 5px;
+  border-radius: 6px;
   overflow: hidden;
-  background-image: url("https://wormy.wormatrix.fun/images/fl-ag.png");
-  background-repeat: no-repeat;
-  background-size: 40px 400px;
-  background-position: 0 calc(var(--flag-index) * -40px);
-  transform: none;
-  transform-origin: center;
+  background: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.wm-flag-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 6px;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .tab-pane {
@@ -5055,40 +5043,23 @@ input[type="color"]::-moz-color-swatch {
   }
 
   .wormatrix-grid {
-    gap: 2px;
+    gap: 3px;
     padding: 3px;
   }
 
   .wormatrix-grid a {
-    height: 29px;
+    height: 30px;
     border-radius: 7px;
   }
 
   .wm-flag-sprite {
-    width: 38px;
-    height: 24px;
-    border-radius: 5px;
-    background-size: 38px 380px;
-    background-position: 0 calc(var(--flag-index) * -38px);
+    width: 40px;
+    height: 26px;
+    border-radius: 6px;
   }
 
   .selectSala {
     min-height: 72px;
     font-size: 11px;
   }
-}
-
-.wm-flag-sprite {
-  width: 42px;
-  height: 27px;
-  display: block;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.wm-flag-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  border-radius: 6px;
 }
