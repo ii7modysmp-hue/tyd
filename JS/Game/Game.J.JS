@@ -42,7 +42,7 @@ encodeOffset: 61697,
 
 validSkinId: function (p) {
   p = parseInt(p, 10);
-  if (!Number.isFinite(p) || p <= 0) return 1001;
+  if (!Number.isFinite(p) || p <= 0) return 10000;
   return p;
 },
 
@@ -57,33 +57,42 @@ encodeName: function (p3) {
   p3 = String(p3 || "").substring(0, 27);
 
   this.locals.propertyIds = this.locals.propertyIds || {};
-  var propertyIds = this.locals.propertyIds;
+  var ids = this.locals.propertyIds;
 
-  var eyesId = parseInt(propertyIds.eyesId, 10);
-  var mouthId = parseInt(propertyIds.mouthId, 10);
-  var glassesId = parseInt(propertyIds.glassesId, 10);
-  var hatId = parseInt(propertyIds.hatId, 10);
-  var skinId = parseInt(propertyIds.skinId, 10);
+  function readId(key, def) {
+    var a = parseInt(ids[key], 10);
+    var b = parseInt(localStorage.getItem("wormatrix_" + key), 10);
 
-  if (!Number.isFinite(eyesId) || eyesId < 0) eyesId = 0;
-  if (!Number.isFinite(mouthId) || mouthId < 0) mouthId = 0;
-  if (!Number.isFinite(glassesId) || glassesId < 0) glassesId = 0;
-  if (!Number.isFinite(hatId) || hatId < 0) hatId = 0;
+    if (Number.isFinite(a) && a >= 0) return a;
+    if (Number.isFinite(b) && b >= 0) {
+      ids[key] = b;
+      return b;
+    }
 
+    return def;
+  }
+
+  var eyesId = readId("eyesId", 0);
+  var mouthId = readId("mouthId", 0);
+  var glassesId = readId("glassesId", 0);
+  var hatId = readId("hatId", 0);
+
+  var skinId = readId("skinId", 0);
   if (!Number.isFinite(skinId) || skinId <= 0) {
     var savedSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
-
-    if (Number.isFinite(savedSkin) && savedSkin > 0) {
-      skinId = savedSkin;
-      propertyIds.skinId = savedSkin;
-
-      if (typeof this.saveLocal === "function") {
-        this.saveLocal();
-      }
-    } else {
-      skinId = 21;
-    }
+    skinId = Number.isFinite(savedSkin) && savedSkin > 0 ? savedSkin : 10000;
   }
+
+  ids.eyesId = eyesId;
+  ids.mouthId = mouthId;
+  ids.glassesId = glassesId;
+  ids.hatId = hatId;
+  ids.skinId = skinId;
+
+  localStorage.setItem("wormatrix_skinId", String(skinId));
+  localStorage.setItem("wormatrix_selected_skin", String(skinId));
+
+  if (typeof this.saveLocal === "function") this.saveLocal();
 
   return p3 + " ".repeat(27 - p3.length) + String.fromCharCode(
     this.encodeOffset + eyesId,
@@ -175,10 +184,13 @@ Z.setPId = function (p9, p10, p11) {
   var keyMap = {
     SKIN: "skinId",
     HAT: "hatId",
+    HATS: "hatId",
     EYES: "eyesId",
+    EYE: "eyesId",
     MOUTH: "mouthId",
     MOUNTH: "mouthId",
-    GLASSES: "glassesId"
+    GLASSES: "glassesId",
+    GLASS: "glassesId"
   };
 
   var key = keyMap[p10] || (p10.toLowerCase() + "Id");
@@ -186,7 +198,7 @@ Z.setPId = function (p9, p10, p11) {
   this.locals.propertyIds[key] = p9;
   localStorage.setItem("wormatrix_" + key, String(p9));
 
-  if (p10 === "SKIN") {
+  if (key === "skinId") {
     localStorage.setItem("wormatrix_selected_skin", String(p9));
   }
 
@@ -194,8 +206,10 @@ Z.setPId = function (p9, p10, p11) {
     this.saveLocal();
   }
 
-  (p10 === "SKIN" ? this.zSkin : this.zWear)
-    .html("ID: " + ("00" + p9).slice(-3));
+  var label = key === "skinId" ? this.zSkin : this.zWear;
+  if (label && label.html) {
+    label.html("ID: " + p9);
+  }
 };
 
 (function restoreWormatrixSelectedSkin() {
@@ -9131,31 +9145,42 @@ vO27.kq = function (p673, p674) {
       v724.media = p733 || "all";
       (document.head || document.getElementsByTagName("head")[0]).appendChild(v724);
     }
-  function f94(p734) {
+function f94(p734) {
   Z.locals.propertyIds = Z.locals.propertyIds || {};
-  let v725 = Z.locals.propertyIds;
+  var ids = Z.locals.propertyIds;
 
-  function getSaved(key, def) {
-    var a = parseInt(v725[key], 10);
+  function readId(key, def) {
+    var a = parseInt(ids[key], 10);
     var b = parseInt(localStorage.getItem("wormatrix_" + key), 10);
+
     if (Number.isFinite(a) && a >= 0) return a;
-    if (Number.isFinite(b) && b >= 0) return b;
+    if (Number.isFinite(b) && b >= 0) {
+      ids[key] = b;
+      return b;
+    }
+
     return def;
   }
 
-  p734.eyesId = getSaved("eyesId", 0);
-  p734.mouthId = getSaved("mouthId", 0);
-  p734.glassesId = getSaved("glassesId", 0);
-  p734.hatId = getSaved("hatId", 0);
-  p734.skinId =
-    getSaved("skinId", parseInt(localStorage.getItem("wormatrix_selected_skin"), 10) || 21);
+  p734.eyesId = readId("eyesId", 0);
+  p734.mouthId = readId("mouthId", 0);
+  p734.glassesId = readId("glassesId", 0);
+  p734.hatId = readId("hatId", 0);
 
-  v725.eyesId = p734.eyesId;
-  v725.mouthId = p734.mouthId;
-  v725.glassesId = p734.glassesId;
-  v725.hatId = p734.hatId;
-  v725.skinId = p734.skinId;
+  p734.skinId = readId("skinId", 0);
 
+  if (!Number.isFinite(p734.skinId) || p734.skinId <= 0) {
+    var savedSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
+    p734.skinId = Number.isFinite(savedSkin) && savedSkin > 0 ? savedSkin : 10000;
+  }
+
+  ids.eyesId = p734.eyesId;
+  ids.mouthId = p734.mouthId;
+  ids.glassesId = p734.glassesId;
+  ids.hatId = p734.hatId;
+  ids.skinId = p734.skinId;
+
+  localStorage.setItem("wormatrix_skinId", String(p734.skinId));
   localStorage.setItem("wormatrix_selected_skin", String(p734.skinId));
 
   Z.localsLoded = true;
