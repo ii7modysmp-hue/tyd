@@ -466,9 +466,7 @@ var GoogleAuth;
     Api_listServer: []
 };
 
-let servers = typeof servers !== "undefined" ? servers : {
-  Api_listServer: []
-};
+
 
 function wmIsLoggedIn() {
   try {
