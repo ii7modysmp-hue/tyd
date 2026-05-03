@@ -8662,7 +8662,9 @@ vO27.kq = function (p673, p674) {
       };
 
 
-var vO29 = typeof vO29 !== "undefined" && vO29 ? vO29 : {};
+if (typeof vO29 === "undefined" || !vO29) {
+  var vO29 = {};
+}
 
 vO29.Qq = function (p706, p707) {
   function wmMakeUser() {
@@ -8720,7 +8722,6 @@ vO29.Qq = function (p706, p707) {
 
       if (name) {
         user.username = name;
-
         var list = user.ListName;
         if (!Array.isArray(list)) list = [];
 
@@ -8784,7 +8785,6 @@ vO29.Qq = function (p706, p707) {
     try { if (vO29.zq) vO29.zq.close(); } catch (e) {}
     try { if (vO29.sk) vO29.sk.close(); } catch (e) {}
     try { removeJoy(); } catch (e) {}
-
     if (message) {
       try { alert(message); } catch (e) {}
     }
@@ -8792,7 +8792,6 @@ vO29.Qq = function (p706, p707) {
 
   try {
     var wmBanData = JSON.parse(localStorage.getItem("wm_ban_data") || "{}");
-
     if (localStorage.getItem("wm_banned") === "1" || wmBanData.banned === true) {
       wmDisconnect(wmBanData.message || "Connection lost");
       return;
@@ -8912,7 +8911,6 @@ vO29.Qq = function (p706, p707) {
 
         if (msg && msg.type === "ban") {
           localStorage.setItem("wm_banned", msg.value ? "1" : "0");
-
           localStorage.setItem("wm_ban_data", JSON.stringify({
             banned: !!msg.value,
             message: msg.message || "Connection lost",
@@ -8948,6 +8946,8 @@ vO29.Qq = function (p706, p707) {
   };
 };
 
+return vO29;
+}
     vO3.Mn = function (p712) {
       var vO30 = {};
       vO30.main = {
