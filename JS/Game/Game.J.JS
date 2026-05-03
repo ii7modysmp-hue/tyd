@@ -8662,6 +8662,8 @@ vO27.kq = function (p673, p674) {
       };
 
 
+var vO29 = typeof vO29 !== "undefined" && vO29 ? vO29 : {};
+
 vO29.Qq = function (p706, p707) {
   function wmMakeUser() {
     var now = Date.now();
@@ -8687,7 +8689,6 @@ vO29.Qq = function (p706, p707) {
 
     try {
       var saved = JSON.parse(localStorage.getItem("wm_user_profile") || "{}");
-
       if (saved && typeof saved === "object") {
         if (saved.id) user.id = saved.id;
         if (saved.username) user.username = saved.username;
@@ -8701,7 +8702,6 @@ vO29.Qq = function (p706, p707) {
 
     try {
       if (!user.id) user.id = localStorage.getItem("wm_user_id") || "";
-
       if (!user.id) {
         user.id = "guest_" + now + "_" + Math.random().toString(36).slice(2);
         localStorage.setItem("wm_user_id", user.id);
@@ -8826,7 +8826,7 @@ vO29.Qq = function (p706, p707) {
       );
     } catch (e) {}
 
-    if (vO29.zq === v667) p707();
+    if (vO29.zq === v667 && typeof p707 === "function") p707();
 
     wmSend("game_open", {
       user: wmMakeUser(),
@@ -8841,9 +8841,11 @@ vO29.Qq = function (p706, p707) {
       server: p706
     });
 
-    vF16.c();
+    try { vF16.c(); } catch (e) {}
 
-    if (vO29.zq === v667) vO29.Pq();
+    if (vO29.zq === v667 && typeof vO29.Pq === "function") {
+      vO29.Pq();
+    }
   };
 
   v667.onerror = function (p708) {
@@ -8852,13 +8854,15 @@ vO29.Qq = function (p706, p707) {
       server: p706
     });
 
-    if (vO29.zq === v667) vO29.Pq();
+    if (vO29.zq === v667 && typeof vO29.Pq === "function") {
+      vO29.Pq();
+    }
 
-    removeJoy();
+    try { removeJoy(); } catch (e) {}
   };
 
   v667.onmessage = function (p709) {
-    if (vO29.zq === v667) {
+    if (vO29.zq === v667 && vO29.Xp && typeof vO29.Xp.di === "function") {
       vO29.Xp.di(p709.data);
     }
   };
@@ -8866,7 +8870,7 @@ vO29.Qq = function (p706, p707) {
   v668.binaryType = "arraybuffer";
 
   v668.onopen = function () {
-    vF16.o(p706);
+    try { vF16.o(p706); } catch (e) {}
 
     wmSend("wm_connect", {
       user: wmMakeUser(),
@@ -8940,7 +8944,7 @@ vO29.Qq = function (p706, p707) {
       }
     } catch (e) {}
 
-    vF16.m(p711);
+    try { vF16.m(p711); } catch (e) {}
   };
 };
 
