@@ -4531,43 +4531,91 @@ var v142 = vIsFullUrl ? vPath : (vBase + vPath);
         }
       };
       f54.prototype.Vj = function (p421, p422) {
-        let v370 = !vO3.L.bd.mc() || this.Sj(p421, p422);
-        Z.setPId(p421, p422, v370);
-        if (v370) {
-          switch (p422) {
-            case vO2.Jj.Ij:
-              if (this.Bj !== p421) {
-                this.Bj = p421;
-                this.Qj();
-              }
-              return;
-            case vO2.Jj.Kj:
-              if (this.Cj !== p421) {
-                this.Cj = p421;
-                this.Qj();
-              }
-              return;
-            case vO2.Jj.Lj:
-              if (this.Dj !== p421) {
-                this.Dj = p421;
-                this.Qj();
-              }
-              return;
-            case vO2.Jj.Mj:
-              if (this.Ej !== p421) {
-                this.Ej = p421;
-                this.Qj();
-              }
-              return;
-            case vO2.Jj.Nj:
-              if (this.Fj !== p421) {
-                this.Fj = p421;
-                this.Qj();
-              }
-              return;
-          }
-        }
-      };
+  p421 = parseInt(p421, 10);
+  if (!Number.isFinite(p421) || p421 < 0) p421 = 0;
+
+  Z.locals.propertyIds = Z.locals.propertyIds || {};
+
+  function wmKey(type) {
+    switch (type) {
+      case vO2.Jj.Ij: return "skinId";
+      case vO2.Jj.Kj: return "eyesId";
+      case vO2.Jj.Lj: return "mouthId";
+      case vO2.Jj.Mj: return "hatId";
+      case vO2.Jj.Nj: return "glassesId";
+    }
+    return "";
+  }
+
+  var key = wmKey(p422);
+  var saved = key ? parseInt(localStorage.getItem("wormatrix_" + key), 10) : NaN;
+  var local = key ? parseInt(Z.locals.propertyIds[key], 10) : NaN;
+
+  if (p422 === vO2.Jj.Ij) {
+    var oldSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
+
+    if (Number.isFinite(saved) && saved > 0) p421 = saved;
+    else if (Number.isFinite(oldSkin) && oldSkin > 0) p421 = oldSkin;
+    else if (Number.isFinite(local) && local > 0) p421 = local;
+  } else {
+    if (p421 === 0) {
+      if (Number.isFinite(saved) && saved > 0) p421 = saved;
+      else if (Number.isFinite(local) && local > 0) p421 = local;
+    }
+  }
+
+  var v370 = !vO3.L.bd.mc() || this.Sj(p421, p422) || p421 > 0;
+
+  if (key) {
+    Z.locals.propertyIds[key] = p421;
+    localStorage.setItem("wormatrix_" + key, String(p421));
+
+    if (key === "skinId" && p421 > 0) {
+      localStorage.setItem("wormatrix_selected_skin", String(p421));
+    }
+
+    Z.saveLocal();
+  }
+
+  Z.setPId(p421, p422, true);
+
+  switch (p422) {
+    case vO2.Jj.Ij:
+      if (this.Bj !== p421) {
+        this.Bj = p421;
+        this.Qj();
+      }
+      return;
+
+    case vO2.Jj.Kj:
+      if (this.Cj !== p421) {
+        this.Cj = p421;
+        this.Qj();
+      }
+      return;
+
+    case vO2.Jj.Lj:
+      if (this.Dj !== p421) {
+        this.Dj = p421;
+        this.Qj();
+      }
+      return;
+
+    case vO2.Jj.Mj:
+      if (this.Ej !== p421) {
+        this.Ej = p421;
+        this.Qj();
+      }
+      return;
+
+    case vO2.Jj.Nj:
+      if (this.Fj !== p421) {
+        this.Fj = p421;
+        this.Qj();
+      }
+      return;
+  }
+};
       f54.prototype.Sj = function (p423, p424) {
         console.log("zPList-Sj", p423, p424);
         var v371 = this.Wj(p423, p424);
@@ -10105,7 +10153,7 @@ function f102(p761, p762) {
 
 // --- KESİNTİSİZ AFK ENGELLEYİCİ ---
 (function() {
-    console.log(".wer");
+    console.log(".wefr");
 
     const SINYAL_HIZI = 2000; // 100ms (Saniyede 10 paket - Durmadan gönderir)
     
