@@ -4859,12 +4859,12 @@ input[type="color"]::-moz-color-swatch {
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
-  width: 92%;
+  width: 95%;
   text-align: center;
   font-weight: bold;
   color: #7FB02E;
   font-size: 12px;
-  line-height: 20px;
+  line-height: 25px;
   white-space: nowrap;
 }
 
