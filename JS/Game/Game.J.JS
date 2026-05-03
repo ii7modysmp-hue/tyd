@@ -10012,7 +10012,7 @@ function f102(p761, p762) {
     return vObj;
   }
 
-  function vApplyRegistry(p763) {
+function vApplyRegistry(p763) {
   try {
     if (!p763 || typeof p763 !== "object") {
       vSafeKe();
@@ -10020,6 +10020,77 @@ function f102(p761, p762) {
     }
 
     vNormalizeObjectAssets(p763);
+
+    function wmArr(v) {
+      return Array.isArray(v) ? v : [];
+    }
+
+    function wmMergeById(oldArr, newArr) {
+      var map = {};
+      var out = [];
+
+      wmArr(oldArr).concat(wmArr(newArr)).forEach(function (item) {
+        if (!item || typeof item !== "object") return;
+
+        var id = parseInt(item.id, 10);
+        if (!Number.isFinite(id) || id <= 0) return;
+
+        item.id = id;
+        map[id] = item;
+      });
+
+      Object.keys(map)
+        .map(function (id) { return parseInt(id, 10); })
+        .sort(function (a, b) { return a - b; })
+        .forEach(function (id) {
+          out.push(map[id]);
+        });
+
+      return out;
+    }
+
+    function wmMergeObject(oldObj, newObj) {
+      return Object.assign(
+        {},
+        oldObj && typeof oldObj === "object" ? oldObj : {},
+        newObj && typeof newObj === "object" ? newObj : {}
+      );
+    }
+
+    function wmAddVisibleFromSkins() {
+      p761.visibleSkin = wmArr(p761.visibleSkin);
+
+      wmArr(p761.skinArrayDict).forEach(function (skin) {
+        var id = parseInt(skin && skin.id, 10);
+        if (Number.isFinite(id) && id > 0 && p761.visibleSkin.indexOf(id) === -1) {
+          p761.visibleSkin.push(id);
+        }
+      });
+    }
+
+    function wmFixSkinObjects() {
+      p761.skinArrayDict = wmArr(p761.skinArrayDict).map(function (skin) {
+        if (!skin || typeof skin !== "object") return skin;
+
+        skin.id = parseInt(skin.id, 10);
+
+        if (!Array.isArray(skin.base)) skin.base = [];
+        if (!Array.isArray(skin.glow)) skin.glow = [];
+
+        if (typeof skin.guest === "undefined") skin.guest = true;
+        skin.nonbuyable = false;
+        skin.nonbuyableCause = "";
+        skin.price = 0;
+        skin.priceBefore = 0;
+
+        return skin;
+      }).filter(function (skin) {
+        return skin &&
+          typeof skin === "object" &&
+          Number.isFinite(parseInt(skin.id, 10)) &&
+          parseInt(skin.id, 10) > 0;
+      });
+    }
 
     var protectedGameKeys = {
       portionDict: 1,
@@ -10030,62 +10101,66 @@ function f102(p761, p762) {
       teamUnknown: 1
     };
 
-    for (let v748 in p763) {
-      if (!Object.prototype.hasOwnProperty.call(p763, v748)) {
+    for (var key in p763) {
+      if (!Object.prototype.hasOwnProperty.call(p763, key)) continue;
+      if (protectedGameKeys[key]) continue;
+
+      if (key === "propertyList") {
         continue;
       }
 
-      if (protectedGameKeys[v748]) {
+      if (key === "visibleSkin") {
+        p761.visibleSkin = vMergeUniqueArray(p761.visibleSkin, p763.visibleSkin);
         continue;
       }
 
-      if (v748 === "propertyList" || v748 === "visibleSkin") {
+      if (key === "skinArrayDict") {
+        p761.skinArrayDict = wmMergeById(p761.skinArrayDict, p763.skinArrayDict);
         continue;
       }
 
-      if (Array.isArray(p763[v748])) {
-        p761[v748] = Array.isArray(p761[v748])
-          ? p761[v748].concat(p763[v748])
-          : p763[v748].slice();
-      } else if (p763[v748] && typeof p763[v748] === "object") {
-        p761[v748] = {
-          ...((p761[v748] && typeof p761[v748] === "object") ? p761[v748] : {}),
-          ...p763[v748]
-        };
+      if (
+        key === "textureDict" ||
+        key === "colorDict" ||
+        key === "regionDict" ||
+        key === "eyesDict" ||
+        key === "mouthDict" ||
+        key === "hatDict" ||
+        key === "glassesDict"
+      ) {
+        p761[key] = wmMergeObject(p761[key], p763[key]);
+        continue;
+      }
+
+      if (Array.isArray(p763[key])) {
+        p761[key] = Array.isArray(p761[key])
+          ? p761[key].concat(p763[key])
+          : p763[key].slice();
+      } else if (p763[key] && typeof p763[key] === "object") {
+        p761[key] = wmMergeObject(p761[key], p763[key]);
       } else {
-        p761[v748] = p763[v748];
+        p761[key] = p763[key];
       }
     }
 
-    if (Array.isArray(p763.visibleSkin)) {
-      p761.visibleSkin = vMergeUniqueArray(p761.visibleSkin, p763.visibleSkin);
+    wmFixSkinObjects();
+    wmAddVisibleFromSkins();
 
-      if (typeof wormatrixObjects !== "undefined" && wormatrixObjects) {
-        wormatrixObjects.visibleSkin = p761.visibleSkin;
+    if (typeof wormatrixObjects !== "undefined" && wormatrixObjects) {
+      wormatrixObjects.visibleSkin = p761.visibleSkin;
+      wormatrixObjects.idSkin = p761.skinArrayDict;
+
+      if (Array.isArray(p763.propertyList)) {
+        wormatrixObjects.pL = p763.propertyList;
       }
     }
 
-    if (
-      Array.isArray(p763.propertyList) &&
-      typeof wormatrixObjects !== "undefined" &&
-      wormatrixObjects
-    ) {
-      wormatrixObjects.pL = p763.propertyList;
-    }
-
-    if (
-      Array.isArray(p763.skinArrayDict) &&
-      typeof wormatrixObjects !== "undefined" &&
-      wormatrixObjects
-    ) {
-      wormatrixObjects.idSkin = p763.skinArrayDict;
-    }
   } catch (e) {
     console.error("vApplyRegistry error:", e);
   }
 
-    vSafeKe();
-  }
+  vSafeKe();
+}
 
   if (wmRegistryCache) {
     vApplyRegistry(wmRegistryCache);
