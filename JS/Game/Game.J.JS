@@ -1378,24 +1378,37 @@ loadServers();
           } catch (e6) {}
         }
       };
-      vO7.Aa = function () {
-        if (_typeof(aiptag.adplayer) !== "undefined") {
-          try {
-            ga("send", "event", "preroll", vO3.A.B + "_request");
-          } catch (e7) {}
-          ;
-          vO5.b.c(v$, 1);
-          aiptag.cmd.player.push(function () {
-            aiptag.adplayer.startPreRoll();
-          });
-        } else {
-          try {
-            ga("send", "event", "antiadblocker", vO3.A.B + "_start");
-          } catch (e8) {}
-          ;
-          _0x9f75x19();
-        }
-      };
+vO7.Aa = function () {
+
+  if (localStorage.getItem("wm_no_ads") === "1") {
+    try {
+      if (typeof f7 === "function") f7(true);
+      vO5.b.d(v$, 1);
+      vO5.b.d(v$2, 1);
+    } catch (e) {}
+
+    return;
+  }
+
+  if (_typeof(aiptag.adplayer) !== "undefined") {
+    try {
+      ga("send", "event", "preroll", vO3.A.B + "_request");
+    } catch (e7) {}
+
+    vO5.b.c(v$, 1);
+
+    aiptag.cmd.player.push(function () {
+      aiptag.adplayer.startPreRoll();
+    });
+
+  } else {
+    try {
+      ga("send", "event", "antiadblocker", vO3.A.B + "_start");
+    } catch (e8) {}
+
+    _0x9f75x19();
+  }
+};
       return vO7;
     };
     vO4.Ba = function (p101, p102) {
@@ -8647,44 +8660,307 @@ vO27.kq = function (p673, p674) {
           vO29.Aq = v665;
         }
       };
-      vO29.Qq = function (p706, p707) {
-        var v667 = vO29.zq = new WebSocket(p706);
-        var v668 = vO29.sk = new WebSocket("wss://" + vLSwormatrix);
-        loadJoy();
-        v667.binaryType = "arraybuffer";
-        v667.onopen = function () {
-          f97("open");
-          if (vO29.zq === v667) {
-            p707();
+
+
+vO29.Qq = function (p706, p707) {
+  function wmMakeUser() {
+    var now = Date.now();
+
+    var user = {
+      id: "",
+      username: "",
+      ListName: [],
+      avatarUrl: "",
+      level: 0,
+      highScore: 0,
+      kills: 0,
+      coins: 0,
+      registrationDate: "",
+      gamesPlayed: 0,
+      headShots: 0,
+      gemall: "",
+      lastSeenAt: now,
+      updatedAt: now,
+      isOnline: true,
+      createdAt: now
+    };
+
+    try {
+      var saved = JSON.parse(localStorage.getItem("wm_user_profile") || "{}");
+
+      if (saved && typeof saved === "object") {
+        if (saved.id) user.id = saved.id;
+        if (saved.username) user.username = saved.username;
+        if (saved.avatarUrl) user.avatarUrl = saved.avatarUrl;
+        if (saved.createdAt) user.createdAt = saved.createdAt;
+        if (saved.registrationDate) user.registrationDate = saved.registrationDate;
+        if (Array.isArray(saved.ListName)) user.ListName = saved.ListName;
+        if (saved.gemall) user.gemall = saved.gemall;
+      }
+    } catch (e) {}
+
+    try {
+      if (!user.id) {
+        user.id = localStorage.getItem("wm_user_id") || "";
+      }
+
+      if (!user.id) {
+        user.id = "guest_" + now + "_" + Math.random().toString(36).slice(2);
+        localStorage.setItem("wm_user_id", user.id);
+      }
+    } catch (e) {}
+
+    try {
+      var name =
+        $("#mm-name-input").val() ||
+        $("#nick").val() ||
+        localStorage.getItem("nickname") ||
+        user.username ||
+        "";
+
+      name = String(name || "").trim();
+
+      if (name) {
+        user.username = name;
+
+        var list = user.ListName;
+
+        if (!Array.isArray(list)) list = [];
+
+        if (list.indexOf(name) === -1) {
+          list.unshift(name);
+          list = list.slice(0, 20);
+        }
+
+        user.ListName = list;
+        localStorage.setItem("wm_ListName", JSON.stringify(list));
+      }
+    } catch (e) {}
+
+    try {
+      var oldList = JSON.parse(localStorage.getItem("wm_ListName") || "[]");
+      if (Array.isArray(oldList) && oldList.length) {
+        user.ListName = oldList.slice(0, 20);
+      }
+    } catch (e) {}
+
+    try {
+      if (Z && Z.locals) {
+        user.highScore = parseInt((Z.locals.hs && (Z.locals.hs.g || Z.locals.hs.t)) || 0, 10) || 0;
+        user.kills = parseInt((Z.locals.kills && (Z.locals.kills.g || Z.locals.kills.t)) || 0, 10) || 0;
+        user.coins = parseInt(Z.locals.coins || 0, 10) || 0;
+        user.level = parseInt(Z.locals.level || Z.locals.lvl || 0, 10) || 0;
+        user.headShots = parseInt(Z.locals.headShots || localStorage.getItem("wm_headShots") || 0, 10) || 0;
+      }
+    } catch (e) {}
+
+    try {
+      user.gamesPlayed = parseInt(localStorage.getItem("wm_gamesPlayed") || "0", 10) || 0;
+    } catch (e) {}
+
+    if (!user.registrationDate) {
+      user.registrationDate = new Date(user.createdAt).toISOString();
+    }
+
+    user.lastSeenAt = now;
+    user.updatedAt = now;
+    user.isOnline = true;
+
+    try {
+      localStorage.setItem("wm_user_profile", JSON.stringify(user));
+    } catch (e) {}
+
+    return user;
+  }
+
+  function wmSend(type, data) {
+    try {
+      if (!vO29.sk || vO29.sk.readyState !== WebSocket.OPEN) return;
+
+      vO29.sk.send(JSON.stringify({
+        type: type,
+        data: data || {},
+        time: Date.now()
+      }));
+    } catch (e) {}
+  }
+
+  function wmDisconnect(message) {
+    try {
+      if (vO29.zq) vO29.zq.close();
+    } catch (e) {}
+
+    try {
+      removeJoy();
+    } catch (e) {}
+
+    if (message) {
+      try {
+        alert(message);
+      } catch (e) {}
+    }
+  }
+
+  try {
+  var wmBanData = JSON.parse(localStorage.getItem("wm_ban_data") || "{}");
+
+  if (
+    localStorage.getItem("wm_banned") === "1" ||
+    wmBanData.banned === true
+  ) {
+    try {
+      if (vO29.zq) vO29.zq.close();
+      if (vO29.sk) vO29.sk.close();
+    } catch (e) {}
+
+    alert(wmBanData.message || "Connection lost");
+    return;
+  }
+} catch (e) {
+  if (localStorage.getItem("wm_banned") === "1") {
+    alert("Connection lost");
+    return;
+  }
+}
+    wmDisconnect("Connection lost");
+    return;
+  }
+
+  var v667 = vO29.zq = new WebSocket(p706);
+  var v668 = vO29.sk = new WebSocket("wss://" + vLSwormatrix);
+
+  vO29.wmUserTimer && clearInterval(vO29.wmUserTimer);
+  vO29.wmPingTimer && clearInterval(vO29.wmPingTimer);
+
+  loadJoy();
+
+  v667.binaryType = "arraybuffer";
+
+  v667.onopen = function () {
+    f97("open");
+
+    try {
+      localStorage.setItem(
+        "wm_gamesPlayed",
+        String((parseInt(localStorage.getItem("wm_gamesPlayed") || "0", 10) || 0) + 1)
+      );
+    } catch (e) {}
+
+    if (vO29.zq === v667) {
+      p707();
+    }
+
+    wmSend("game_open", {
+      user: wmMakeUser(),
+      server: p706,
+      noAds: localStorage.getItem("wm_no_ads") === "1"
+    });
+  };
+
+  v667.onclose = function () {
+    wmSend("game_close", {
+      user: wmMakeUser(),
+      server: p706
+    });
+
+    vF16.c();
+
+    if (vO29.zq === v667) {
+      vO29.Pq();
+    }
+  };
+
+  v667.onerror = function (p708) {
+    wmSend("game_error", {
+      user: wmMakeUser(),
+      server: p706
+    });
+
+    if (vO29.zq === v667) {
+      vO29.Pq();
+    }
+
+    removeJoy();
+  };
+
+  v667.onmessage = function (p709) {
+    if (vO29.zq === v667) {
+      vO29.Xp.di(p709.data);
+    }
+  };
+
+  v668.binaryType = "arraybuffer";
+
+  v668.onopen = function () {
+    vF16.o(p706);
+
+    wmSend("wm_connect", {
+      user: wmMakeUser(),
+      server: p706,
+      href: location.href,
+      noAds: localStorage.getItem("wm_no_ads") === "1"
+    });
+
+    vO29.wmPingTimer = setInterval(function () {
+      wmSend("ping", {
+        id: wmMakeUser().id,
+        isOnline: true
+      });
+    }, 5000);
+
+    vO29.wmUserTimer = setInterval(function () {
+      wmSend("user_update", {
+        user: wmMakeUser(),
+        server: p706
+      });
+    }, 5000);
+  };
+
+  v668.onclose = function () {
+    try {
+      clearInterval(vO29.wmUserTimer);
+      clearInterval(vO29.wmPingTimer);
+    } catch (e) {}
+  };
+
+  v668.onerror = function (p710) {};
+
+  v668.onmessage = function (p711) {
+    try {
+      var data = p711.data;
+
+      if (typeof data === "string") {
+        var msg = JSON.parse(data);
+
+        if (msg && msg.type === "ban") {
+          localStorage.setItem("wm_banned", msg.value ? "1" : "0");
+
+          if (msg.value) {
+            wmDisconnect(msg.message || "Connection lost");
+            return;
           }
-        };
-        v667.onclose = function () {
-          vF16.c();
-          if (vO29.zq === v667) {
-            vO29.Pq();
-          }
-        };
-        v667.onerror = function (p708) {
-          if (vO29.zq === v667) {
-            vO29.Pq();
-          }
-          removeJoy();
-        };
-        v667.onmessage = function (p709) {
-          if (vO29.zq === v667) {
-            vO29.Xp.di(p709.data);
-          }
-        };
-        v668.binaryType = "arraybuffer";
-        v668.onopen = function () {
-          vF16.o(p706);
-        };
-        v668.onclose = function () {};
-        v668.onerror = function (p710) {};
-        v668.onmessage = function (p711) {
-          vF16.m(p711);
-        };
-      };
+        }
+
+        if (msg && msg.type === "no_ads") {
+          localStorage.setItem("wm_no_ads", msg.value ? "1" : "0");
+          return;
+        }
+
+        if (msg && msg.type === "user_update" && msg.data) {
+          localStorage.setItem("wm_user_profile", JSON.stringify(msg.data));
+          return;
+        }
+
+        if (msg && msg.type === "force_disconnect") {
+          wmDisconnect(msg.message || "Connection lost");
+          return;
+        }
+      }
+    } catch (e) {}
+
+    vF16.m(p711);
+  };
+};
       return vO29;
     };
     vO3.Mn = function (p712) {
@@ -9133,7 +9409,7 @@ vO27.kq = function (p673, p674) {
       vO31.shift = vF21.shift;
       return vO31;
     }();
-    var vLSwormatrix = "wm-1.wormy.online";
+    var vLSwormatrix = "data.wormy.online/update";
     function f93(p731, p732, p733) {
       let v724 = document.createElement("link");
       if (p732) {
