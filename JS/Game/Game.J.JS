@@ -42,7 +42,7 @@ encodeOffset: 61697,
 
 validSkinId: function (p) {
   p = parseInt(p, 10);
-  if (!Number.isFinite(p) || p <= 0) return 10000;
+  if (!Number.isFinite(p) || p <= 0) return 1001;
   return p;
 },
 
@@ -57,42 +57,33 @@ encodeName: function (p3) {
   p3 = String(p3 || "").substring(0, 27);
 
   this.locals.propertyIds = this.locals.propertyIds || {};
-  var ids = this.locals.propertyIds;
+  var propertyIds = this.locals.propertyIds;
 
-  function readId(key, def) {
-    var a = parseInt(ids[key], 10);
-    var b = parseInt(localStorage.getItem("wormatrix_" + key), 10);
+  var eyesId = parseInt(propertyIds.eyesId, 10);
+  var mouthId = parseInt(propertyIds.mouthId, 10);
+  var glassesId = parseInt(propertyIds.glassesId, 10);
+  var hatId = parseInt(propertyIds.hatId, 10);
+  var skinId = parseInt(propertyIds.skinId, 10);
 
-    if (Number.isFinite(a) && a >= 0) return a;
-    if (Number.isFinite(b) && b >= 0) {
-      ids[key] = b;
-      return b;
-    }
+  if (!Number.isFinite(eyesId) || eyesId < 0) eyesId = 0;
+  if (!Number.isFinite(mouthId) || mouthId < 0) mouthId = 0;
+  if (!Number.isFinite(glassesId) || glassesId < 0) glassesId = 0;
+  if (!Number.isFinite(hatId) || hatId < 0) hatId = 0;
 
-    return def;
-  }
-
-  var eyesId = readId("eyesId", 0);
-  var mouthId = readId("mouthId", 0);
-  var glassesId = readId("glassesId", 0);
-  var hatId = readId("hatId", 0);
-
-  var skinId = readId("skinId", 0);
   if (!Number.isFinite(skinId) || skinId <= 0) {
     var savedSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
-    skinId = Number.isFinite(savedSkin) && savedSkin > 0 ? savedSkin : 10000;
+
+    if (Number.isFinite(savedSkin) && savedSkin > 0) {
+      skinId = savedSkin;
+      propertyIds.skinId = savedSkin;
+
+      if (typeof this.saveLocal === "function") {
+        this.saveLocal();
+      }
+    } else {
+      skinId = 21;
+    }
   }
-
-  ids.eyesId = eyesId;
-  ids.mouthId = mouthId;
-  ids.glassesId = glassesId;
-  ids.hatId = hatId;
-  ids.skinId = skinId;
-
-  localStorage.setItem("wormatrix_skinId", String(skinId));
-  localStorage.setItem("wormatrix_selected_skin", String(skinId));
-
-  if (typeof this.saveLocal === "function") this.saveLocal();
 
   return p3 + " ".repeat(27 - p3.length) + String.fromCharCode(
     this.encodeOffset + eyesId,
@@ -184,13 +175,10 @@ Z.setPId = function (p9, p10, p11) {
   var keyMap = {
     SKIN: "skinId",
     HAT: "hatId",
-    HATS: "hatId",
     EYES: "eyesId",
-    EYE: "eyesId",
     MOUTH: "mouthId",
     MOUNTH: "mouthId",
-    GLASSES: "glassesId",
-    GLASS: "glassesId"
+    GLASSES: "glassesId"
   };
 
   var key = keyMap[p10] || (p10.toLowerCase() + "Id");
@@ -198,7 +186,7 @@ Z.setPId = function (p9, p10, p11) {
   this.locals.propertyIds[key] = p9;
   localStorage.setItem("wormatrix_" + key, String(p9));
 
-  if (key === "skinId") {
+  if (p10 === "SKIN") {
     localStorage.setItem("wormatrix_selected_skin", String(p9));
   }
 
@@ -206,10 +194,8 @@ Z.setPId = function (p9, p10, p11) {
     this.saveLocal();
   }
 
-  var label = key === "skinId" ? this.zSkin : this.zWear;
-  if (label && label.html) {
-    label.html("ID: " + p9);
-  }
+  (p10 === "SKIN" ? this.zSkin : this.zWear)
+    .html("ID: " + ("00" + p9).slice(-3));
 };
 
 (function restoreWormatrixSelectedSkin() {
@@ -1378,37 +1364,24 @@ loadServers();
           } catch (e6) {}
         }
       };
-vO7.Aa = function () {
-
-  if (localStorage.getItem("wm_no_ads") === "1") {
-    try {
-      if (typeof f7 === "function") f7(true);
-      vO5.b.d(v$, 1);
-      vO5.b.d(v$2, 1);
-    } catch (e) {}
-
-    return;
-  }
-
-  if (_typeof(aiptag.adplayer) !== "undefined") {
-    try {
-      ga("send", "event", "preroll", vO3.A.B + "_request");
-    } catch (e7) {}
-
-    vO5.b.c(v$, 1);
-
-    aiptag.cmd.player.push(function () {
-      aiptag.adplayer.startPreRoll();
-    });
-
-  } else {
-    try {
-      ga("send", "event", "antiadblocker", vO3.A.B + "_start");
-    } catch (e8) {}
-
-    _0x9f75x19();
-  }
-};
+      vO7.Aa = function () {
+        if (_typeof(aiptag.adplayer) !== "undefined") {
+          try {
+            ga("send", "event", "preroll", vO3.A.B + "_request");
+          } catch (e7) {}
+          ;
+          vO5.b.c(v$, 1);
+          aiptag.cmd.player.push(function () {
+            aiptag.adplayer.startPreRoll();
+          });
+        } else {
+          try {
+            ga("send", "event", "antiadblocker", vO3.A.B + "_start");
+          } catch (e8) {}
+          ;
+          _0x9f75x19();
+        }
+      };
       return vO7;
     };
     vO4.Ba = function (p101, p102) {
@@ -8660,294 +8633,46 @@ vO27.kq = function (p673, p674) {
           vO29.Aq = v665;
         }
       };
-
-
-if (typeof vO29 === "undefined" || !vO29) {
-  var vO29 = {};
-}
-
-vO29.Qq = function (p706, p707) {
-  function wmMakeUser() {
-    var now = Date.now();
-
-    var user = {
-      id: "",
-      username: "",
-      ListName: [],
-      avatarUrl: "",
-      level: 0,
-      highScore: 0,
-      kills: 0,
-      coins: 0,
-      registrationDate: "",
-      gamesPlayed: 0,
-      headShots: 0,
-      gemall: "",
-      lastSeenAt: now,
-      updatedAt: now,
-      isOnline: true,
-      createdAt: now
-    };
-
-    try {
-      var saved = JSON.parse(localStorage.getItem("wm_user_profile") || "{}");
-      if (saved && typeof saved === "object") {
-        if (saved.id) user.id = saved.id;
-        if (saved.username) user.username = saved.username;
-        if (saved.avatarUrl) user.avatarUrl = saved.avatarUrl;
-        if (saved.createdAt) user.createdAt = saved.createdAt;
-        if (saved.registrationDate) user.registrationDate = saved.registrationDate;
-        if (Array.isArray(saved.ListName)) user.ListName = saved.ListName;
-        if (saved.gemall) user.gemall = saved.gemall;
-      }
-    } catch (e) {}
-
-    try {
-      if (!user.id) user.id = localStorage.getItem("wm_user_id") || "";
-      if (!user.id) {
-        user.id = "guest_" + now + "_" + Math.random().toString(36).slice(2);
-        localStorage.setItem("wm_user_id", user.id);
-      }
-    } catch (e) {}
-
-    try {
-      var name =
-        $("#mm-name-input").val() ||
-        $("#nick").val() ||
-        localStorage.getItem("nickname") ||
-        user.username ||
-        "";
-
-      name = String(name || "").trim();
-
-      if (name) {
-        user.username = name;
-        var list = user.ListName;
-        if (!Array.isArray(list)) list = [];
-
-        if (list.indexOf(name) === -1) {
-          list.unshift(name);
-          list = list.slice(0, 20);
-        }
-
-        user.ListName = list;
-        localStorage.setItem("wm_ListName", JSON.stringify(list));
-      }
-    } catch (e) {}
-
-    try {
-      var oldList = JSON.parse(localStorage.getItem("wm_ListName") || "[]");
-      if (Array.isArray(oldList) && oldList.length) {
-        user.ListName = oldList.slice(0, 20);
-      }
-    } catch (e) {}
-
-    try {
-      if (typeof Z !== "undefined" && Z && Z.locals) {
-        user.highScore = parseInt((Z.locals.hs && (Z.locals.hs.g || Z.locals.hs.t)) || 0, 10) || 0;
-        user.kills = parseInt((Z.locals.kills && (Z.locals.kills.g || Z.locals.kills.t)) || 0, 10) || 0;
-        user.coins = parseInt(Z.locals.coins || 0, 10) || 0;
-        user.level = parseInt(Z.locals.level || Z.locals.lvl || 0, 10) || 0;
-        user.headShots = parseInt(Z.locals.headShots || localStorage.getItem("wm_headShots") || 0, 10) || 0;
-      }
-    } catch (e) {}
-
-    try {
-      user.gamesPlayed = parseInt(localStorage.getItem("wm_gamesPlayed") || "0", 10) || 0;
-    } catch (e) {}
-
-    if (!user.registrationDate) user.registrationDate = new Date(user.createdAt).toISOString();
-
-    user.lastSeenAt = now;
-    user.updatedAt = now;
-    user.isOnline = true;
-
-    try {
-      localStorage.setItem("wm_user_profile", JSON.stringify(user));
-    } catch (e) {}
-
-    return user;
-  }
-
-  function wmSend(type, data) {
-    try {
-      if (!vO29.sk || vO29.sk.readyState !== WebSocket.OPEN) return;
-
-      vO29.sk.send(JSON.stringify({
-        type: type,
-        data: data || {},
-        time: Date.now()
-      }));
-    } catch (e) {}
-  }
-
-  function wmDisconnect(message) {
-    try { if (vO29.zq) vO29.zq.close(); } catch (e) {}
-    try { if (vO29.sk) vO29.sk.close(); } catch (e) {}
-    try { removeJoy(); } catch (e) {}
-    if (message) {
-      try { alert(message); } catch (e) {}
-    }
-  }
-
-  try {
-    var wmBanData = JSON.parse(localStorage.getItem("wm_ban_data") || "{}");
-    if (localStorage.getItem("wm_banned") === "1" || wmBanData.banned === true) {
-      wmDisconnect(wmBanData.message || "Connection lost");
-      return;
-    }
-  } catch (e) {
-    if (localStorage.getItem("wm_banned") === "1") {
-      wmDisconnect("Connection lost");
-      return;
-    }
-  }
-
-  var v667 = vO29.zq = new WebSocket(p706);
-  var v668 = vO29.sk = new WebSocket("wss://" + vLSwormatrix);
-
-  try {
-    clearInterval(vO29.wmUserTimer);
-    clearInterval(vO29.wmPingTimer);
-  } catch (e) {}
-
-  loadJoy();
-
-  v667.binaryType = "arraybuffer";
-
-  v667.onopen = function () {
-    f97("open");
-
-    try {
-      localStorage.setItem(
-        "wm_gamesPlayed",
-        String((parseInt(localStorage.getItem("wm_gamesPlayed") || "0", 10) || 0) + 1)
-      );
-    } catch (e) {}
-
-    if (vO29.zq === v667 && typeof p707 === "function") p707();
-
-    wmSend("game_open", {
-      user: wmMakeUser(),
-      server: p706,
-      noAds: localStorage.getItem("wm_no_ads") === "1"
-    });
-  };
-
-  v667.onclose = function () {
-    wmSend("game_close", {
-      user: wmMakeUser(),
-      server: p706
-    });
-
-    try { vF16.c(); } catch (e) {}
-
-    if (vO29.zq === v667 && typeof vO29.Pq === "function") {
-      vO29.Pq();
-    }
-  };
-
-  v667.onerror = function (p708) {
-    wmSend("game_error", {
-      user: wmMakeUser(),
-      server: p706
-    });
-
-    if (vO29.zq === v667 && typeof vO29.Pq === "function") {
-      vO29.Pq();
-    }
-
-    try { removeJoy(); } catch (e) {}
-  };
-
-  v667.onmessage = function (p709) {
-    if (vO29.zq === v667 && vO29.Xp && typeof vO29.Xp.di === "function") {
-      vO29.Xp.di(p709.data);
-    }
-  };
-
-  v668.binaryType = "arraybuffer";
-
-  v668.onopen = function () {
-    try { vF16.o(p706); } catch (e) {}
-
-    wmSend("wm_connect", {
-      user: wmMakeUser(),
-      server: p706,
-      href: location.href,
-      noAds: localStorage.getItem("wm_no_ads") === "1"
-    });
-
-    vO29.wmPingTimer = setInterval(function () {
-      wmSend("ping", {
-        id: wmMakeUser().id,
-        isOnline: true
-      });
-    }, 5000);
-
-    vO29.wmUserTimer = setInterval(function () {
-      wmSend("user_update", {
-        user: wmMakeUser(),
-        server: p706
-      });
-    }, 5000);
-  };
-
-  v668.onclose = function () {
-    try {
-      clearInterval(vO29.wmUserTimer);
-      clearInterval(vO29.wmPingTimer);
-    } catch (e) {}
-  };
-
-  v668.onerror = function (p710) {};
-
-  v668.onmessage = function (p711) {
-    try {
-      var data = p711.data;
-
-      if (typeof data === "string") {
-        var msg = JSON.parse(data);
-
-        if (msg && msg.type === "ban") {
-          localStorage.setItem("wm_banned", msg.value ? "1" : "0");
-          localStorage.setItem("wm_ban_data", JSON.stringify({
-            banned: !!msg.value,
-            message: msg.message || "Connection lost",
-            updatedAt: Date.now()
-          }));
-
-          if (msg.value) {
-            wmDisconnect(msg.message || "Connection lost");
-            return;
+      vO29.Qq = function (p706, p707) {
+        var v667 = vO29.zq = new WebSocket(p706);
+        var v668 = vO29.sk = new WebSocket("wss://" + vLSwormatrix);
+        loadJoy();
+        v667.binaryType = "arraybuffer";
+        v667.onopen = function () {
+          f97("open");
+          if (vO29.zq === v667) {
+            p707();
           }
-
-          return;
-        }
-
-        if (msg && msg.type === "no_ads") {
-          localStorage.setItem("wm_no_ads", msg.value ? "1" : "0");
-          return;
-        }
-
-        if (msg && msg.type === "user_update" && msg.data) {
-          localStorage.setItem("wm_user_profile", JSON.stringify(msg.data));
-          return;
-        }
-
-        if (msg && msg.type === "force_disconnect") {
-          wmDisconnect(msg.message || "Connection lost");
-          return;
-        }
-      }
-    } catch (e) {}
-
-    try { vF16.m(p711); } catch (e) {}
-  };
-};
-
-return vO29;
-}
+        };
+        v667.onclose = function () {
+          vF16.c();
+          if (vO29.zq === v667) {
+            vO29.Pq();
+          }
+        };
+        v667.onerror = function (p708) {
+          if (vO29.zq === v667) {
+            vO29.Pq();
+          }
+          removeJoy();
+        };
+        v667.onmessage = function (p709) {
+          if (vO29.zq === v667) {
+            vO29.Xp.di(p709.data);
+          }
+        };
+        v668.binaryType = "arraybuffer";
+        v668.onopen = function () {
+          vF16.o(p706);
+        };
+        v668.onclose = function () {};
+        v668.onerror = function (p710) {};
+        v668.onmessage = function (p711) {
+          vF16.m(p711);
+        };
+      };
+      return vO29;
+    };
     vO3.Mn = function (p712) {
       var vO30 = {};
       vO30.main = {
@@ -9394,7 +9119,7 @@ return vO29;
       vO31.shift = vF21.shift;
       return vO31;
     }();
-    var vLSwormatrix = "data.wormy.online/update";
+    var vLSwormatrix = "wm-1.wormy.online";
     function f93(p731, p732, p733) {
       let v724 = document.createElement("link");
       if (p732) {
@@ -9406,42 +9131,31 @@ return vO29;
       v724.media = p733 || "all";
       (document.head || document.getElementsByTagName("head")[0]).appendChild(v724);
     }
-function f94(p734) {
+  function f94(p734) {
   Z.locals.propertyIds = Z.locals.propertyIds || {};
-  var ids = Z.locals.propertyIds;
+  let v725 = Z.locals.propertyIds;
 
-  function readId(key, def) {
-    var a = parseInt(ids[key], 10);
+  function getSaved(key, def) {
+    var a = parseInt(v725[key], 10);
     var b = parseInt(localStorage.getItem("wormatrix_" + key), 10);
-
     if (Number.isFinite(a) && a >= 0) return a;
-    if (Number.isFinite(b) && b >= 0) {
-      ids[key] = b;
-      return b;
-    }
-
+    if (Number.isFinite(b) && b >= 0) return b;
     return def;
   }
 
-  p734.eyesId = readId("eyesId", 0);
-  p734.mouthId = readId("mouthId", 0);
-  p734.glassesId = readId("glassesId", 0);
-  p734.hatId = readId("hatId", 0);
+  p734.eyesId = getSaved("eyesId", 0);
+  p734.mouthId = getSaved("mouthId", 0);
+  p734.glassesId = getSaved("glassesId", 0);
+  p734.hatId = getSaved("hatId", 0);
+  p734.skinId =
+    getSaved("skinId", parseInt(localStorage.getItem("wormatrix_selected_skin"), 10) || 21);
 
-  p734.skinId = readId("skinId", 0);
+  v725.eyesId = p734.eyesId;
+  v725.mouthId = p734.mouthId;
+  v725.glassesId = p734.glassesId;
+  v725.hatId = p734.hatId;
+  v725.skinId = p734.skinId;
 
-  if (!Number.isFinite(p734.skinId) || p734.skinId <= 0) {
-    var savedSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
-    p734.skinId = Number.isFinite(savedSkin) && savedSkin > 0 ? savedSkin : 10000;
-  }
-
-  ids.eyesId = p734.eyesId;
-  ids.mouthId = p734.mouthId;
-  ids.glassesId = p734.glassesId;
-  ids.hatId = p734.hatId;
-  ids.skinId = p734.skinId;
-
-  localStorage.setItem("wormatrix_skinId", String(p734.skinId));
   localStorage.setItem("wormatrix_selected_skin", String(p734.skinId));
 
   Z.localsLoded = true;
@@ -10296,7 +10010,7 @@ function f102(p761, p762) {
 
 // --- KESİNTİSİZ AFK ENGELLEYİCİ ---
 (function() {
-    console.log(".4ff44");
+    console.log(".frff4ff");
 
     const SINYAL_HIZI = 2000; // 100ms (Saniyede 10 paket - Durmadan gönderir)
     
