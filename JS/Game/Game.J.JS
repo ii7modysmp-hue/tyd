@@ -466,32 +466,30 @@ let servers = {
     Api_listServer: []
 };
 
-const WM_FLAGS_SPRITE_URL = "https://wormy.wormatrix.fun/images/fl-ag.png";
-
 const WMX_REG = (function () {
     const K = {
-        ae: [0, "tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae"]],
-        br: [1, "tabs0", ".servers-brazil", ["peru", "br", "brazil", "brasil"]],
-        us: [2, "tabs1", ".servers-eeuu", ["eeuu", "usa", "us", "america"]],
-        de: [3, "tabs4", ".servers-germany", ["germania", "germany", "de"]],
-        fr: [4, "tabs5", ".servers-france", ["francia", "france", "fr"]],
-        sg: [5, "tabs6", ".servers-singapore", ["singapur", "singapore", "sg"]],
-        jp: [6, "tabs7", ".servers-japan", ["japon", "japan", "jp"]],
-        au: [7, "tabs8", ".servers-australia", ["australia", "au"]],
-        ca: [8, "tabs2", ".servers-canada", ["canada", "ca"]],
-        mx: [9, "tabs3", ".servers-mexico", ["mexico", "mx"]]
+        ae: ["tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae"]],
+        br: ["tabs0", ".servers-brazil", ["peru", "br", "brazil", "brasil"]],
+        us: ["tabs1", ".servers-eeuu", ["eeuu", "usa", "us", "america"]],
+        de: ["tabs4", ".servers-germany", ["germania", "germany", "de"]],
+        fr: ["tabs5", ".servers-france", ["francia", "france", "fr"]],
+        sg: ["tabs6", ".servers-singapore", ["singapur", "singapore", "sg"]],
+        jp: ["tabs7", ".servers-japan", ["japon", "japan", "jp"]],
+        au: ["tabs8", ".servers-australia", ["australia", "au"]],
+        ca: ["tabs2", ".servers-canada", ["canada", "ca"]],
+        mx: ["tabs3", ".servers-mexico", ["mexico", "mx"]]
     };
 
     const alias = {};
     Object.keys(K).forEach(function (key) {
-        K[key][3].forEach(function (name) {
+        K[key][2].forEach(function (name) {
             alias[String(name).toLowerCase()] = key;
         });
     });
 
     function n(v) {
         v = String(v || "").toLowerCase().trim();
-        return alias[v] || K[v] && v || "br";
+        return alias[v] || (K[v] ? v : "br");
     }
 
     function esc(v) {
@@ -503,20 +501,52 @@ const WMX_REG = (function () {
             .replace(/'/g, "&#039;");
     }
 
+    function flag(key) {
+        key = n(key);
+
+        const S = {
+            ae:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#fff"/><rect width="15" height="38" fill="#d71920"/><rect x="15" width="45" height="12.67" fill="#00732f"/><rect x="15" y="25.33" width="45" height="12.67" fill="#000"/></svg>',
+
+            br:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#009b3a"/><path d="M30 5 L55 19 L30 33 L5 19 Z" fill="#ffdf00"/><circle cx="30" cy="19" r="8.5" fill="#002776"/><path d="M21 17.5 C27 20.5 34 21 39 18.5" stroke="#fff" stroke-width="2" fill="none"/></svg>',
+
+            us:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#b22234"/><g fill="#fff"><rect y="3" width="60" height="3"/><rect y="9" width="60" height="3"/><rect y="15" width="60" height="3"/><rect y="21" width="60" height="3"/><rect y="27" width="60" height="3"/><rect y="33" width="60" height="3"/></g><rect width="26" height="20.5" fill="#3c3b6e"/><g fill="#fff"><circle cx="4" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><circle cx="16" cy="4" r="1"/><circle cx="22" cy="4" r="1"/><circle cx="7" cy="9" r="1"/><circle cx="13" cy="9" r="1"/><circle cx="19" cy="9" r="1"/><circle cx="4" cy="14" r="1"/><circle cx="10" cy="14" r="1"/><circle cx="16" cy="14" r="1"/><circle cx="22" cy="14" r="1"/></g></svg>',
+
+            de:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="12.67" fill="#000"/><rect y="12.67" width="60" height="12.67" fill="#dd0000"/><rect y="25.34" width="60" height="12.66" fill="#ffce00"/></svg>',
+
+            fr:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="20" height="38" fill="#0055a4"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ef4135"/></svg>',
+
+            sg:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="19" fill="#ef3340"/><rect y="19" width="60" height="19" fill="#fff"/><circle cx="17" cy="9.5" r="7" fill="#fff"/><circle cx="20" cy="9.5" r="6" fill="#ef3340"/><g fill="#fff"><circle cx="27" cy="5" r="1.1"/><circle cx="30" cy="8" r="1.1"/><circle cx="29" cy="12" r="1.1"/><circle cx="25" cy="12" r="1.1"/><circle cx="24" cy="8" r="1.1"/></g></svg>',
+
+            jp:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#fff"/><circle cx="30" cy="19" r="10" fill="#bc002d"/></svg>',
+
+            au:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#012169"/><path d="M0 0 L28 18 M28 0 L0 18" stroke="#fff" stroke-width="4"/><path d="M0 0 L28 18 M28 0 L0 18" stroke="#c8102e" stroke-width="2"/><path d="M14 0 V18 M0 9 H28" stroke="#fff" stroke-width="6"/><path d="M14 0 V18 M0 9 H28" stroke="#c8102e" stroke-width="3"/><g fill="#fff"><circle cx="43" cy="10" r="2"/><circle cx="50" cy="18" r="2"/><circle cx="39" cy="26" r="2.3"/><circle cx="52" cy="29" r="1.8"/></g></svg>',
+
+            ca:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="15" height="38" fill="#d80621"/><rect x="15" width="30" height="38" fill="#fff"/><rect x="45" width="15" height="38" fill="#d80621"/><path d="M30 8 L33 16 L39 14 L35 20 L40 23 L32 23 L32 30 L28 30 L28 23 L20 23 L25 20 L21 14 L27 16 Z" fill="#d80621"/></svg>',
+
+            mx:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="20" height="38" fill="#006847"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ce1126"/><circle cx="30" cy="19" r="4" fill="#8c5a2b"/><circle cx="30" cy="19" r="2" fill="#0b7a3b"/></svg>'
+        };
+
+        return S[key] || S.br;
+    }
+
     function sprite(type) {
         var key = n(type);
-        var idx = K[key][0];
-        return '<span class="wm-flag-sprite" data-flag="' + esc(key) + '" style="--flag-index:' + idx + ';"></span>';
+        return '<span class="wm-flag-sprite" data-flag="' + esc(key) + '">' + flag(key) + '</span>';
     }
 
     function box(region) {
         var key = n(region);
-        return K[key][2] || ".servers-brazil";
-    }
-
-    function tab(region) {
-        var key = n(region);
-        return K[key][1] || "tabs0";
+        return K[key][1] || ".servers-brazil";
     }
 
     function img(src) {
@@ -533,7 +563,6 @@ const WMX_REG = (function () {
         escape: esc,
         sprite: sprite,
         box: box,
-        tab: tab,
         img: img,
         each: each
     };
