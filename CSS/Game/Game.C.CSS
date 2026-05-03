@@ -1210,14 +1210,7 @@ body {display:block !important;}
 }
 #game-wrap #game-cont #stretch-box #main-menu-view #mm-line-center .column-left .description-text {
   border-radius:5px;
-  background:rgba(0,0,0,.25);
-  height:320px;
-  margin:30px 0;
-  overflow:scroll;
   padding:24px 5px;
-  box-sizing:border-box;
-  color:rgba(255,255,255,.8);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.747);
 }
 
 .title-wormate-friends-connect {
@@ -3680,7 +3673,7 @@ body {display:block !important;}
 
 #game-wrap #game-cont #results-view #congrats-bg #congrats-wrap #congrats .controls #final-continue:hover {
   box-shadow:0 1px 1px 0 rgba(0,0,0,.5);
-  background-color:#a4d070;
+  background-color:#f7941d;
 }
 #game-wrap #game-cont #results-view #congrats-bg #congrats-wrap #congrats .controls #final-continue:focus {outline:none;}
 #game-wrap #game-cont #results-view #congrats-bg #congrats-wrap #congrats .controls #final-continue * {vertical-align:middle;}
@@ -4842,13 +4835,13 @@ input[type="color"]::-moz-color-swatch {
 
 .wm-connect-title-bg {
   position: absolute;
-  top: -35px;
+  top: -22px;
   left: 50%;
   transform: translateX(-50%);
   width: 106%;
-  height: 40px;
+  height: 32px;
   background: #ffffff;
-  border-radius: 6px;
+  border-radius: 13px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   z-index: 0;
 }
