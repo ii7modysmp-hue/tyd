@@ -461,9 +461,11 @@ var GoogleAuth;
         });
       
 
-            let servers = typeof servers !== "undefined" ? servers : {
-  Api_listServer: []
+ 
+             let servers = {
+    Api_listServer: []
 };
+
 
 async function loadServers() {
   try {
