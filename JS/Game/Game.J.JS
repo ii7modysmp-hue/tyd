@@ -1297,28 +1297,22 @@ loadServers();
     }();
 vO4.ya = function () {
   var vO7 = {};
+  var doneCallback = function () {};
 
   vO7.za = function (p99) {
-    try {
-      if (typeof p99 === "function") {
-        p99(true);
-      }
-    } catch (e) {}
-  };
-
-vO4.ya = function () {
-  var vO7 = {};
-
-  vO7.za = function (cb) {
-    if (typeof cb === "function") {
-      cb(true);
-    }
+    doneCallback = typeof p99 === "function" ? p99 : function () {};
   };
 
   vO7.Aa = function () {
     try {
-      $("#JDHnkHtYwyXyVgG9").remove();
+      $("#JDHnkHtYwyXyVgG9").hide();
+      $("#adbl-continue").hide();
     } catch (e) {}
+
+    try {
+      doneCallback(true);
+    } catch (e) {}
+
     return true;
   };
 
