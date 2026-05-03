@@ -4862,18 +4862,18 @@ input[type="color"]::-moz-color-swatch {
   width: 92%;
   text-align: center;
   font-weight: bold;
-  color: #222;
+  color: #7FB02E;
   font-size: 12px;
   line-height: 20px;
   white-space: nowrap;
 }
 
 .title-worm-world-connect img {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   object-fit: contain;
   vertical-align: middle;
-  margin-right: 4px;
+  margin-right: 5px;
 }
 
 #wormatrix_tabs {
