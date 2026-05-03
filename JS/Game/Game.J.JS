@@ -1306,11 +1306,18 @@ vO4.ya = function () {
     } catch (e) {}
   };
 
+vO4.ya = function () {
+  var vO7 = {};
+
+  vO7.za = function (cb) {
+    if (typeof cb === "function") {
+      cb(true);
+    }
+  };
+
   vO7.Aa = function () {
     try {
-      $("#JDHnkHtYwyXyVgG9").hide();
-      $("#adbl-continue").show();
-      $("#adbl-continue").trigger("click");
+      $("#JDHnkHtYwyXyVgG9").remove();
     } catch (e) {}
     return true;
   };
