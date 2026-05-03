@@ -466,8 +466,46 @@ var GoogleAuth;
     Api_listServer: []
 };
 
+let servers = typeof servers !== "undefined" ? servers : {
+  Api_listServer: []
+};
+
+function wmIsLoggedIn() {
+  try {
+    if (typeof GoogleAuth !== "undefined" && GoogleAuth && GoogleAuth.currentUser) return true;
+    if (typeof FB_UserID !== "undefined" && FB_UserID) return true;
+    if (typeof theoKzObjects !== "undefined" && theoKzObjects.FB_UserID) return true;
+    if (typeof wormXyObjects !== "undefined" && wormXyObjects.FB_UserID) return true;
+    if (localStorage.getItem("FB_UserID")) return true;
+    if (localStorage.getItem("cliente_ID")) return true;
+  } catch (e) {}
+  return false;
+}
+
+function wmHideServerUI() {
+  try {
+    $("#wormatrix_servers_locked").remove();
+    $("#load_page_apoiador").hide();
+    $("#wormatrix_tabs").hide();
+  } catch (e) {}
+}
+
+function wmShowServerUI() {
+  try {
+    $("#load_page_apoiador").show();
+    $("#wormatrix_tabs").show();
+  } catch (e) {}
+}
 
 async function loadServers() {
+  if (!wmIsLoggedIn()) {
+    servers.Api_listServer = [];
+    wmHideServerUI();
+    return;
+  }
+
+  wmShowServerUI();
+
   try {
     const response = await fetch("https://wm.wormy.online/servers", {
       cache: "no-store"
@@ -479,7 +517,6 @@ async function loadServers() {
       servers.Api_listServer = (data.servers || []).filter(function (s) {
         return s && s.serverUrl;
       });
-
       createServerList();
     } else {
       servers.Api_listServer = [];
@@ -511,11 +548,7 @@ function wmNormalizeRegion(region) {
   region = String(region || "").toLowerCase().trim();
 
   for (var key in WM_REGION_CONFIG) {
-    if (!WM_REGION_CONFIG.hasOwnProperty(key)) continue;
-
-    if (WM_REGION_CONFIG[key].aliases.indexOf(region) !== -1) {
-      return key;
-    }
+    if (WM_REGION_CONFIG[key].aliases.indexOf(region) !== -1) return key;
   }
 
   return "br";
@@ -525,11 +558,7 @@ function wmFlagSprite(type) {
   var key = wmNormalizeRegion(type);
   var index = WM_REGION_CONFIG[key].index;
 
-  return `
-    <span class="wm-flag-frame">
-      <span class="wm-flag-sprite" data-flag="${key}" style="--flag-index:${index};"></span>
-    </span>
-  `;
+  return `<span class="wm-flag-sprite" data-flag="${key}" style="--flag-index:${index};"></span>`;
 }
 
 function injectWormatrixConnectUI() {
@@ -603,80 +632,55 @@ function injectWormatrixConnectUI() {
       0 2px 8px rgba(0,0,0,.32);
   }
 
-  #wormatrix_tabs::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  #wormatrix_tabs::-webkit-scrollbar-thumb {
-    background: rgba(127,176,46,.75);
-    border-radius: 10px;
-  }
-
   .wormatrix-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
-    padding: 4px;
+    gap: 2px;
+    padding: 2px;
     margin-bottom: 5px;
     border-radius: 4px;
-    background: rgba(0,0,0,.28);
-    border-bottom: 1px solid rgba(127,176,46,.55);
+    background: transparent;
     box-sizing: border-box;
   }
 
   .wormatrix-grid a {
-    height: 28px;
+    height: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2px;
-    border-radius: 3px;
-    border: 1px solid rgba(127,176,46,.85);
-    background:
-      linear-gradient(180deg, rgba(255,255,255,.10), rgba(0,0,0,.20));
+    padding: 0;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background: transparent !important;
+    box-shadow: none !important;
     box-sizing: border-box;
     cursor: pointer;
     transition: .12s ease;
+    overflow: hidden;
   }
 
   .wormatrix-grid a:hover {
-    border-color: #ffffff;
-    background: rgba(127,176,46,.22);
+    border-color: rgba(125, 190, 38, .65);
     transform: translateY(-1px);
   }
 
   .wormatrix-grid a.active {
-    border: 2px solid #ff2020 !important;
-    background: rgba(255,0,0,.10);
-    box-shadow:
-      inset 0 0 8px rgba(255,0,0,.20),
-      0 0 4px rgba(255,0,0,.18);
-  }
-
-  .wm-flag-frame {
-    width: 36px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border-radius: 2px;
-    background: rgba(255,255,255,.13);
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,.38),
-      0 1px 2px rgba(0,0,0,.45);
+    border: 2px solid #78d331 !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
   .wm-flag-sprite {
-    width: 32px;
-    height: 32px;
+    width: 39px;
+    height: 24px;
     display: block;
+    border-radius: 3px;
+    overflow: hidden;
     background-image: url("${WM_FLAGS_SPRITE_URL}");
     background-repeat: no-repeat;
-    background-size: 32px 320px;
-    background-position: 0 calc(var(--flag-index) * -32px);
-    transform: scale(.74);
-    transform-origin: center;
+    background-size: 39px 390px;
+    background-position: 0 calc(var(--flag-index) * -39px);
+    transform: none;
   }
 
   .tab-pane {
@@ -712,14 +716,13 @@ function injectWormatrixConnectUI() {
 
   .selectSala:hover {
     background: rgba(127,176,46,.30) !important;
-    color: #fff !important;
-    border-color: #ff2020 !important;
+    border-color: #78d331 !important;
     transform: translateX(1px);
   }
 
   .selectSala.wm-selected-server {
-    border-color: #ff2020 !important;
-    background: rgba(255,0,0,.10) !important;
+    border-color: #78d331 !important;
+    background: rgba(120,211,49,.12) !important;
   }
 
   .wm-server-row {
@@ -775,49 +778,10 @@ function injectWormatrixConnectUI() {
     padding: 18px 5px;
     text-shadow: 0 1px 2px #000;
   }
-
-  @media (max-width: 380px) {
-    #wormatrix_tabs {
-      height: 285px;
-      padding: 3px;
-    }
-
-    .wormatrix-grid {
-      gap: 3px;
-      padding: 3px;
-    }
-
-    .wormatrix-grid a {
-      height: 27px;
-    }
-
-    .wm-flag-frame {
-      width: 34px;
-      height: 21px;
-    }
-
-    .wm-flag-sprite {
-      transform: scale(.70);
-    }
-
-    .selectSala {
-      min-height: 55px;
-      padding: 6px;
-    }
-
-    .wm-server-name {
-      font-size: 11px;
-    }
-
-    .wm-server-url {
-      font-size: 8px;
-    }
-  }
 </style>
 
 <div id="load_page_apoiador">
   <div class="wm-connect-title-bg"></div>
-
   <div class="title-worm-world-connect">
     <img src="https://wormy.wormatrix.fun/images/logo.png" align="center" alt="" />
     Worm Matrix Connect
@@ -831,7 +795,6 @@ function injectWormatrixConnectUI() {
     <a href="#tabs1" data-flag="us">${wmFlagSprite("us")}</a>
     <a href="#tabs4" data-flag="de">${wmFlagSprite("de")}</a>
     <a href="#tabs5" data-flag="fr">${wmFlagSprite("fr")}</a>
-
     <a href="#tabs6" data-flag="sg">${wmFlagSprite("sg")}</a>
     <a href="#tabs7" data-flag="jp">${wmFlagSprite("jp")}</a>
     <a href="#tabs2" data-flag="ca">${wmFlagSprite("ca")}</a>
@@ -859,9 +822,8 @@ function getRegionContainer(region) {
   return WM_REGION_CONFIG[key].box || ".servers-brazil";
 }
 
-function wmGetSafeImage(server, regionKey) {
+function wmGetSafeImage(server) {
   if (server && server.image) return server.image;
-
   return "https://wormy.wormatrix.fun/images/logo.png";
 }
 
@@ -875,6 +837,11 @@ function wmEscapeHTML(text) {
 }
 
 function createServerList() {
+  if (!wmIsLoggedIn()) {
+    wmHideServerUI();
+    return;
+  }
+
   $(".tab-pane").empty();
 
   var hasAny = false;
@@ -888,7 +855,7 @@ function createServerList() {
 
     const regionKey = wmNormalizeRegion(srv.region);
     const serverName = srv.name || serverUrl;
-    const image = wmGetSafeImage(srv, regionKey);
+    const image = wmGetSafeImage(srv);
 
     const item = document.createElement("p");
     item.id = "wormatrix_room_item_" + a;
@@ -933,9 +900,7 @@ function createServerList() {
         window._x7.containerImgS.texture = window._x7.onclickServer;
       }
 
-      if (typeof retundFlagError === "function") {
-        retundFlagError();
-      }
+      if (typeof retundFlagError === "function") retundFlagError();
 
       window.server_url = selectedServer;
       $("#mm-action-play").click();
@@ -951,25 +916,16 @@ function createServerList() {
   if (!hasAny) {
     $(".servers-ae").html(`<div class="wm-empty-server">ERROR SERVER</div>`);
   }
-
-  try {
-    var lastRegion = localStorage.getItem("wormatrix_last_region");
-    if (lastRegion) {
-      var key = wmNormalizeRegion(lastRegion);
-      var tabId = WM_REGION_CONFIG[key].tab;
-
-      $("#wormatrix_tabs .wormatrix-grid a").removeClass("active");
-      $('#wormatrix_tabs .wormatrix-grid a[href="#' + tabId + '"]').addClass("active");
-
-      $("#wormatrix_tabs .tab-pane").removeClass("active").hide();
-      $("#" + tabId).addClass("active").show();
-    }
-  } catch (e) {}
 }
 
 function bindWormatrixTabs() {
   $("#wormatrix_tabs .wormatrix-grid a").off("click").on("click", function (e) {
     e.preventDefault();
+
+    if (!wmIsLoggedIn()) {
+      wmHideServerUI();
+      return;
+    }
 
     const target = $(this).attr("href");
     const flagKey = $(this).attr("data-flag");
@@ -984,23 +940,42 @@ function bindWormatrixTabs() {
       localStorage.setItem("wormatrix_last_region", flagKey);
     } catch (e) {}
 
-    if (typeof theoKzObjects !== "undefined") {
-      theoKzObjects.flag = flagKey;
-    }
+    if (typeof theoKzObjects !== "undefined") theoKzObjects.flag = flagKey;
 
     if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
       window._x7.containerImgS.texture = window._x7.onclickServer;
     }
 
-    if (typeof retundFlagError === "function") {
-      retundFlagError();
-    }
+    if (typeof retundFlagError === "function") retundFlagError();
   });
 }
 
-injectWormatrixConnectUI();
-bindWormatrixTabs();
-loadServers();
+function wmStartServersAfterLogin() {
+  injectWormatrixConnectUI();
+  bindWormatrixTabs();
+
+  if (wmIsLoggedIn()) {
+    wmShowServerUI();
+    loadServers();
+  } else {
+    wmHideServerUI();
+  }
+
+  setInterval(function () {
+    if (wmIsLoggedIn()) {
+      wmShowServerUI();
+
+      if (!servers.Api_listServer || !servers.Api_listServer.length) {
+        loadServers();
+      }
+    } else {
+      servers.Api_listServer = [];
+      wmHideServerUI();
+    }
+  }, 1500);
+}
+
+wmStartServersAfterLogin();
 
         (function () {
           var v15;
