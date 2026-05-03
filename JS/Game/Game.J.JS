@@ -4530,7 +4530,7 @@ var v142 = vIsFullUrl ? vPath : (vBase + vPath);
           }
         }
       };
-      f54.prototype.Vj = function (p421, p422) {
+    f54.prototype.Vj = function (p421, p422) {
   p421 = parseInt(p421, 10);
   if (!Number.isFinite(p421) || p421 < 0) p421 = 0;
 
@@ -4548,23 +4548,6 @@ var v142 = vIsFullUrl ? vPath : (vBase + vPath);
   }
 
   var key = wmKey(p422);
-  var saved = key ? parseInt(localStorage.getItem("wormatrix_" + key), 10) : NaN;
-  var local = key ? parseInt(Z.locals.propertyIds[key], 10) : NaN;
-
-  if (p422 === vO2.Jj.Ij) {
-    var oldSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
-
-    if (Number.isFinite(saved) && saved > 0) p421 = saved;
-    else if (Number.isFinite(oldSkin) && oldSkin > 0) p421 = oldSkin;
-    else if (Number.isFinite(local) && local > 0) p421 = local;
-  } else {
-    if (p421 === 0) {
-      if (Number.isFinite(saved) && saved > 0) p421 = saved;
-      else if (Number.isFinite(local) && local > 0) p421 = local;
-    }
-  }
-
-  var v370 = !vO3.L.bd.mc() || this.Sj(p421, p422) || p421 > 0;
 
   if (key) {
     Z.locals.propertyIds[key] = p421;
@@ -4574,105 +4557,109 @@ var v142 = vIsFullUrl ? vPath : (vBase + vPath);
       localStorage.setItem("wormatrix_selected_skin", String(p421));
     }
 
-    Z.saveLocal();
+    if (typeof Z.saveLocal === "function") {
+      Z.saveLocal();
+    }
   }
 
-  Z.setPId(p421, p422, true);
+  if (typeof Z.setPId === "function") {
+    Z.setPId(p421, p422, true);
+  }
 
   switch (p422) {
     case vO2.Jj.Ij:
-      if (this.Bj !== p421) {
-        this.Bj = p421;
-        this.Qj();
-      }
-      return;
+      this.Bj = p421;
+      break;
 
     case vO2.Jj.Kj:
-      if (this.Cj !== p421) {
-        this.Cj = p421;
-        this.Qj();
-      }
-      return;
+      this.Cj = p421;
+      break;
 
     case vO2.Jj.Lj:
-      if (this.Dj !== p421) {
-        this.Dj = p421;
-        this.Qj();
-      }
-      return;
+      this.Dj = p421;
+      break;
 
     case vO2.Jj.Mj:
-      if (this.Ej !== p421) {
-        this.Ej = p421;
-        this.Qj();
-      }
-      return;
+      this.Ej = p421;
+      break;
 
     case vO2.Jj.Nj:
-      if (this.Fj !== p421) {
-        this.Fj = p421;
-        this.Qj();
-      }
-      return;
+      this.Fj = p421;
+      break;
+  }
+
+  if (typeof this.Qj === "function") {
+    this.Qj();
   }
 };
-      f54.prototype.Sj = function (p423, p424) {
-        console.log("zPList-Sj", p423, p424);
-        var v371 = this.Wj(p423, p424);
-        return v371 != null && (vO3.L.Yj.Xj() ? v371.Zj() === 0 && !v371.$j() || vO3.L.Yj._j(p423, p424) : v371.ak());
-      };
-      f54.prototype.Wj = function (p425, p426) {
-        if (!vO3.L.bd.mc()) {
-          return null;
-        }
-        ;
-        var v372 = vO3.L.bd.nc();
-        if (p426 === vO2.Jj.Ij) {
-          var vF553 = f55(v372.skinArrayDict, p425);
-          if (vF553 < 0) {
-            return null;
-          } else {
-            return vO2.ck.bk(v372.skinArrayDict[vF553]);
-          }
-        }
-        ;
-        var v373 = null;
-        switch (p426) {
-          case vO2.Jj.Kj:
-            v373 = v372.eyesDict[p425];
-            break;
-          case vO2.Jj.Lj:
-            v373 = v372.mouthDict[p425];
-            break;
-          case vO2.Jj.Mj:
-            v373 = v372.hatDict[p425];
-            break;
-          case vO2.Jj.Nj:
-            v373 = v372.glassesDict[p425];
-        }
-        ;
-        if (v373 != null) {
-          return vO2.ck.dk(v373);
-        } else {
-          return null;
-        }
-      };
-      f54.prototype.Qj = function () {
-        for (var vLN072 = 0; vLN072 < this.Gj.length; vLN072++) {
-          this.Gj[vLN072]();
-        }
-      };
-      return f54;
-    }();
-    vO2.Jj = function () {
-      function f56() {}
-      f56.Ij = "SKIN";
-      f56.Kj = "EYES";
-      f56.Lj = "MOUTH";
-      f56.Nj = "GLASSES";
-      f56.Mj = "HAT";
-      return f56;
-    }();
+
+f54.prototype.Sj = function (p423, p424) {
+  console.log("zPList-Sj", p423, p424);
+  var v371 = this.Wj(p423, p424);
+  return v371 != null && (vO3.L.Yj.Xj() ? v371.Zj() === 0 && !v371.$j() || vO3.L.Yj._j(p423, p424) : v371.ak());
+};
+
+f54.prototype.Wj = function (p425, p426) {
+  if (!vO3.L.bd.mc()) {
+    return null;
+  }
+
+  var v372 = vO3.L.bd.nc();
+
+  if (p426 === vO2.Jj.Ij) {
+    var vF553 = f55(v372.skinArrayDict, p425);
+    if (vF553 < 0) {
+      return null;
+    } else {
+      return vO2.ck.bk(v372.skinArrayDict[vF553]);
+    }
+  }
+
+  var v373 = null;
+
+  switch (p426) {
+    case vO2.Jj.Kj:
+      v373 = v372.eyesDict[p425];
+      break;
+
+    case vO2.Jj.Lj:
+      v373 = v372.mouthDict[p425];
+      break;
+
+    case vO2.Jj.Mj:
+      v373 = v372.hatDict[p425];
+      break;
+
+    case vO2.Jj.Nj:
+      v373 = v372.glassesDict[p425];
+      break;
+  }
+
+  if (v373 != null) {
+    return vO2.ck.dk(v373);
+  } else {
+    return null;
+  }
+};
+
+f54.prototype.Qj = function () {
+  for (var vLN072 = 0; vLN072 < this.Gj.length; vLN072++) {
+    this.Gj[vLN072]();
+  }
+};
+
+return f54;
+}();
+
+vO2.Jj = function () {
+  function f56() {}
+  f56.Ij = "SKIN";
+  f56.Kj = "EYES";
+  f56.Lj = "MOUTH";
+  f56.Nj = "GLASSES";
+  f56.Mj = "HAT";
+  return f56;
+}();
     vO2.ek = function () {
       function _0x9f75x19() {
         this.Sf = new vO5.e.h(vO5.e.g.from("/images/bg-obstacle.png"));
