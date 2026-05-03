@@ -1210,6 +1210,7 @@ body {display:block !important;}
 }
 #game-wrap #game-cont #stretch-box #main-menu-view #mm-line-center .column-left .description-text {
   border-radius:5px;
+  height: 329px;
   padding:24px 5px;
 }
 
