@@ -4857,3 +4857,225 @@ input[type="color"]::-moz-color-swatch {
     width: 40px;
     top: -50px;
 }
+
+#load_page_apoiador {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  margin: 0 auto;
+}
+
+.wm-connect-title-bg {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 106%;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 0;
+}
+
+.title-worm-world-connect {
+  position: absolute;
+  top: -19px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  width: 92%;
+  text-align: center;
+  font-weight: bold;
+  color: #222;
+  font-size: 12px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.title-worm-world-connect img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+#wormatrix_tabs {
+  width: 100%;
+  height: 285px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid rgba(127,176,46,.85);
+  margin: 6px auto;
+  padding: 4px;
+  background: rgba(0,0,0,.28);
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 10px rgba(127,176,46,.22);
+}
+
+.wormatrix-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+  padding: 3px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(127,176,46,.65);
+  background: rgba(0,0,0,.22);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.wormatrix-grid a {
+  width: 100%;
+  height: 31px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0 !important;
+  border-radius: 7px;
+  padding: 1px;
+  background: transparent !important;
+  box-shadow: none !important;
+  box-sizing: border-box;
+  overflow: hidden;
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.wormatrix-grid a:hover {
+  transform: translateY(-1px);
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.wormatrix-grid a.active {
+  border: 2px solid #ff2424 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.wm-flag-sprite {
+  width: 40px;
+  height: 25px;
+  display: block;
+  border-radius: 5px;
+  overflow: hidden;
+  background-image: url("https://wormy.wormatrix.fun/images/fl-ag.png");
+  background-repeat: no-repeat;
+  background-size: 40px 400px;
+  background-position: 0 calc(var(--flag-index) * -40px);
+  transform: none;
+  transform-origin: center;
+}
+
+.tab-pane {
+  display: none;
+  padding: 2px;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+.selectSala {
+  width: calc(100% - 4px);
+  min-height: 76px;
+  margin: 4px 2px 7px;
+  padding: 8px 9px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 7px;
+  background: rgba(0,0,0,.24);
+  border: 1px solid rgba(127,176,46,.85);
+  text-align: left;
+  text-shadow: 0 1px 2px #000;
+  box-sizing: border-box;
+  overflow: hidden;
+  line-height: 1.45;
+}
+
+.selectSala:hover {
+  background: rgba(127,176,46,.35) !important;
+  color: #fff !important;
+  border-color: #ff2424 !important;
+}
+
+.selectSala.wm-selected-server {
+  border-color: #ff2424 !important;
+  background: rgba(255,0,0,.08) !important;
+}
+
+.wm-server-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.wm-server-img {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  object-fit: cover;
+  border-radius: 7px;
+  border: 1px solid rgba(127,176,46,.85);
+  background: rgba(0,0,0,.25);
+}
+
+.wm-server-info {
+  flex: 1;
+  overflow: hidden;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.wm-server-name {
+  color: #fff;
+  font-weight: bold;
+  font-size: 13px;
+  text-shadow: 0 1px 2px #000;
+}
+
+.wm-server-url {
+  color: rgba(255,255,255,.65);
+  font-size: 10px;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 380px) {
+  #wormatrix_tabs {
+    height: 285px;
+    padding: 3px;
+  }
+
+  .wormatrix-grid {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .wormatrix-grid a {
+    height: 29px;
+    border-radius: 7px;
+  }
+
+  .wm-flag-sprite {
+    width: 38px;
+    height: 24px;
+    border-radius: 5px;
+    background-size: 38px 380px;
+    background-position: 0 calc(var(--flag-index) * -38px);
+  }
+
+  .selectSala {
+    min-height: 72px;
+    font-size: 11px;
+  }
+}

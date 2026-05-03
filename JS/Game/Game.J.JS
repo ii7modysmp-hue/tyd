@@ -462,518 +462,236 @@ var GoogleAuth;
       
 
  
-             let servers = {
+let servers = {
     Api_listServer: []
 };
 
-
-
-function wmIsLoggedIn() {
-  try {
-    if (typeof GoogleAuth !== "undefined" && GoogleAuth && GoogleAuth.currentUser) return true;
-    if (typeof FB_UserID !== "undefined" && FB_UserID) return true;
-    if (typeof theoKzObjects !== "undefined" && theoKzObjects.FB_UserID) return true;
-    if (typeof wormXyObjects !== "undefined" && wormXyObjects.FB_UserID) return true;
-    if (localStorage.getItem("FB_UserID")) return true;
-    if (localStorage.getItem("cliente_ID")) return true;
-  } catch (e) {}
-  return false;
-}
-
-function wmHideServerUI() {
-  try {
-    $("#wormatrix_servers_locked").remove();
-    $("#load_page_apoiador").hide();
-    $("#wormatrix_tabs").hide();
-  } catch (e) {}
-}
-
-function wmShowServerUI() {
-  try {
-    $("#load_page_apoiador").show();
-    $("#wormatrix_tabs").show();
-  } catch (e) {}
-}
-
-async function loadServers() {
-  if (!wmIsLoggedIn()) {
-    servers.Api_listServer = [];
-    wmHideServerUI();
-    return;
-  }
-
-  wmShowServerUI();
-
-  try {
-    const response = await fetch("https://wm.wormy.online/servers", {
-      cache: "no-store"
-    });
-
-    const data = await response.json();
-
-    if (data && data.success) {
-      servers.Api_listServer = (data.servers || []).filter(function (s) {
-        return s && s.serverUrl;
-      });
-      createServerList();
-    } else {
-      servers.Api_listServer = [];
-      createServerList();
-    }
-  } catch (e) {
-    console.error("SERVER LOAD ERROR:", e);
-    servers.Api_listServer = [];
-    createServerList();
-  }
-}
-
 const WM_FLAGS_SPRITE_URL = "https://wormy.wormatrix.fun/images/fl-ag.png";
 
-const WM_REGION_CONFIG = {
-  br: { tab: "tabs0", box: ".servers-brazil", index: 1, aliases: ["peru", "br", "brazil", "brasil"] },
-  us: { tab: "tabs1", box: ".servers-eeuu", index: 2, aliases: ["eeuu", "usa", "us", "america"] },
-  ca: { tab: "tabs2", box: ".servers-canada", index: 8, aliases: ["canada", "ca"] },
-  mx: { tab: "tabs3", box: ".servers-mexico", index: 9, aliases: ["mexico", "mx"] },
-  de: { tab: "tabs4", box: ".servers-germany", index: 3, aliases: ["germania", "germany", "de"] },
-  fr: { tab: "tabs5", box: ".servers-france", index: 4, aliases: ["francia", "france", "fr"] },
-  sg: { tab: "tabs6", box: ".servers-singapore", index: 5, aliases: ["singapur", "singapore", "sg"] },
-  jp: { tab: "tabs7", box: ".servers-japan", index: 6, aliases: ["japon", "japan", "jp"] },
-  au: { tab: "tabs8", box: ".servers-australia", index: 7, aliases: ["australia", "au"] },
-  ae: { tab: "tabs9", box: ".servers-ae", index: 0, aliases: ["granbretana", "uk", "gb", "ae", "arab", "iraq"] }
-};
+const WMX_REG = (function () {
+    const K = {
+        ae: [0, "tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae"]],
+        br: [1, "tabs0", ".servers-brazil", ["peru", "br", "brazil", "brasil"]],
+        us: [2, "tabs1", ".servers-eeuu", ["eeuu", "usa", "us", "america"]],
+        de: [3, "tabs4", ".servers-germany", ["germania", "germany", "de"]],
+        fr: [4, "tabs5", ".servers-france", ["francia", "france", "fr"]],
+        sg: [5, "tabs6", ".servers-singapore", ["singapur", "singapore", "sg"]],
+        jp: [6, "tabs7", ".servers-japan", ["japon", "japan", "jp"]],
+        au: [7, "tabs8", ".servers-australia", ["australia", "au"]],
+        ca: [8, "tabs2", ".servers-canada", ["canada", "ca"]],
+        mx: [9, "tabs3", ".servers-mexico", ["mexico", "mx"]]
+    };
 
-function wmNormalizeRegion(region) {
-  region = String(region || "").toLowerCase().trim();
+    const alias = {};
+    Object.keys(K).forEach(function (key) {
+        K[key][3].forEach(function (name) {
+            alias[String(name).toLowerCase()] = key;
+        });
+    });
 
-  for (var key in WM_REGION_CONFIG) {
-    if (WM_REGION_CONFIG[key].aliases.indexOf(region) !== -1) return key;
-  }
+    function n(v) {
+        v = String(v || "").toLowerCase().trim();
+        return alias[v] || K[v] && v || "br";
+    }
 
-  return "br";
+    function esc(v) {
+        return String(v == null ? "" : v)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function sprite(type) {
+        var key = n(type);
+        var idx = K[key][0];
+        return '<span class="wm-flag-sprite" data-flag="' + esc(key) + '" style="--flag-index:' + idx + ';"></span>';
+    }
+
+    function box(region) {
+        var key = n(region);
+        return K[key][2] || ".servers-brazil";
+    }
+
+    function tab(region) {
+        var key = n(region);
+        return K[key][1] || "tabs0";
+    }
+
+    function img(src) {
+        src = String(src || "").trim();
+        return src || "https://wormy.wormatrix.fun/images/logo.png";
+    }
+
+    function each(arr, fn) {
+        for (var i = 0; i < arr.length; i++) fn(arr[i], i);
+    }
+
+    return {
+        normalize: n,
+        escape: esc,
+        sprite: sprite,
+        box: box,
+        tab: tab,
+        img: img,
+        each: each
+    };
+})();
+
+async function loadServers() {
+    try {
+        const response = await fetch("https://wm.wormy.online/servers", {
+            cache: "no-store"
+        });
+
+        const data = await response.json();
+
+        if (data && data.success) {
+            servers.Api_listServer = (data.servers || []).filter(function (s) {
+                return s && s.serverUrl;
+            });
+            createServerList();
+        } else {
+            servers.Api_listServer = [];
+            alert("ERROR SERVER");
+        }
+    } catch (e) {
+        console.error("SERVER LOAD ERROR:", e);
+        servers.Api_listServer = [];
+        alert("ERROR SERVER");
+    }
 }
 
 function wmFlagSprite(type) {
-  var key = wmNormalizeRegion(type);
-  var index = WM_REGION_CONFIG[key].index;
-
-  return `<span class="wm-flag-sprite" data-flag="${key}" style="--flag-index:${index};"></span>`;
+    return WMX_REG.sprite(type);
 }
 
 function injectWormatrixConnectUI() {
-  $(".description-text").replaceWith(`
-<div class="description-text">
-<style>
-  .description-text {
-    position: relative !important;
-  }
+    $(".description-text").replaceWith(
+        '<div class="description-text">' +
+            '<div id="load_page_apoiador">' +
+                '<div class="wm-connect-title-bg"></div>' +
+                '<div class="title-worm-world-connect">' +
+                    '<img src="https://wormy.wormatrix.fun/images/logo.png" width="20" align="center" alt="" />' +
+                    ' Worm Matrix Connect' +
+                '</div>' +
+            '</div>' +
 
-  #load_page_apoiador {
-    position: relative;
-    width: 100%;
-    height: 13px;
-    margin: 0 auto;
-  }
+            '<div id="wormatrix_tabs">' +
+                '<div class="wormatrix-grid">' +
+                    '<a href="#tabs9" class="active" data-flag="ae">' + wmFlagSprite("ae") + '</a>' +
+                    '<a href="#tabs0" data-flag="br">' + wmFlagSprite("br") + '</a>' +
+                    '<a href="#tabs1" data-flag="us">' + wmFlagSprite("us") + '</a>' +
+                    '<a href="#tabs4" data-flag="de">' + wmFlagSprite("de") + '</a>' +
+                    '<a href="#tabs5" data-flag="fr">' + wmFlagSprite("fr") + '</a>' +
+                    '<a href="#tabs6" data-flag="sg">' + wmFlagSprite("sg") + '</a>' +
+                    '<a href="#tabs7" data-flag="jp">' + wmFlagSprite("jp") + '</a>' +
+                    '<a href="#tabs2" data-flag="ca">' + wmFlagSprite("ca") + '</a>' +
+                    '<a href="#tabs8" data-flag="au">' + wmFlagSprite("au") + '</a>' +
+                    '<a href="#tabs3" data-flag="mx">' + wmFlagSprite("mx") + '</a>' +
+                '</div>' +
 
-  .wm-connect-title-bg {
-    position: absolute;
-    top: -35px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 106%;
-    height: 40px;
-    background: #ffffff;
-    border-radius: 5px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.32);
-    z-index: 0;
-  }
-
-  .title-worm-world-connect {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
-    width: 96%;
-    text-align: center;
-    font-family: Arial, sans-serif;
-    font-weight: 700;
-    color: #111;
-    font-size: 11px;
-    line-height: 20px;
-    white-space: nowrap;
-  }
-
-  .title-worm-world-connect img {
-    width: 18px;
-    height: 18px;
-    object-fit: contain;
-    vertical-align: middle;
-    margin-right: 4px;
-  }
-
-  #wormatrix_tabs {
-    width: 100%;
-    height: 285px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin: 5px auto 0;
-    padding: 4px;
-    box-sizing: border-box;
-    border: 1px solid #79a62b;
-    border-radius: 5px;
-    background:
-      radial-gradient(circle at top, rgba(32,64,28,.50), rgba(0,0,0,.45) 45%, rgba(0,0,0,.70)),
-      rgba(5,10,6,.72);
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,.05),
-      inset 0 0 14px rgba(127,176,46,.22),
-      0 2px 8px rgba(0,0,0,.32);
-  }
-
-  .wormatrix-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 2px;
-    padding: 2px;
-    margin-bottom: 5px;
-    border-radius: 4px;
-    background: transparent;
-    box-sizing: border-box;
-  }
-
-  .wormatrix-grid a {
-    height: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border-radius: 4px;
-    border: 1px solid transparent;
-    background: transparent !important;
-    box-shadow: none !important;
-    box-sizing: border-box;
-    cursor: pointer;
-    transition: .12s ease;
-    overflow: hidden;
-  }
-
-  .wormatrix-grid a:hover {
-    border-color: rgba(125, 190, 38, .65);
-    transform: translateY(-1px);
-  }
-
-  .wormatrix-grid a.active {
-    border: 2px solid #78d331 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-  }
-
-  .wm-flag-sprite {
-    width: 39px;
-    height: 24px;
-    display: block;
-    border-radius: 3px;
-    overflow: hidden;
-    background-image: url("${WM_FLAGS_SPRITE_URL}");
-    background-repeat: no-repeat;
-    background-size: 39px 390px;
-    background-position: 0 calc(var(--flag-index) * -39px);
-    transform: none;
-  }
-
-  .tab-pane {
-    display: none;
-    padding: 1px;
-  }
-
-  .tab-pane.active {
-    display: block;
-  }
-
-  .selectSala {
-    width: calc(100% - 2px);
-    min-height: 58px;
-    margin: 3px 1px 5px;
-    padding: 6px 7px;
-    cursor: pointer;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    font-weight: 700;
-    border-radius: 5px;
-    background:
-      linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.22)),
-      rgba(0,0,0,.24);
-    border: 1px solid rgba(127,176,46,.78);
-    text-align: left;
-    text-shadow: 0 1px 2px #000;
-    box-sizing: border-box;
-    overflow: hidden;
-    line-height: 1.25;
-    transition: .12s ease;
-  }
-
-  .selectSala:hover {
-    background: rgba(127,176,46,.30) !important;
-    border-color: #78d331 !important;
-    transform: translateX(1px);
-  }
-
-  .selectSala.wm-selected-server {
-    border-color: #78d331 !important;
-    background: rgba(120,211,49,.12) !important;
-  }
-
-  .wm-server-row {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    overflow: hidden;
-  }
-
-  .wm-server-img {
-    width: 29px;
-    height: 29px;
-    min-width: 29px;
-    min-height: 29px;
-    object-fit: cover;
-    border-radius: 4px;
-    border: 1px solid rgba(127,176,46,.85);
-    background: rgba(0,0,0,.28);
-  }
-
-  .wm-server-info {
-    flex: 1;
-    overflow: hidden;
-    min-width: 0;
-  }
-
-  .wm-server-name {
-    color: #fff;
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 15px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .wm-server-url {
-    color: rgba(255,255,255,.58);
-    font-size: 9px;
-    margin-top: 1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-weight: 600;
-  }
-
-  .wm-empty-server {
-    color: rgba(255,255,255,.72);
-    font-size: 11px;
-    font-weight: 700;
-    text-align: center;
-    padding: 18px 5px;
-    text-shadow: 0 1px 2px #000;
-  }
-</style>
-
-<div id="load_page_apoiador">
-  <div class="wm-connect-title-bg"></div>
-  <div class="title-worm-world-connect">
-    <img src="https://wormy.wormatrix.fun/images/logo.png" align="center" alt="" />
-    Worm Matrix Connect
-  </div>
-</div>
-
-<div id="wormatrix_tabs">
-  <div class="wormatrix-grid">
-    <a href="#tabs9" class="active" data-flag="ae">${wmFlagSprite("ae")}</a>
-    <a href="#tabs0" data-flag="br">${wmFlagSprite("br")}</a>
-    <a href="#tabs1" data-flag="us">${wmFlagSprite("us")}</a>
-    <a href="#tabs4" data-flag="de">${wmFlagSprite("de")}</a>
-    <a href="#tabs5" data-flag="fr">${wmFlagSprite("fr")}</a>
-    <a href="#tabs6" data-flag="sg">${wmFlagSprite("sg")}</a>
-    <a href="#tabs7" data-flag="jp">${wmFlagSprite("jp")}</a>
-    <a href="#tabs2" data-flag="ca">${wmFlagSprite("ca")}</a>
-    <a href="#tabs8" data-flag="au">${wmFlagSprite("au")}</a>
-    <a href="#tabs3" data-flag="mx">${wmFlagSprite("mx")}</a>
-  </div>
-
-  <div class="tab-pane servers-brazil" id="tabs0"></div>
-  <div class="tab-pane servers-eeuu" id="tabs1"></div>
-  <div class="tab-pane servers-canada" id="tabs2"></div>
-  <div class="tab-pane servers-mexico" id="tabs3"></div>
-  <div class="tab-pane servers-germany" id="tabs4"></div>
-  <div class="tab-pane servers-france" id="tabs5"></div>
-  <div class="tab-pane servers-singapore" id="tabs6"></div>
-  <div class="tab-pane servers-japan" id="tabs7"></div>
-  <div class="tab-pane servers-australia" id="tabs8"></div>
-  <div class="tab-pane active servers-ae" id="tabs9"></div>
-</div>
-</div>
-`);
+                '<div class="tab-pane servers-brazil" id="tabs0"></div>' +
+                '<div class="tab-pane servers-eeuu" id="tabs1"></div>' +
+                '<div class="tab-pane servers-canada" id="tabs2"></div>' +
+                '<div class="tab-pane servers-mexico" id="tabs3"></div>' +
+                '<div class="tab-pane servers-germany" id="tabs4"></div>' +
+                '<div class="tab-pane servers-france" id="tabs5"></div>' +
+                '<div class="tab-pane servers-singapore" id="tabs6"></div>' +
+                '<div class="tab-pane servers-japan" id="tabs7"></div>' +
+                '<div class="tab-pane servers-australia" id="tabs8"></div>' +
+                '<div class="tab-pane active servers-ae" id="tabs9"></div>' +
+            '</div>' +
+        '</div>'
+    );
 }
 
 function getRegionContainer(region) {
-  var key = wmNormalizeRegion(region);
-  return WM_REGION_CONFIG[key].box || ".servers-brazil";
-}
-
-function wmGetSafeImage(server) {
-  if (server && server.image) return server.image;
-  return "https://wormy.wormatrix.fun/images/logo.png";
-}
-
-function wmEscapeHTML(text) {
-  return String(text == null ? "" : text)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    return WMX_REG.box(region);
 }
 
 function createServerList() {
-  if (!wmIsLoggedIn()) {
-    wmHideServerUI();
-    return;
-  }
+    $(".tab-pane").empty();
 
-  $(".tab-pane").empty();
+    WMX_REG.each(servers.Api_listServer, function (srv, a) {
+        srv = srv || {};
 
-  var hasAny = false;
+        const serverUrl = srv.serverUrl;
+        if (!serverUrl) return;
 
-  for (let a = 0; a < servers.Api_listServer.length; a++) {
-    const srv = servers.Api_listServer[a] || {};
-    const serverUrl = srv.serverUrl;
-    if (!serverUrl) continue;
+        const serverName = srv.name || serverUrl;
+        const region = srv.region;
+        const image = WMX_REG.img(srv.image);
 
-    hasAny = true;
+        const item = document.createElement("p");
+        item.id = "wormatrix_room_item_" + a;
+        item.className = "selectSala";
+        item.value = serverUrl;
 
-    const regionKey = wmNormalizeRegion(srv.region);
-    const serverName = srv.name || serverUrl;
-    const image = wmGetSafeImage(srv);
+        item.innerHTML =
+            '<div class="wm-server-row">' +
+                '<img class="wm-server-img" src="' + WMX_REG.escape(image) + '" onerror="this.style.display=\'none\';">' +
+                '<div class="wm-server-info">' +
+                    '<div class="wm-server-name">' + WMX_REG.escape(serverName) + '</div>' +
+                    '<div class="wm-server-url">' + WMX_REG.escape(serverUrl) + '</div>' +
+                '</div>' +
+            '</div>';
 
-    const item = document.createElement("p");
-    item.id = "wormatrix_room_item_" + a;
-    item.className = "selectSala";
-    item.value = serverUrl;
+        $(item).attr("data-region", region);
+        $(item).attr("data-server-url", serverUrl);
+        $(item).attr("title", serverUrl);
 
-    item.innerHTML = `
-      <div class="wm-server-row">
-        <img class="wm-server-img"
-             src="${wmEscapeHTML(image)}"
-             onerror="this.src='https://wormy.wormatrix.fun/images/logo.png';">
+        $(getRegionContainer(region)).prepend(item);
 
-        <div class="wm-server-info">
-          <div class="wm-server-name">${wmEscapeHTML(serverName)}</div>
-          <div class="wm-server-url">${wmEscapeHTML(serverUrl)}</div>
-        </div>
-      </div>
-    `;
+        $(item).off("click").on("click", function () {
+            const selectedServer = $(this).attr("data-server-url") || this.value;
 
-    $(item).attr("data-region", regionKey);
-    $(item).attr("data-server-url", serverUrl);
-    $(item).attr("title", serverUrl);
+            $(".selectSala").removeClass("wm-selected-server");
+            $(this).addClass("wm-selected-server");
 
-    $(getRegionContainer(regionKey)).prepend(item);
+            if (window._x7 && typeof window._x7.setServer === "function") {
+                window._x7.setServer(selectedServer);
+            }
 
-    $(item).off("click").on("click", function () {
-      const selectedServer = $(this).attr("data-server-url") || this.value;
+            if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
+                window._x7.containerImgS.texture = window._x7.onclickServer;
+            }
 
-      $(".selectSala").removeClass("wm-selected-server");
-      $(this).addClass("wm-selected-server");
+            if (typeof retundFlagError === "function") retundFlagError();
 
-      try {
-        localStorage.setItem("wormatrix_last_server", selectedServer);
-        localStorage.setItem("wormatrix_last_region", $(this).attr("data-region") || "");
-      } catch (e) {}
-
-      if (window._x7 && typeof window._x7.setServer === "function") {
-        window._x7.setServer(selectedServer);
-      }
-
-      if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
-        window._x7.containerImgS.texture = window._x7.onclickServer;
-      }
-
-      if (typeof retundFlagError === "function") retundFlagError();
-
-      window.server_url = selectedServer;
-      $("#mm-action-play").click();
+            window.server_url = selectedServer;
+            $("#mm-action-play").click();
+        });
     });
-  }
-
-  $(".tab-pane").each(function () {
-    if (!$(this).children().length) {
-      $(this).html(`<div class="wm-empty-server">No servers found</div>`);
-    }
-  });
-
-  if (!hasAny) {
-    $(".servers-ae").html(`<div class="wm-empty-server">ERROR SERVER</div>`);
-  }
 }
 
 function bindWormatrixTabs() {
-  $("#wormatrix_tabs .wormatrix-grid a").off("click").on("click", function (e) {
-    e.preventDefault();
+    $("#wormatrix_tabs .wormatrix-grid a").off("click").on("click", function (e) {
+        e.preventDefault();
 
-    if (!wmIsLoggedIn()) {
-      wmHideServerUI();
-      return;
-    }
+        const target = $(this).attr("href");
+        const flagKey = $(this).attr("data-flag");
 
-    const target = $(this).attr("href");
-    const flagKey = $(this).attr("data-flag");
+        $("#wormatrix_tabs .wormatrix-grid a").removeClass("active");
+        $(this).addClass("active");
 
-    $("#wormatrix_tabs .wormatrix-grid a").removeClass("active");
-    $(this).addClass("active");
+        $("#wormatrix_tabs .tab-pane").removeClass("active").hide();
+        $(target).addClass("active").fadeIn(160);
 
-    $("#wormatrix_tabs .tab-pane").removeClass("active").hide();
-    $(target).addClass("active").fadeIn(120);
+        if (typeof theoKzObjects !== "undefined") theoKzObjects.flag = flagKey;
 
-    try {
-      localStorage.setItem("wormatrix_last_region", flagKey);
-    } catch (e) {}
+        if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
+            window._x7.containerImgS.texture = window._x7.onclickServer;
+        }
 
-    if (typeof theoKzObjects !== "undefined") theoKzObjects.flag = flagKey;
-
-    if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
-      window._x7.containerImgS.texture = window._x7.onclickServer;
-    }
-
-    if (typeof retundFlagError === "function") retundFlagError();
-  });
+        if (typeof retundFlagError === "function") retundFlagError();
+    });
 }
 
-function wmStartServersAfterLogin() {
-  injectWormatrixConnectUI();
-  bindWormatrixTabs();
-
-  if (wmIsLoggedIn()) {
-    wmShowServerUI();
-    loadServers();
-  } else {
-    wmHideServerUI();
-  }
-
-  setInterval(function () {
-    if (wmIsLoggedIn()) {
-      wmShowServerUI();
-
-      if (!servers.Api_listServer || !servers.Api_listServer.length) {
-        loadServers();
-      }
-    } else {
-      servers.Api_listServer = [];
-      wmHideServerUI();
-    }
-  }, 1500);
-}
-
-wmStartServersAfterLogin();
+injectWormatrixConnectUI();
+bindWormatrixTabs();
+loadServers();
 
         (function () {
           var v15;
