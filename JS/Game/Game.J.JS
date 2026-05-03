@@ -839,8 +839,7 @@ function createServerList() {
             if (typeof retundFlagError === "function") retundFlagError();
 
             window.server_url = selectedServer;
-            $("#mm-action-play").click();
-            $("#adbl-continue").click();
+$("#mm-action-play").click();
         });
     }
 }
@@ -1296,94 +1295,28 @@ loadServers();
       };
       return _0x9f75x19;
     }();
-    vO4.ya = function () {
-      function _0x9f75x19() {
-        let _0x2df545 = theoKzObjects.adblock ? 1 : 5;
+vO4.ya = function () {
+  var vO7 = {};
 
-        $("#adbl-1").text(vO4.O("index.game.antiadblocker.msg1"));
-        $("#adbl-2").text(vO4.O("index.game.antiadblocker.msg2"));
-        $("#adbl-3").text(vO4.O("index.game.antiadblocker.msg3"));
-        $("#adbl-4").text(vO4.O("index.game.antiadblocker.msg4").replace("{0}", 10));
-        $("#adbl-continue span").text(vO4.O("index.game.antiadblocker.continue"));
-        vO5.b.d($("#adbl-continue"), 1);
-         $("#" + vLS1eaom01c3pxu9wd3).fadeIn(500);
-
-        var f6 = _0x2df545;
-        for (var vLN02 = 0; vLN02 < _0x2df545; vLN02++) {
-          vO4.S(function () {
-            f6--;
-            $("#adbl-4").text(vO4.O("index.game.antiadblocker.msg4").replace("{0}", f6));
-            if (f6 === 0) {
-              try {
-                ga("send", "event", "antiadblocker", vO3.A.B + "_complete");
-              } catch (e4) {}
-              ;
-              vO5.b.c($("#adbl-continue"), 200);
-            }
-          }, (vLN02 + 1) * 1000);
-        }
+  vO7.za = function (p99) {
+    try {
+      if (typeof p99 === "function") {
+        p99(true);
       }
-      var v62 = false;
-      function f7() {}
-      var vO7 = {};
-      var vLS1eaom01c3pxu9wd3 = "JDHnkHtYwyXyVgG9";
-      var v$ = $("#" + vLS1eaom01c3pxu9wd3);
-      var vLSJDHnkHtYwyXyVgG9 = "JDHnkHtYwyXyVgG9";
-      var v$2 = $("#" + vLSJDHnkHtYwyXyVgG9);
-      $("#adbl-continue").click(function () {
-        $("#" +vLS1eaom01c3pxu9wd3).fadeOut(500);
-        f7(false);
-      });
-      vO7.za = function (p99) {
-        f7 = p99;
-        if (!v62) {
-          try {
-            aiptag.cmd.player.push(function () {
-              var vO8 = {
-                AD_WIDTH: 960,
-                AD_HEIGHT: 540,
-                AD_FULLSCREEN: true,
-                AD_CENTERPLAYER: false,
-                LOADING_TEXT: "loading advertisement"
-              };
-              vO8.PREROLL_ELEM = function () {
-                return document.getElementById(vLS1eaom01c3pxu9wd3);
-              };
-              vO8.AIP_COMPLETE = function (p100) {
-                f7(true);
-                vO5.b.d(v$, 1);
-                vO5.b.d(v$2, 1);
-                try {
-                  ga("send", "event", "preroll", vO3.A.B + "_complete");
-                } catch (e5) {}
-              };
-              vO8.AIP_REMOVE = function () {};
-              aiptag.adplayer = new aipPlayer(vO8);
-            });
-            v62 = true;
-          } catch (e6) {}
-        }
-      };
-      vO7.Aa = function () {
-        if (_typeof(aiptag.adplayer) !== "undefined") {
-          try {
-            ga("send", "event", "preroll", vO3.A.B + "_request");
-          } catch (e7) {}
-          ;
-          vO5.b.c(v$, 1);
-          aiptag.cmd.player.push(function () {
-            aiptag.adplayer.startPreRoll();
-          });
-        } else {
-          try {
-            ga("send", "event", "antiadblocker", vO3.A.B + "_start");
-          } catch (e8) {}
-          ;
-          _0x9f75x19();
-        }
-      };
-      return vO7;
-    };
+    } catch (e) {}
+  };
+
+  vO7.Aa = function () {
+    try {
+      $("#JDHnkHtYwyXyVgG9").hide();
+      $("#adbl-continue").show();
+      $("#adbl-continue").trigger("click");
+    } catch (e) {}
+    return true;
+  };
+
+  return vO7;
+};
     vO4.Ba = function (p101, p102) {
       var v$3 = $("#" + p101);
       var vP102 = p102;
