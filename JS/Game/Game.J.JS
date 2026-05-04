@@ -462,48 +462,41 @@ var GoogleAuth;
       
 
  
+
 let servers = {
     Api_listServer: []
 };
 
+const WM_FLAGS_SPRITE_URL = "https://i.ibb.co/Pv8Ms4tb/flags.png";
+
 const WMX_REG = (function () {
     const K = {
-        ae: ["tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae", "arab", "iraq"]],
-        br: ["tabs0", ".servers-brazil", ["peru", "br", "brazil", "brasil"]],
-        us: ["tabs1", ".servers-eeuu", ["eeuu", "usa", "us", "america"]],
-        de: ["tabs4", ".servers-germany", ["germania", "germany", "de"]],
-        fr: ["tabs5", ".servers-france", ["francia", "france", "fr"]],
-        sg: ["tabs6", ".servers-singapore", ["singapur", "singapore", "sg"]],
-        jp: ["tabs7", ".servers-japan", ["japon", "japan", "jp"]],
-        au: ["tabs8", ".servers-australia", ["australia", "au"]],
-        ca: ["tabs2", ".servers-canada", ["canada", "ca"]],
-        mx: ["tabs3", ".servers-mexico", ["mexico", "mx"]]
+        ae: [0, "tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae", "arab", "iraq"]],
+        br: [1, "tabs0", ".servers-brazil", ["peru", "br", "brazil", "brasil"]],
+        us: [2, "tabs1", ".servers-eeuu", ["eeuu", "usa", "us", "america"]],
+        de: [3, "tabs4", ".servers-germany", ["germania", "germany", "de"]],
+        fr: [4, "tabs5", ".servers-france", ["francia", "france", "fr"]],
+        sg: [5, "tabs6", ".servers-singapore", ["singapur", "singapore", "sg"]],
+        jp: [6, "tabs7", ".servers-japan", ["japon", "japan", "jp"]],
+        au: [7, "tabs8", ".servers-australia", ["australia", "au"]],
+        in: [8, "tabs10", ".servers-india", ["india", "in"]],
+        ca: [2, "tabs2", ".servers-canada", ["canada", "ca"]],
+        mx: [1, "tabs3", ".servers-mexico", ["mexico", "mx"]]
     };
 
     const A = {};
-    const _wmGhostNull = {
-        build: "wmx-svg-safe",
-        ghostBackground: false,
-        check: function (v) {
-            v = String(v || "");
-            var h = 0;
-            for (var i = 0; i < v.length; i++) h = ((h << 5) - h + v.charCodeAt(i)) | 0;
-            return h;
-        }
-    };
-
     Object.keys(K).forEach(function (key) {
-        K[key][2].forEach(function (name) {
+        K[key][3].forEach(function (name) {
             A[String(name).toLowerCase()] = key;
         });
     });
 
-    function N(v) {
+    function normalize(v) {
         v = String(v || "").toLowerCase().trim();
         return A[v] || (K[v] ? v : "br");
     }
 
-    function E(v) {
+    function escapeHTML(v) {
         return String(v == null ? "" : v)
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
@@ -512,73 +505,38 @@ const WMX_REG = (function () {
             .replace(/'/g, "&#039;");
     }
 
-    function Flag(key) {
-        key = N(key);
-
-        const S = {
-            ae:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#fff"/><rect width="15" height="38" fill="#d71920"/><rect x="15" width="45" height="12.666" fill="#00732f"/><rect x="15" y="25.333" width="45" height="12.667" fill="#000"/></svg>',
-            br:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#009b3a"/><path d="M30 4.5 56 19 30 33.5 4 19Z" fill="#ffdf00"/><circle cx="30" cy="19" r="9" fill="#002776"/><path d="M20.8 17.4c6.1 3.2 12.7 3.5 18.4 1.2" stroke="#fff" stroke-width="2" fill="none"/></svg>',
-            us:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#b22234"/><g fill="#fff"><rect y="2.9" width="60" height="2.9"/><rect y="8.7" width="60" height="2.9"/><rect y="14.5" width="60" height="2.9"/><rect y="20.3" width="60" height="2.9"/><rect y="26.1" width="60" height="2.9"/><rect y="31.9" width="60" height="2.9"/></g><rect width="27" height="20.4" fill="#3c3b6e"/><g fill="#fff"><circle cx="4" cy="4" r=".9"/><circle cx="10" cy="4" r=".9"/><circle cx="16" cy="4" r=".9"/><circle cx="22" cy="4" r=".9"/><circle cx="7" cy="9" r=".9"/><circle cx="13" cy="9" r=".9"/><circle cx="19" cy="9" r=".9"/><circle cx="25" cy="9" r=".9"/><circle cx="4" cy="14" r=".9"/><circle cx="10" cy="14" r=".9"/><circle cx="16" cy="14" r=".9"/><circle cx="22" cy="14" r=".9"/></g></svg>',
-            de:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="12.666" fill="#000"/><rect y="12.666" width="60" height="12.667" fill="#dd0000"/><rect y="25.333" width="60" height="12.667" fill="#ffce00"/></svg>',
-            fr:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="20" height="38" fill="#0055a4"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ef4135"/></svg>',
-            sg:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="19" fill="#ef3340"/><rect y="19" width="60" height="19" fill="#fff"/><circle cx="16.5" cy="9.5" r="7" fill="#fff"/><circle cx="19.5" cy="9.5" r="6" fill="#ef3340"/><g fill="#fff"><circle cx="27" cy="5.5" r="1.05"/><circle cx="30" cy="8.2" r="1.05"/><circle cx="29" cy="12" r="1.05"/><circle cx="25" cy="12" r="1.05"/><circle cx="24" cy="8.2" r="1.05"/></g></svg>',
-            jp:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#fff"/><circle cx="30" cy="19" r="10.2" fill="#bc002d"/></svg>',
-            au:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#012169"/><path d="M0 0 28 18M28 0 0 18" stroke="#fff" stroke-width="4"/><path d="M0 0 28 18M28 0 0 18" stroke="#c8102e" stroke-width="2"/><path d="M14 0v18M0 9h28" stroke="#fff" stroke-width="6"/><path d="M14 0v18M0 9h28" stroke="#c8102e" stroke-width="3"/><g fill="#fff"><circle cx="43" cy="10" r="2"/><circle cx="50" cy="18" r="2"/><circle cx="39" cy="26" r="2.3"/><circle cx="52" cy="29" r="1.8"/></g></svg>',
-            ca:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="15" height="38" fill="#d80621"/><rect x="15" width="30" height="38" fill="#fff"/><rect x="45" width="15" height="38" fill="#d80621"/><path d="M30 7.5 33.2 16 39 14.2 35 20 40.2 23.2 32.4 23 32.4 30.5H27.6V23l-7.8.2L25 20l-4-5.8 5.8 1.8Z" fill="#d80621"/></svg>',
-            mx:
-                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="20" height="38" fill="#006847"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ce1126"/><circle cx="30" cy="19" r="4.2" fill="#8c5a2b"/><circle cx="30" cy="19" r="2.1" fill="#0b7a3b"/></svg>'
-        };
-
-        return S[key] || S.br;
+    function sprite(type) {
+        var key = normalize(type);
+        return '<span class="wm-flag-sprite" data-flag="' + escapeHTML(key) + '" style="--flag-index:' + K[key][0] + ';"></span>';
     }
 
-    function S(type) {
-        var key = N(type);
-        return '<span class="wm-flag-sprite" data-flag="' + E(key) + '">' + Flag(key) + '</span>';
+    function box(region) {
+        var key = normalize(region);
+        return K[key][2] || ".servers-brazil";
     }
 
-    function B(region) {
-        var key = N(region);
-        return K[key][1] || ".servers-brazil";
-    }
-
-    function I(src) {
+    function img(src) {
         src = String(src || "").trim();
         return src || "https://wormy.wormatrix.fun/images/logo.png";
     }
 
-    function Q(arr, fn) {
-        for (var i = 0; i < arr.length; i++) fn(arr[i], i, _wmGhostNull.check(i + ":" + ((arr[i] && arr[i].serverUrl) || "")));
+    function each(arr, fn) {
+        for (var i = 0; i < arr.length; i++) fn(arr[i], i);
     }
 
     return {
-        normalize: N,
-        escape: E,
-        sprite: S,
-        box: B,
-        img: I,
-        each: Q,
-        ghostLayer: function () {
-            return _wmGhostNull.ghostBackground;
-        }
+        normalize: normalize,
+        escape: escapeHTML,
+        sprite: sprite,
+        box: box,
+        img: img,
+        each: each
     };
 })();
 
 async function loadServers() {
     try {
-        const response = await fetch("https://wm.wormy.online/servers", {
-            cache: "no-store"
-        });
-
+        const response = await fetch("https://wm.wormy.online/servers", { cache: "no-store" });
         const data = await response.json();
 
         if (data && data.success) {
@@ -614,28 +572,28 @@ function injectWormatrixConnectUI() {
 
             '<div id="wormatrix_tabs">' +
                 '<div class="wormatrix-grid">' +
-                    '<a href="#tabs9" class="active" data-flag="ae">' + wmFlagSprite("ae") + '</a>' +
+                    '<a href="#tabs9" data-flag="ae">' + wmFlagSprite("ae") + '</a>' +
                     '<a href="#tabs0" data-flag="br">' + wmFlagSprite("br") + '</a>' +
                     '<a href="#tabs1" data-flag="us">' + wmFlagSprite("us") + '</a>' +
-                    '<a href="#tabs4" data-flag="de">' + wmFlagSprite("de") + '</a>' +
+                    '<a href="#tabs4" class="active" data-flag="de">' + wmFlagSprite("de") + '</a>' +
                     '<a href="#tabs5" data-flag="fr">' + wmFlagSprite("fr") + '</a>' +
                     '<a href="#tabs6" data-flag="sg">' + wmFlagSprite("sg") + '</a>' +
                     '<a href="#tabs7" data-flag="jp">' + wmFlagSprite("jp") + '</a>' +
-                    '<a href="#tabs2" data-flag="ca">' + wmFlagSprite("ca") + '</a>' +
                     '<a href="#tabs8" data-flag="au">' + wmFlagSprite("au") + '</a>' +
-                    '<a href="#tabs3" data-flag="mx">' + wmFlagSprite("mx") + '</a>' +
+                    '<a href="#tabs10" data-flag="in">' + wmFlagSprite("in") + '</a>' +
                 '</div>' +
-
+                '<div class="wm-server-split"></div>' +
                 '<div class="tab-pane servers-brazil" id="tabs0"></div>' +
                 '<div class="tab-pane servers-eeuu" id="tabs1"></div>' +
                 '<div class="tab-pane servers-canada" id="tabs2"></div>' +
                 '<div class="tab-pane servers-mexico" id="tabs3"></div>' +
-                '<div class="tab-pane servers-germany" id="tabs4"></div>' +
+                '<div class="tab-pane active servers-germany" id="tabs4"></div>' +
                 '<div class="tab-pane servers-france" id="tabs5"></div>' +
                 '<div class="tab-pane servers-singapore" id="tabs6"></div>' +
                 '<div class="tab-pane servers-japan" id="tabs7"></div>' +
                 '<div class="tab-pane servers-australia" id="tabs8"></div>' +
-                '<div class="tab-pane active servers-ae" id="tabs9"></div>' +
+                '<div class="tab-pane servers-ae" id="tabs9"></div>' +
+                '<div class="tab-pane servers-india" id="tabs10"></div>' +
             '</div>' +
         '</div>'
     );
@@ -664,19 +622,17 @@ function createServerList() {
         item.value = serverUrl;
 
         item.innerHTML =
-            '<div class="wm-server-row">' +
-                '<img class="wm-server-img" src="' + WMX_REG.escape(image) + '" onerror="this.style.display=\'none\';">' +
-                '<div class="wm-server-info">' +
-                    '<div class="wm-server-name">' + WMX_REG.escape(serverName) + '</div>' +
-                    '<div class="wm-server-url">' + WMX_REG.escape(serverUrl) + '</div>' +
-                '</div>' +
+            '<div class="wm-server-line">' +
+                '<span class="wm-server-number">' + String(a + 1).padStart(2, "0") + '</span>' +
+                '<span class="wm-server-title">' + WMX_REG.escape(serverName) + '</span>' +
+                '<img class="wm-server-side-img" src="' + WMX_REG.escape(image) + '" onerror="this.style.display=\\'none\\';">' +
             '</div>';
 
         $(item).attr("data-region", region);
         $(item).attr("data-server-url", serverUrl);
         $(item).attr("title", serverUrl);
 
-        $(getRegionContainer(region)).prepend(item);
+        $(getRegionContainer(region)).append(item);
 
         $(item).off("click").on("click", function () {
             const selectedServer = $(this).attr("data-server-url") || this.value;
@@ -711,7 +667,7 @@ function bindWormatrixTabs() {
         $(this).addClass("active");
 
         $("#wormatrix_tabs .tab-pane").removeClass("active").hide();
-        $(target).addClass("active").fadeIn(160);
+        $(target).addClass("active").fadeIn(130);
 
         if (typeof theoKzObjects !== "undefined") theoKzObjects.flag = flagKey;
 
