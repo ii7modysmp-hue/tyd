@@ -4876,14 +4876,18 @@ input[type="color"]::-moz-color-swatch {
   height: 285px;
   overflow-y: auto;
   overflow-x: hidden;
-  border: 1px solid rgba(127,176,46,.85);
+  border: 1px solid rgba(127,176,46,.95);
   margin: 6px auto;
   padding: 4px;
-  background: rgba(0,0,0,.28);
+  background: radial-gradient(circle at top, rgba(74,16,7,.88) 0%, rgba(38,5,2,.94) 58%, rgba(18,0,0,.96) 100%);
   border-radius: 8px;
   box-sizing: border-box;
-  box-shadow: inset 0 0 10px rgba(127,176,46,.22);
+  box-shadow: inset 0 0 12px rgba(127,176,46,.24), 0 0 8px rgba(0,0,0,.35);
 }
+
+#wormatrix_tabs::-webkit-scrollbar { width: 6px; }
+#wormatrix_tabs::-webkit-scrollbar-track { background: rgba(0,0,0,.22); border-radius: 8px; }
+#wormatrix_tabs::-webkit-scrollbar-thumb { background: rgba(127,176,46,.85); border-radius: 8px; }
 
 .wormatrix-grid {
   display: grid;
@@ -4891,8 +4895,8 @@ input[type="color"]::-moz-color-swatch {
   gap: 4px;
   padding: 4px;
   margin-bottom: 6px;
-  border-bottom: 1px solid rgba(127,176,46,.65);
-  background: rgba(0,0,0,.22);
+  border-bottom: 1px solid rgba(127,176,46,.8);
+  background: rgba(17,2,1,.38) !important;
   border-radius: 8px;
   box-sizing: border-box;
 }
@@ -4903,7 +4907,7 @@ input[type="color"]::-moz-color-swatch {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 0 !important;
+  border: 1px solid transparent !important;
   border-radius: 7px;
   padding: 1px;
   background: transparent !important;
@@ -4917,36 +4921,38 @@ input[type="color"]::-moz-color-swatch {
 
 .wormatrix-grid a:hover {
   transform: translateY(-1px);
-  background: transparent !important;
+  border-color: rgba(127,176,46,.62) !important;
+  background: rgba(127,176,46,.10) !important;
   background-image: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 7px rgba(127,176,46,.22) !important;
 }
 
 .wormatrix-grid a.active {
-  border: 2px solid #ff2424 !important;
-  background: transparent !important;
+  border: 2px solid #7FB02E !important;
+  background: rgba(127,176,46,.12) !important;
   background-image: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 8px rgba(127,176,46,.72), inset 0 0 6px rgba(127,176,46,.25) !important;
 }
 
 .wm-flag-sprite {
   width: 42px;
   height: 27px;
   display: block;
-  border-radius: 6px;
+  border-radius: 5px;
   overflow: hidden;
-  background: none !important;
+  background: transparent !important;
   background-image: none !important;
   background-color: transparent !important;
-  box-shadow: none !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.55) !important;
   transform: none !important;
+  line-height: 0;
 }
 
 .wm-flag-svg {
   width: 100%;
   height: 100%;
   display: block;
-  border-radius: 6px;
+  border-radius: 5px;
   background: transparent !important;
   box-shadow: none !important;
 }
@@ -4962,69 +4968,90 @@ input[type="color"]::-moz-color-swatch {
 
 .selectSala {
   width: calc(100% - 4px);
-  min-height: 76px;
+  min-height: 56px;
   margin: 4px 2px 7px;
-  padding: 8px 9px;
+  padding: 7px 8px;
   cursor: pointer;
   color: #fff;
   font-weight: bold;
-  border-radius: 7px;
-  background: rgba(0,0,0,.24);
-  border: 1px solid rgba(127,176,46,.85);
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(43,3,1,.88), rgba(72,9,4,.58)) !important;
+  border: 1px solid rgba(127,176,46,.82);
   text-align: left;
   text-shadow: 0 1px 2px #000;
   box-sizing: border-box;
   overflow: hidden;
-  line-height: 1.45;
+  line-height: 1.25;
+  box-shadow: inset 0 0 8px rgba(0,0,0,.22);
 }
 
 .selectSala:hover {
-  background: rgba(127,176,46,.35) !important;
+  background: linear-gradient(90deg, rgba(63,12,4,.95), rgba(127,176,46,.24)) !important;
   color: #fff !important;
-  border-color: #ff2424 !important;
+  border-color: #7FB02E !important;
+  box-shadow: 0 0 9px rgba(127,176,46,.28), inset 0 0 8px rgba(0,0,0,.22) !important;
 }
 
 .selectSala.wm-selected-server {
-  border-color: #ff2424 !important;
-  background: rgba(255,0,0,.08) !important;
+  border-color: #7FB02E !important;
+  background: linear-gradient(90deg, rgba(127,176,46,.22), rgba(37,5,2,.9)) !important;
+  box-shadow: 0 0 10px rgba(127,176,46,.5), inset 0 0 8px rgba(127,176,46,.18) !important;
 }
 
 .wm-server-row {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   overflow: hidden;
 }
 
+.wm-server-region-flag {
+  width: 35px;
+  min-width: 35px;
+  height: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wm-server-region-flag .wm-flag-sprite {
+  width: 35px;
+  height: 23px;
+  border-radius: 4px;
+}
+
 .wm-server-img {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  min-height: 34px;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
   object-fit: cover;
   border-radius: 7px;
   border: 1px solid rgba(127,176,46,.85);
-  background: rgba(0,0,0,.25);
+  background: rgba(0,0,0,.25) !important;
 }
 
 .wm-server-info {
   flex: 1;
   overflow: hidden;
   white-space: normal;
-  line-height: 1.35;
+  line-height: 1.28;
 }
 
 .wm-server-name {
   color: #fff;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 12.5px;
   text-shadow: 0 1px 2px #000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .wm-server-url {
-  color: rgba(255,255,255,.65);
-  font-size: 10px;
+  color: rgba(255,255,255,.62);
+  font-size: 9.5px;
   margin-top: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5050,11 +5077,11 @@ input[type="color"]::-moz-color-swatch {
   .wm-flag-sprite {
     width: 40px;
     height: 26px;
-    border-radius: 6px;
+    border-radius: 5px;
   }
 
   .selectSala {
-    min-height: 72px;
+    min-height: 54px;
     font-size: 11px;
   }
 }
