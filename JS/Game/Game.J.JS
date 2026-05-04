@@ -625,7 +625,7 @@ function createServerList() {
             '<div class="wm-server-line">' +
                 '<span class="wm-server-number">' + String(a + 1).padStart(2, "0") + '</span>' +
                 '<span class="wm-server-title">' + WMX_REG.escape(serverName) + '</span>' +
-                '<img class="wm-server-side-img" src="' + WMX_REG.escape(image) + '" onerror="this.style.display=\\'none\\';">' +
+                '<img class="wm-server-side-img" src="' + WMX_REG.escape(image) + '" onerror="this.style.display=\'none\'">' +
             '</div>';
 
         $(item).attr("data-region", region);
