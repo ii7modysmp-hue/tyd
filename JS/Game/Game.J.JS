@@ -467,30 +467,44 @@ let servers = {
     Api_listServer: []
 };
 
-(function () {
-    const _0xW = {
-        s: [],
-        f: {},
-        r: {
-            ae: ["tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae", "arab", "iraq"]],
-            br: ["tabs0", ".servers-brazil", ["peru", "br", "brazil", "brasil"]],
-            us: ["tabs1", ".servers-eeuu", ["eeuu", "usa", "us", "america"]],
-            de: ["tabs4", ".servers-germany", ["germania", "germany", "de"]],
-            fr: ["tabs5", ".servers-france", ["francia", "france", "fr"]],
-            sg: ["tabs6", ".servers-singapore", ["singapur", "singapore", "sg"]],
-            jp: ["tabs7", ".servers-japan", ["japon", "japan", "jp"]],
-            au: ["tabs8", ".servers-australia", ["australia", "au"]],
-            in: ["tabs10", ".servers-india", ["india", "in"]]
+const WMX_REG = (function () {
+    const K = {
+        ae: ["tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae", "arab", "iraq"]],
+        br: ["tabs0", ".servers-brazil", ["peru", "br", "brazil", "brasil"]],
+        us: ["tabs1", ".servers-eeuu", ["eeuu", "usa", "us", "america"]],
+        de: ["tabs4", ".servers-germany", ["germania", "germany", "de"]],
+        fr: ["tabs5", ".servers-france", ["francia", "france", "fr"]],
+        sg: ["tabs6", ".servers-singapore", ["singapur", "singapore", "sg"]],
+        jp: ["tabs7", ".servers-japan", ["japon", "japan", "jp"]],
+        au: ["tabs8", ".servers-australia", ["australia", "au"]],
+        ca: ["tabs2", ".servers-canada", ["canada", "ca"]],
+        mx: ["tabs3", ".servers-mexico", ["mexico", "mx"]]
+    };
+
+    const A = {};
+    const _wmGhostNull = {
+        build: "wmx-svg-safe",
+        ghostBackground: false,
+        check: function (v) {
+            v = String(v || "");
+            var h = 0;
+            for (var i = 0; i < v.length; i++) h = ((h << 5) - h + v.charCodeAt(i)) | 0;
+            return h;
         }
     };
 
-    Object.keys(_0xW.r).forEach(function (k) {
-        _0xW.r[k][2].forEach(function (v) {
-            _0xW.f[String(v).toLowerCase()] = k;
+    Object.keys(K).forEach(function (key) {
+        K[key][2].forEach(function (name) {
+            A[String(name).toLowerCase()] = key;
         });
     });
 
-    function _e(v) {
+    function N(v) {
+        v = String(v || "").toLowerCase().trim();
+        return A[v] || (K[v] ? v : "br");
+    }
+
+    function E(v) {
         return String(v == null ? "" : v)
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
@@ -499,202 +513,220 @@ let servers = {
             .replace(/'/g, "&#039;");
     }
 
-    function _n(v) {
-        v = String(v || "").toLowerCase().trim();
-        return _0xW.f[v] || (_0xW.r[v] ? v : "br");
-    }
+    function Flag(key) {
+        key = N(key);
 
-    function _svg(k) {
-        k = _n(k);
-        const F = {
-            ae: '<svg class="wm-flag-svg" viewBox="0 0 60 38"><rect width="60" height="38" fill="#fff"/><rect width="15" height="38" fill="#d71920"/><rect x="15" width="45" height="12.66" fill="#00732f"/><rect x="15" y="25.33" width="45" height="12.67" fill="#000"/></svg>',
-            br: '<svg class="wm-flag-svg" viewBox="0 0 60 38"><rect width="60" height="38" fill="#009b3a"/><path d="M30 4.5 56 19 30 33.5 4 19Z" fill="#ffdf00"/><circle cx="30" cy="19" r="9" fill="#002776"/><path d="M21 17.5c6 3 12.8 3.2 18 1" stroke="#fff" stroke-width="2" fill="none"/></svg>',
-            us: '<svg class="wm-flag-svg" viewBox="0 0 60 38"><rect width="60" height="38" fill="#b22234"/><g fill="#fff"><rect y="3" width="60" height="3"/><rect y="9" width="60" height="3"/><rect y="15" width="60" height="3"/><rect y="21" width="60" height="3"/><rect y="27" width="60" height="3"/><rect y="33" width="60" height="3"/></g><rect width="27" height="21" fill="#3c3b6e"/><g fill="#fff"><circle cx="4" cy="4" r=".9"/><circle cx="10" cy="4" r=".9"/><circle cx="16" cy="4" r=".9"/><circle cx="22" cy="4" r=".9"/><circle cx="7" cy="9" r=".9"/><circle cx="13" cy="9" r=".9"/><circle cx="19" cy="9" r=".9"/><circle cx="25" cy="9" r=".9"/><circle cx="4" cy="14" r=".9"/><circle cx="10" cy="14" r=".9"/><circle cx="16" cy="14" r=".9"/><circle cx="22" cy="14" r=".9"/></g></svg>',
-            de: '<svg class="wm-flag-svg" viewBox="0 0 60 38"><rect width="60" height="12.66" fill="#000"/><rect y="12.66" width="60" height="12.67" fill="#dd0000"/><rect y="25.33" width="60" height="12.67" fill="#ffce00"/></svg>',
-            fr: '<svg class="wm-flag-svg" viewBox="0 0 60 38"><rect width="20" height="38" fill="#0055a4"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ef4135"/></svg>',
-            sg: '<svg class="wm-flag-svg" viewBox="0 0 60 38"><rect width="60" height="19" fill="#ef3340"/><rect y="19" width="60" height="19" fill="#fff"/><circle cx="16.5" cy="9.5" r="7" fill="#fff"/><circle cx="19.5" cy="9.5" r="6" fill="#ef3340"/><g fill="#fff"><circle cx="27" cy="5.5" r="1"/><circle cx="30" cy="8.3" r="1"/><circle cx="29" cy="12" r="1"/><circle cx="25" cy="12" r="1"/><circle cx="24" cy="8.3" r="1"/></g></svg>',
-            jp: '<svg class="wm-flag-svg" viewBox="0 0 60 38"><rect width="60" height="38" fill="#fff"/><circle cx="30" cy="19" r="10.5" fill="#bc002d"/></svg>',
-            au: '<svg class="wm-flag-svg" viewBox="0 0 60 38"><rect width="60" height="38" fill="#012169"/><path d="M0 0 28 18M28 0 0 18" stroke="#fff" stroke-width="4"/><path d="M0 0 28 18M28 0 0 18" stroke="#c8102e" stroke-width="2"/><path d="M14 0v18M0 9h28" stroke="#fff" stroke-width="6"/><path d="M14 0v18M0 9h28" stroke="#c8102e" stroke-width="3"/><g fill="#fff"><circle cx="43" cy="10" r="2"/><circle cx="50" cy="18" r="2"/><circle cx="39" cy="26" r="2.2"/><circle cx="52" cy="29" r="1.8"/></g></svg>',
-            in: '<svg class="wm-flag-svg" viewBox="0 0 60 38"><rect width="60" height="12.66" fill="#ff9933"/><rect y="12.66" width="60" height="12.67" fill="#fff"/><rect y="25.33" width="60" height="12.67" fill="#138808"/><circle cx="30" cy="19" r="4" fill="none" stroke="#000080" stroke-width="1.4"/><circle cx="30" cy="19" r="1" fill="#000080"/></svg>'
+        const S = {
+            ae:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#fff"/><rect width="15" height="38" fill="#d71920"/><rect x="15" width="45" height="12.666" fill="#00732f"/><rect x="15" y="25.333" width="45" height="12.667" fill="#000"/></svg>',
+            br:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#009b3a"/><path d="M30 4.5 56 19 30 33.5 4 19Z" fill="#ffdf00"/><circle cx="30" cy="19" r="9" fill="#002776"/><path d="M20.8 17.4c6.1 3.2 12.7 3.5 18.4 1.2" stroke="#fff" stroke-width="2" fill="none"/></svg>',
+            us:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#b22234"/><g fill="#fff"><rect y="2.9" width="60" height="2.9"/><rect y="8.7" width="60" height="2.9"/><rect y="14.5" width="60" height="2.9"/><rect y="20.3" width="60" height="2.9"/><rect y="26.1" width="60" height="2.9"/><rect y="31.9" width="60" height="2.9"/></g><rect width="27" height="20.4" fill="#3c3b6e"/><g fill="#fff"><circle cx="4" cy="4" r=".9"/><circle cx="10" cy="4" r=".9"/><circle cx="16" cy="4" r=".9"/><circle cx="22" cy="4" r=".9"/><circle cx="7" cy="9" r=".9"/><circle cx="13" cy="9" r=".9"/><circle cx="19" cy="9" r=".9"/><circle cx="25" cy="9" r=".9"/><circle cx="4" cy="14" r=".9"/><circle cx="10" cy="14" r=".9"/><circle cx="16" cy="14" r=".9"/><circle cx="22" cy="14" r=".9"/></g></svg>',
+            de:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="12.666" fill="#000"/><rect y="12.666" width="60" height="12.667" fill="#dd0000"/><rect y="25.333" width="60" height="12.667" fill="#ffce00"/></svg>',
+            fr:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="20" height="38" fill="#0055a4"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ef4135"/></svg>',
+            sg:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="19" fill="#ef3340"/><rect y="19" width="60" height="19" fill="#fff"/><circle cx="16.5" cy="9.5" r="7" fill="#fff"/><circle cx="19.5" cy="9.5" r="6" fill="#ef3340"/><g fill="#fff"><circle cx="27" cy="5.5" r="1.05"/><circle cx="30" cy="8.2" r="1.05"/><circle cx="29" cy="12" r="1.05"/><circle cx="25" cy="12" r="1.05"/><circle cx="24" cy="8.2" r="1.05"/></g></svg>',
+            jp:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#fff"/><circle cx="30" cy="19" r="10.2" fill="#bc002d"/></svg>',
+            au:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#012169"/><path d="M0 0 28 18M28 0 0 18" stroke="#fff" stroke-width="4"/><path d="M0 0 28 18M28 0 0 18" stroke="#c8102e" stroke-width="2"/><path d="M14 0v18M0 9h28" stroke="#fff" stroke-width="6"/><path d="M14 0v18M0 9h28" stroke="#c8102e" stroke-width="3"/><g fill="#fff"><circle cx="43" cy="10" r="2"/><circle cx="50" cy="18" r="2"/><circle cx="39" cy="26" r="2.3"/><circle cx="52" cy="29" r="1.8"/></g></svg>',
+            ca:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="15" height="38" fill="#d80621"/><rect x="15" width="30" height="38" fill="#fff"/><rect x="45" width="15" height="38" fill="#d80621"/><path d="M30 7.5 33.2 16 39 14.2 35 20 40.2 23.2 32.4 23 32.4 30.5H27.6V23l-7.8.2L25 20l-4-5.8 5.8 1.8Z" fill="#d80621"/></svg>',
+            mx:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="20" height="38" fill="#006847"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ce1126"/><circle cx="30" cy="19" r="4.2" fill="#8c5a2b"/><circle cx="30" cy="19" r="2.1" fill="#0b7a3b"/></svg>'
         };
-        return '<span class="wm-flag-sprite" data-flag="' + _e(k) + '">' + (F[k] || F.br) + '</span>';
+
+        return S[key] || S.br;
     }
 
-    function _box(v) {
-        return (_0xW.r[_n(v)] || _0xW.r.br)[1];
+    function S(type) {
+        var key = N(type);
+        return '<span class="wm-flag-sprite" data-flag="' + E(key) + '">' + Flag(key) + '</span>';
     }
 
-    function _img(v) {
-        v = String(v || "").trim();
-        return v || "https://wormy.wormatrix.fun/images/logo.png";
+    function B(region) {
+        var key = N(region);
+        return K[key][1] || ".servers-brazil";
     }
 
-    function _css() {
-        if (document.getElementById("wmx-svg-server-css")) return;
-        var s = document.createElement("style");
-        s.id = "wmx-svg-server-css";
-        s.textContent =
-            ".wormatrix-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:0;margin:0 0 7px;background:transparent;border:0;box-sizing:border-box}" +
-            ".wormatrix-grid a{width:100%;height:30px;display:flex;align-items:center;justify-content:center;border:0!important;border-radius:3px;padding:0;background:transparent!important;box-shadow:none!important;overflow:hidden;cursor:pointer}" +
-            ".wormatrix-grid a.active{border:2px solid #7fb02e!important;background:transparent!important;box-shadow:none!important}" +
-            ".wm-flag-sprite{width:42px;height:27px;display:block;border-radius:3px;overflow:hidden;background:none!important;box-shadow:none!important}" +
-            ".wm-flag-svg{width:100%;height:100%;display:block;border-radius:3px;background:transparent!important;box-shadow:none!important}" +
-            ".wm-server-split{width:100%;height:1px;margin:4px 0 6px;background:rgba(127,176,46,.75)}";
-        document.head.appendChild(s);
+    function I(src) {
+        src = String(src || "").trim();
+        return src || "https://wormy.wormatrix.fun/images/logo.png";
     }
 
-    window.loadServers = async function () {
-        try {
-            const response = await fetch("https://wm.wormy.online/servers", { cache: "no-store" });
-            const data = await response.json();
+    function Q(arr, fn) {
+        for (var i = 0; i < arr.length; i++) fn(arr[i], i, _wmGhostNull.check(i + ":" + ((arr[i] && arr[i].serverUrl) || "")));
+    }
 
-            if (data && data.success) {
-                servers.Api_listServer = (data.servers || []).filter(function (s) {
-                    return s && s.serverUrl;
-                });
-                createServerList();
-            } else {
-                servers.Api_listServer = [];
-                alert("ERROR SERVER");
-            }
-        } catch (e) {
-            console.error("SERVER LOAD ERROR:", e);
+    return {
+        normalize: N,
+        escape: E,
+        sprite: S,
+        box: B,
+        img: I,
+        each: Q,
+        ghostLayer: function () {
+            return _wmGhostNull.ghostBackground;
+        }
+    };
+})();
+
+async function loadServers() {
+    try {
+        const response = await fetch("https://wm.wormy.online/servers", {
+            cache: "no-store"
+        });
+
+        const data = await response.json();
+
+        if (data && data.success) {
+            servers.Api_listServer = (data.servers || []).filter(function (s) {
+                return s && s.serverUrl;
+            });
+            createServerList();
+        } else {
             servers.Api_listServer = [];
             alert("ERROR SERVER");
         }
-    };
+    } catch (e) {
+        console.error("SERVER LOAD ERROR:", e);
+        servers.Api_listServer = [];
+        alert("ERROR SERVER");
+    }
+}
 
-    window.wmFlagSprite = function (type) {
-        return _svg(type);
-    };
+function wmFlagSprite(type) {
+    return WMX_REG.sprite(type);
+}
 
-    window.injectWormatrixConnectUI = function () {
-        _css();
+function injectWormatrixConnectUI() {
+    $(".description-text").replaceWith(
+        '<div class="description-text">' +
+            '<div id="load_page_apoiador">' +
+                '<div class="wm-connect-title-bg"></div>' +
+                '<div class="title-worm-world-connect">' +
+                    '<img src="https://wormy.wormatrix.fun/images/logo.png" width="20" align="center" alt="" />' +
+                    ' Worm Matrix Connect' +
+                '</div>' +
+            '</div>' +
 
-        $(".description-text").replaceWith(
-            '<div class="description-text">' +
-                '<div id="load_page_apoiador">' +
-                    '<div class="wm-connect-title-bg"></div>' +
-                    '<div class="title-worm-world-connect">' +
-                        '<img src="https://wormy.wormatrix.fun/images/logo.png" width="20" align="center" alt="" />' +
-                        ' Worm Matrix Connect' +
-                    '</div>' +
+            '<div id="wormatrix_tabs">' +
+                '<div class="wormatrix-grid">' +
+                    '<a href="#tabs9" class="active" data-flag="ae">' + wmFlagSprite("ae") + '</a>' +
+                    '<a href="#tabs0" data-flag="br">' + wmFlagSprite("br") + '</a>' +
+                    '<a href="#tabs1" data-flag="us">' + wmFlagSprite("us") + '</a>' +
+                    '<a href="#tabs4" data-flag="de">' + wmFlagSprite("de") + '</a>' +
+                    '<a href="#tabs5" data-flag="fr">' + wmFlagSprite("fr") + '</a>' +
+                    '<a href="#tabs6" data-flag="sg">' + wmFlagSprite("sg") + '</a>' +
+                    '<a href="#tabs7" data-flag="jp">' + wmFlagSprite("jp") + '</a>' +
+                    '<a href="#tabs2" data-flag="ca">' + wmFlagSprite("ca") + '</a>' +
+                    '<a href="#tabs8" data-flag="au">' + wmFlagSprite("au") + '</a>' +
+                    '<a href="#tabs3" data-flag="mx">' + wmFlagSprite("mx") + '</a>' +
                 '</div>' +
 
-                '<div id="wormatrix_tabs">' +
-                    '<div class="wormatrix-grid">' +
-                        '<a href="#tabs9" data-flag="ae">' + wmFlagSprite("ae") + '</a>' +
-                        '<a href="#tabs0" data-flag="br">' + wmFlagSprite("br") + '</a>' +
-                        '<a href="#tabs1" data-flag="us">' + wmFlagSprite("us") + '</a>' +
-                        '<a href="#tabs4" class="active" data-flag="de">' + wmFlagSprite("de") + '</a>' +
-                        '<a href="#tabs5" data-flag="fr">' + wmFlagSprite("fr") + '</a>' +
-                        '<a href="#tabs6" data-flag="sg">' + wmFlagSprite("sg") + '</a>' +
-                        '<a href="#tabs7" data-flag="jp">' + wmFlagSprite("jp") + '</a>' +
-                        '<a href="#tabs8" data-flag="au">' + wmFlagSprite("au") + '</a>' +
-                        '<a href="#tabs10" data-flag="in">' + wmFlagSprite("in") + '</a>' +
-                    '</div>' +
+                '<div class="tab-pane servers-brazil" id="tabs0"></div>' +
+                '<div class="tab-pane servers-eeuu" id="tabs1"></div>' +
+                '<div class="tab-pane servers-canada" id="tabs2"></div>' +
+                '<div class="tab-pane servers-mexico" id="tabs3"></div>' +
+                '<div class="tab-pane servers-germany" id="tabs4"></div>' +
+                '<div class="tab-pane servers-france" id="tabs5"></div>' +
+                '<div class="tab-pane servers-singapore" id="tabs6"></div>' +
+                '<div class="tab-pane servers-japan" id="tabs7"></div>' +
+                '<div class="tab-pane servers-australia" id="tabs8"></div>' +
+                '<div class="tab-pane active servers-ae" id="tabs9"></div>' +
+            '</div>' +
+        '</div>'
+    );
+}
 
-                    '<div class="wm-server-split"></div>' +
+function getRegionContainer(region) {
+    return WMX_REG.box(region);
+}
 
-                    '<div class="tab-pane servers-brazil" id="tabs0"></div>' +
-                    '<div class="tab-pane servers-eeuu" id="tabs1"></div>' +
-                    '<div class="tab-pane servers-canada" id="tabs2"></div>' +
-                    '<div class="tab-pane servers-mexico" id="tabs3"></div>' +
-                    '<div class="tab-pane active servers-germany" id="tabs4"></div>' +
-                    '<div class="tab-pane servers-france" id="tabs5"></div>' +
-                    '<div class="tab-pane servers-singapore" id="tabs6"></div>' +
-                    '<div class="tab-pane servers-japan" id="tabs7"></div>' +
-                    '<div class="tab-pane servers-australia" id="tabs8"></div>' +
-                    '<div class="tab-pane servers-ae" id="tabs9"></div>' +
-                    '<div class="tab-pane servers-india" id="tabs10"></div>' +
+function createServerList() {
+    $(".tab-pane").empty();
+
+    WMX_REG.each(servers.Api_listServer, function (srv, a) {
+        srv = srv || {};
+
+        const serverUrl = srv.serverUrl;
+        if (!serverUrl) return;
+
+        const serverName = srv.name || serverUrl;
+        const region = srv.region;
+        const image = WMX_REG.img(srv.image);
+
+        const item = document.createElement("p");
+        item.id = "wormatrix_room_item_" + a;
+        item.className = "selectSala";
+        item.value = serverUrl;
+
+        item.innerHTML =
+            '<div class="wm-server-row">' +
+                '<img class="wm-server-img" src="' + WMX_REG.escape(image) + '" onerror="this.style.display=\'none\';">' +
+                '<div class="wm-server-info">' +
+                    '<div class="wm-server-name">' + WMX_REG.escape(serverName) + '</div>' +
+                    '<div class="wm-server-url">' + WMX_REG.escape(serverUrl) + '</div>' +
                 '</div>' +
-            '</div>'
-        );
-    };
+            '</div>';
 
-    window.getRegionContainer = function (region) {
-        return _box(region);
-    };
+        $(item).attr("data-region", region);
+        $(item).attr("data-server-url", serverUrl);
+        $(item).attr("title", serverUrl);
 
-    window.createServerList = function () {
-        $(".tab-pane").empty();
+        $(getRegionContainer(region)).prepend(item);
 
-        for (var a = 0; a < servers.Api_listServer.length; a++) {
-            var srv = servers.Api_listServer[a] || {};
-            var serverUrl = srv.serverUrl;
-            if (!serverUrl) continue;
+        $(item).off("click").on("click", function () {
+            const selectedServer = $(this).attr("data-server-url") || this.value;
 
-            var serverName = srv.name || serverUrl;
-            var region = srv.region;
-            var image = _img(srv.image);
+            $(".selectSala").removeClass("wm-selected-server");
+            $(this).addClass("wm-selected-server");
 
-            var item = document.createElement("p");
-            item.id = "wormatrix_room_item_" + a;
-            item.className = "selectSala";
-            item.value = serverUrl;
-
-            item.innerHTML =
-                '<div class="wm-server-line">' +
-                    '<span class="wm-server-number">' + String(a + 1).padStart(2, "0") + '</span>' +
-                    '<span class="wm-server-title">' + _e(serverName) + '</span>' +
-                    '<img class="wm-server-side-img" src="' + _e(image) + '" onerror="this.style.display=&quot;none&quot;">' +
-                '</div>';
-
-            $(item).attr("data-region", region);
-            $(item).attr("data-server-url", serverUrl);
-            $(item).attr("title", serverUrl);
-
-            $(_box(region)).append(item);
-
-            $(item).off("click").on("click", function () {
-                var selectedServer = $(this).attr("data-server-url") || this.value;
-
-                $(".selectSala").removeClass("wm-selected-server");
-                $(this).addClass("wm-selected-server");
-
-                if (window._x7 && typeof window._x7.setServer === "function") {
-                    window._x7.setServer(selectedServer);
-                }
-
-                if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
-                    window._x7.containerImgS.texture = window._x7.onclickServer;
-                }
-
-                if (typeof retundFlagError === "function") retundFlagError();
-
-                window.server_url = selectedServer;
-                $("#mm-action-play").click();
-            });
-        }
-    };
-
-    window.bindWormatrixTabs = function () {
-        $("#wormatrix_tabs .wormatrix-grid a").off("click").on("click", function (e) {
-            e.preventDefault();
-
-            var target = $(this).attr("href");
-            var flagKey = $(this).attr("data-flag");
-
-            $("#wormatrix_tabs .wormatrix-grid a").removeClass("active");
-            $(this).addClass("active");
-
-            $("#wormatrix_tabs .tab-pane").removeClass("active").hide();
-            $(target).addClass("active").fadeIn(130);
-
-            if (typeof theoKzObjects !== "undefined") theoKzObjects.flag = flagKey;
+            if (window._x7 && typeof window._x7.setServer === "function") {
+                window._x7.setServer(selectedServer);
+            }
 
             if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
                 window._x7.containerImgS.texture = window._x7.onclickServer;
             }
 
             if (typeof retundFlagError === "function") retundFlagError();
-        });
-    };
 
-    injectWormatrixConnectUI();
-    bindWormatrixTabs();
-    loadServers();
-})();
+            window.server_url = selectedServer;
+            $("#mm-action-play").click();
+        });
+    });
+}
+
+function bindWormatrixTabs() {
+    $("#wormatrix_tabs .wormatrix-grid a").off("click").on("click", function (e) {
+        e.preventDefault();
+
+        const target = $(this).attr("href");
+        const flagKey = $(this).attr("data-flag");
+
+        $("#wormatrix_tabs .wormatrix-grid a").removeClass("active");
+        $(this).addClass("active");
+
+        $("#wormatrix_tabs .tab-pane").removeClass("active").hide();
+        $(target).addClass("active").fadeIn(160);
+
+        if (typeof theoKzObjects !== "undefined") theoKzObjects.flag = flagKey;
+
+        if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
+            window._x7.containerImgS.texture = window._x7.onclickServer;
+        }
+
+        if (typeof retundFlagError === "function") retundFlagError();
+    });
+}
+
+injectWormatrixConnectUI();
+bindWormatrixTabs();
+loadServers();
 
         (function () {
           var v15;

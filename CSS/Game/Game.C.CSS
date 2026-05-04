@@ -4843,8 +4843,8 @@ input[type="color"]::-moz-color-swatch {
   width: 106%;
   height: 40px;
   background: #ffffff;
-  border-radius: 5px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   z-index: 0;
 }
 
@@ -4857,7 +4857,7 @@ input[type="color"]::-moz-color-swatch {
   width: 92%;
   text-align: center;
   font-weight: bold;
-  color: #111;
+  color: #222;
   font-size: 12px;
   line-height: 20px;
   white-space: nowrap;
@@ -4876,49 +4876,56 @@ input[type="color"]::-moz-color-swatch {
   height: 285px;
   overflow-y: auto;
   overflow-x: hidden;
-  border: 1px solid rgba(127,176,46,.90);
+  border: 1px solid rgba(127,176,46,.85);
   margin: 6px auto;
-  padding: 5px;
-  background:
-    radial-gradient(circle at 25% 18%, rgba(255,0,0,.22), transparent 20%),
-    radial-gradient(circle at 75% 42%, rgba(255,0,0,.20), transparent 22%),
-    rgba(42,0,0,.92);
-  border-radius: 7px;
+  padding: 4px;
+  background: rgba(0,0,0,.28);
+  border-radius: 8px;
   box-sizing: border-box;
-  box-shadow: inset 0 0 10px rgba(127,176,46,.18);
+  box-shadow: inset 0 0 10px rgba(127,176,46,.22);
 }
 
 .wormatrix-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 4px;
-  padding: 0;
-  margin: 0 0 7px 0;
-  background: transparent;
-  border: 0;
+  padding: 4px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(127,176,46,.65);
+  background: rgba(0,0,0,.22);
+  border-radius: 8px;
   box-sizing: border-box;
 }
 
 .wormatrix-grid a {
   width: 100%;
-  height: 30px;
+  height: 31px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 0 !important;
-  border-radius: 3px;
-  padding: 0;
+  border-radius: 7px;
+  padding: 1px;
   background: transparent !important;
   background-image: none !important;
   box-shadow: none !important;
   box-sizing: border-box;
   overflow: hidden;
   cursor: pointer;
+  transition: .15s ease;
+}
+
+.wormatrix-grid a:hover {
+  transform: translateY(-1px);
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
 }
 
 .wormatrix-grid a.active {
-  border: 2px solid #7fb02e !important;
+  border: 2px solid #ff2424 !important;
   background: transparent !important;
+  background-image: none !important;
   box-shadow: none !important;
 }
 
@@ -4926,25 +4933,27 @@ input[type="color"]::-moz-color-swatch {
   width: 42px;
   height: 27px;
   display: block;
-  border-radius: 2px;
+  border-radius: 6px;
   overflow: hidden;
-  background-image: url("https://i.ibb.co/Pv8Ms4tb/flags.png");
-  background-repeat: no-repeat;
-  background-size: 42px 243px;
-  background-position: 0 calc(var(--flag-index) * -27px);
+  background: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
   box-shadow: none !important;
+  transform: none !important;
 }
 
-.wm-server-split {
+.wm-flag-svg {
   width: 100%;
-  height: 1px;
-  margin: 4px 0 6px;
-  background: rgba(127,176,46,.75);
+  height: 100%;
+  display: block;
+  border-radius: 6px;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .tab-pane {
   display: none;
-  padding: 0;
+  padding: 2px;
 }
 
 .tab-pane.active {
@@ -4952,83 +4961,100 @@ input[type="color"]::-moz-color-swatch {
 }
 
 .selectSala {
-  width: 100%;
-  height: 24px;
-  min-height: 24px;
-  margin: 0 0 3px 0;
-  padding: 0;
+  width: calc(100% - 4px);
+  min-height: 76px;
+  margin: 4px 2px 7px;
+  padding: 8px 9px;
   cursor: pointer;
   color: #fff;
   font-weight: bold;
-  background: transparent !important;
-  border: 0 !important;
+  border-radius: 7px;
+  background: rgba(0,0,0,.24);
+  border: 1px solid rgba(127,176,46,.85);
   text-align: left;
   text-shadow: 0 1px 2px #000;
   box-sizing: border-box;
   overflow: hidden;
-  line-height: 24px;
+  line-height: 1.45;
 }
 
-.selectSala:hover,
+.selectSala:hover {
+  background: rgba(127,176,46,.35) !important;
+  color: #fff !important;
+  border-color: #ff2424 !important;
+}
+
 .selectSala.wm-selected-server {
-  color: #ffffff !important;
-  background: rgba(127,176,46,.18) !important;
+  border-color: #ff2424 !important;
+  background: rgba(255,0,0,.08) !important;
 }
 
-.wm-server-line {
+.wm-server-row {
   width: 100%;
-  height: 24px;
-  display: grid;
-  grid-template-columns: 22px 1fr 18px;
+  display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 8px;
   overflow: hidden;
 }
 
-.wm-server-number {
-  font-size: 12px;
-  color: #fff;
-  text-align: left;
+.wm-server-img {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  object-fit: cover;
+  border-radius: 7px;
+  border: 1px solid rgba(127,176,46,.85);
+  background: rgba(0,0,0,.25);
 }
 
-.wm-server-title {
-  font-size: 12px;
+.wm-server-info {
+  flex: 1;
+  overflow: hidden;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.wm-server-name {
   color: #fff;
-  white-space: nowrap;
+  font-weight: bold;
+  font-size: 13px;
+  text-shadow: 0 1px 2px #000;
+}
+
+.wm-server-url {
+  color: rgba(255,255,255,.65);
+  font-size: 10px;
+  margin-top: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.wm-server-side-img {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-  border-radius: 2px;
+  white-space: nowrap;
 }
 
 @media (max-width: 380px) {
   #wormatrix_tabs {
     height: 285px;
-    padding: 5px;
+    padding: 3px;
   }
 
   .wormatrix-grid {
     gap: 3px;
+    padding: 3px;
   }
 
   .wormatrix-grid a {
-    height: 28px;
+    height: 30px;
+    border-radius: 7px;
   }
 
   .wm-flag-sprite {
     width: 40px;
     height: 26px;
-    background-size: 40px 234px;
-    background-position: 0 calc(var(--flag-index) * -26px);
+    border-radius: 6px;
   }
 
-  .wm-server-title,
-  .wm-server-number {
+  .selectSala {
+    min-height: 72px;
     font-size: 11px;
   }
 }
