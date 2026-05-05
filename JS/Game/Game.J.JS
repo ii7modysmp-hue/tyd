@@ -593,41 +593,6 @@ async function loadServers() {
             servers.Api_listServer = (data.servers || []).filter(function (s) {
                 return s && s.serverUrl;
             });
-
-            const WMX_STATS = (function () {
-
-    function _k(url){
-        return "wmx_k_" + btoa(url).replace(/=/g,"");
-    }
-
-    function get(url){
-        try{
-            let d = JSON.parse(localStorage.getItem(_k(url))) || {};
-            return { hs: d.hs || 0, kill: d.kill || 0 };
-        }catch(e){
-            return { hs:0, kill:0 };
-        }
-    }
-
-    function set(url, hs, kill){
-        localStorage.setItem(_k(url), JSON.stringify({hs, kill}));
-    }
-
-    function update(url){
-        let s = get(url);
-
-        // ⚡ زيادة ذكية (مو عشوائي غبي)
-        s.kill += Math.floor(Math.random()*2);
-        if(Math.random() > 0.65) s.hs++;
-
-        set(url, s.hs, s.kill);
-        return s;
-    }
-
-    return {get, update};
-
-})();
-
             createServerList();
         } else {
             servers.Api_listServer = [];
@@ -703,9 +668,6 @@ function createServerList() {
         const region = WMX_REG.normalize(srv.region);
         const image = WMX_REG.img(srv.image);
 
-        // ⭐ جلب الإحصائيات
-        let stats = WMX_STATS.update(serverUrl);
-
         const item = document.createElement("p");
         item.id = "wormatrix_room_item_" + a;
         item.className = "selectSala";
@@ -713,22 +675,12 @@ function createServerList() {
 
         item.innerHTML =
             '<div class="wm-server-row">' +
-
                 '<span class="wm-server-region-flag">' + wmFlagSprite(region) + '</span>' +
-
                 '<img class="wm-server-img" src="' + WMX_REG.escape(image) + '" onerror="this.style.display=\'none\';">' +
-
                 '<div class="wm-server-info">' +
                     '<div class="wm-server-name">' + WMX_REG.escape(serverName) + '</div>' +
                     '<div class="wm-server-url">' + WMX_REG.escape(serverUrl) + '</div>' +
                 '</div>' +
-
-                // 🔥 HS + KILL
-                '<div class="wm-server-stats">' +
-                    '<div class="wm-hs">HS: ' + stats.hs + '</div>' +
-                    '<div class="wm-kill">K: ' + stats.kill + '</div>' +
-                '</div>' +
-
             '</div>';
 
         $(item).attr("data-region", region);
@@ -742,11 +694,6 @@ function createServerList() {
 
             $(".selectSala").removeClass("wm-selected-server");
             $(this).addClass("wm-selected-server");
-
-            // ⚡ تحديث مباشر عند الضغط
-            let s = WMX_STATS.update(selectedServer);
-            $(this).find(".wm-hs").text("HS: " + s.hs);
-            $(this).find(".wm-kill").text("K: " + s.kill);
 
             if (window._x7 && typeof window._x7.setServer === "function") {
                 window._x7.setServer(selectedServer);
