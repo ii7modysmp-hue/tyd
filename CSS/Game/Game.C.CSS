@@ -5085,23 +5085,6 @@ input[type="color"]::-moz-color-swatch {
   }
 }
 
-.wm-server-stats{
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-  font-size:10px;
-  min-width:45px;
-  text-align:right;
-}
-
-.wm-hs{
-  color:#9cff4f;
-  font-weight:bold;
-}
-
-.wm-kill{
-  color:#d6ffb3;
-}
 
 #hs_kill_box{
   margin-top:10px;
