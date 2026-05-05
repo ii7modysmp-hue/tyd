@@ -5102,3 +5102,26 @@ input[type="color"]::-moz-color-swatch {
 .wm-kill{
   color:#d6ffb3;
 }
+
+#hs_kill_box{
+  margin-top:10px;
+  padding:6px;
+  border-radius:8px;
+  background:rgba(0,0,0,.25);
+  border:1px solid rgba(127,176,46,.5);
+}
+
+.hs-title{
+  text-align:center;
+  color:#7FB02E;
+  font-weight:bold;
+}
+
+.hs-item{
+  display:flex;
+  justify-content:space-between;
+  padding:4px;
+  color:#fff;
+  font-size:11px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
