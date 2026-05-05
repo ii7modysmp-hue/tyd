@@ -464,8 +464,7 @@ var GoogleAuth;
  
 
 let servers = {
-    Api_listServer: [],
-    HS_KILL: JSON.parse(localStorage.getItem("HS_KILL")) || []
+    Api_listServer: []
 };
 
 const WMX_REG = (function () {
@@ -485,7 +484,6 @@ const WMX_REG = (function () {
     };
 
     const A = {};
-
     const _wmGhostNull = {
         build: "wmx-svg-mixed-green-safe",
         ghostBackground: false,
@@ -521,18 +519,30 @@ const WMX_REG = (function () {
         key = N(key);
 
         const S = {
-            lt: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="12.667" fill="#fdb913"/><rect y="12.667" width="60" height="12.666" fill="#006a44"/><rect y="25.333" width="60" height="12.667" fill="#c1272d"/></svg>',
-            ae: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#fff"/><rect width="15" height="38" fill="#d71920"/><rect x="15" width="45" height="12.666" fill="#00732f"/></svg>',
-            br: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#009b3a"/></svg>',
-            us: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#b22234"/></svg>',
-            de: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="12.667" fill="#000"/></svg>',
-            sg: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#ef3340"/></svg>',
-            jp: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><circle cx="30" cy="19" r="10" fill="#bc002d"/></svg>',
-            au: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="38" fill="#18449a"/></svg>',
-            in: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="60" height="12.667" fill="#ff9933"/></svg>',
-            fr: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="20" height="38" fill="#0055a4"/></svg>',
-            ca: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="15" height="38" fill="#d80621"/></svg>',
-            mx: '<svg viewBox="0 0 60 38" class="wm-flag-svg"><rect width="20" height="38" fill="#006847"/></svg>'
+            lt:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="12.667" fill="#fdb913"/><rect y="12.667" width="60" height="12.666" fill="#006a44"/><rect y="25.333" width="60" height="12.667" fill="#c1272d"/></svg>',
+            ae:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#fff"/><rect width="15" height="38" fill="#d71920"/><rect x="15" width="45" height="12.666" fill="#00732f"/><rect x="15" y="25.333" width="45" height="12.667" fill="#000"/></svg>',
+            br:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#009b3a"/><path d="M30 4.3 56.5 19 30 33.7 3.5 19Z" fill="#ffdf00"/><circle cx="30" cy="19" r="9.2" fill="#002776"/><path d="M20.7 17.3c6.1 3.25 12.85 3.55 18.6 1.25" stroke="#fff" stroke-width="1.9" fill="none"/></svg>',
+            us:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#b22234"/><g fill="#fff"><rect y="2.92" width="60" height="2.92"/><rect y="8.76" width="60" height="2.92"/><rect y="14.6" width="60" height="2.92"/><rect y="20.44" width="60" height="2.92"/><rect y="26.28" width="60" height="2.92"/><rect y="32.12" width="60" height="2.92"/></g><rect width="27.5" height="20.5" fill="#3c3b6e"/><g fill="#fff"><circle cx="4.3" cy="4" r=".85"/><circle cx="10" cy="4" r=".85"/><circle cx="15.7" cy="4" r=".85"/><circle cx="21.4" cy="4" r=".85"/><circle cx="7" cy="8.9" r=".85"/><circle cx="12.7" cy="8.9" r=".85"/><circle cx="18.4" cy="8.9" r=".85"/><circle cx="24.1" cy="8.9" r=".85"/><circle cx="4.3" cy="13.8" r=".85"/><circle cx="10" cy="13.8" r=".85"/><circle cx="15.7" cy="13.8" r=".85"/><circle cx="21.4" cy="13.8" r=".85"/></g></svg>',
+            de:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="12.667" fill="#000"/><rect y="12.667" width="60" height="12.666" fill="#dd0000"/><rect y="25.333" width="60" height="12.667" fill="#ffce00"/></svg>',
+            sg:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="19" fill="#ef3340"/><rect y="19" width="60" height="19" fill="#fff"/><circle cx="16.5" cy="9.5" r="7" fill="#fff"/><circle cx="19.5" cy="9.5" r="6" fill="#ef3340"/><g fill="#fff"><circle cx="27" cy="5.5" r="1.05"/><circle cx="30" cy="8.2" r="1.05"/><circle cx="29" cy="12" r="1.05"/><circle cx="25" cy="12" r="1.05"/><circle cx="24" cy="8.2" r="1.05"/></g></svg>',
+            jp:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#fff"/><circle cx="30" cy="19" r="10.4" fill="#bc002d"/></svg>',
+            au:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="38" fill="#18449a"/><path d="M0 0 29 19M29 0 0 19" stroke="#fff" stroke-width="4.4"/><path d="M0 0 29 19M29 0 0 19" stroke="#c8102e" stroke-width="2.1"/><path d="M14.5 0v19M0 9.5h29" stroke="#fff" stroke-width="6"/><path d="M14.5 0v19M0 9.5h29" stroke="#c8102e" stroke-width="3"/><g fill="#fff"><circle cx="42" cy="10" r="2.3"/><circle cx="50.5" cy="18.3" r="2.1"/><circle cx="39" cy="26.5" r="2.6"/><circle cx="53" cy="29.5" r="1.8"/><circle cx="47.7" cy="6.1" r="1.55"/></g></svg>',
+            in:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="60" height="12.667" fill="#ff9933"/><rect y="12.667" width="60" height="12.666" fill="#fff"/><rect y="25.333" width="60" height="12.667" fill="#138808"/><circle cx="30" cy="19" r="5.3" fill="none" stroke="#000080" stroke-width="1.2"/><g stroke="#000080" stroke-width=".55"><path d="M30 13.7v10.6M24.7 19h10.6M26.25 15.25l7.5 7.5M33.75 15.25l-7.5 7.5"/></g></svg>',
+            fr:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="20" height="38" fill="#0055a4"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ef4135"/></svg>',
+            ca:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="15" height="38" fill="#d80621"/><rect x="15" width="30" height="38" fill="#fff"/><rect x="45" width="15" height="38" fill="#d80621"/><path d="M30 7.5 33.2 16 39 14.2 35 20 40.2 23.2 32.4 23 32.4 30.5H27.6V23l-7.8.2L25 20l-4-5.8 5.8 1.8Z" fill="#d80621"/></svg>',
+            mx:
+                '<svg viewBox="0 0 60 38" class="wm-flag-svg" aria-hidden="true"><rect width="20" height="38" fill="#006847"/><rect x="20" width="20" height="38" fill="#fff"/><rect x="40" width="20" height="38" fill="#ce1126"/><circle cx="30" cy="19" r="4.2" fill="#8c5a2b"/><circle cx="30" cy="19" r="2.1" fill="#0b7a3b"/></svg>'
         };
 
         return S[key] || S.br;
@@ -540,7 +550,7 @@ const WMX_REG = (function () {
 
     function S(type) {
         var key = N(type);
-        return '<span class="wm-flag-sprite">' + Flag(key) + '</span>';
+        return '<span class="wm-flag-sprite" data-flag="' + E(key) + '">' + Flag(key) + '</span>';
     }
 
     function B(region) {
@@ -549,12 +559,13 @@ const WMX_REG = (function () {
     }
 
     function I(src) {
+        src = String(src || "").trim();
         return src || "https://wormy.wormatrix.fun/images/logo.png";
     }
 
     function Q(arr, fn) {
         arr = Array.isArray(arr) ? arr : [];
-        for (var i = 0; i < arr.length; i++) fn(arr[i], i);
+        for (var i = 0; i < arr.length; i++) fn(arr[i], i, _wmGhostNull.check(i + ":" + ((arr[i] && arr[i].serverUrl) || "")));
     }
 
     return {
@@ -563,53 +574,36 @@ const WMX_REG = (function () {
         sprite: S,
         box: B,
         img: I,
-        each: Q
+        each: Q,
+        ghostLayer: function () {
+            return _wmGhostNull.ghostBackground;
+        }
     };
 })();
 
-/* ===================== HS KILL SYSTEM ===================== */
-
-function saveHSKill(data) {
-    servers.HS_KILL.push(data);
-    localStorage.setItem("HS_KILL", JSON.stringify(servers.HS_KILL));
-    renderHSKill();
-}
-
-function renderHSKill() {
-    const box = document.getElementById("hs_kill_list");
-    if (!box) return;
-
-    box.innerHTML = "";
-
-    servers.HS_KILL.forEach((k) => {
-        const div = document.createElement("div");
-        div.className = "hs-item";
-
-        div.innerHTML =
-            `<div>🧠 HS: ${k.headshots || 0} 🔫 KILL: ${k.kills || 0}</div>
-             <div style="opacity:.7">${k.server || "unknown"}</div>`;
-
-        box.appendChild(div);
-    });
-}
-
-/* ===================== LOAD SERVERS ===================== */
-
 async function loadServers() {
     try {
-        const response = await fetch("https://wm.wormy.online/servers", { cache: "no-store" });
+        const response = await fetch("https://wm.wormy.online/servers", {
+            cache: "no-store"
+        });
+
         const data = await response.json();
 
         if (data && data.success) {
-            servers.Api_listServer = (data.servers || []).filter(s => s && s.serverUrl);
+            servers.Api_listServer = (data.servers || []).filter(function (s) {
+                return s && s.serverUrl;
+            });
             createServerList();
+        } else {
+            servers.Api_listServer = [];
+            alert("ERROR SERVER");
         }
     } catch (e) {
-        console.error(e);
+        console.error("SERVER LOAD ERROR:", e);
+        servers.Api_listServer = [];
+        alert("ERROR SERVER");
     }
 }
-
-/* ===================== UI ===================== */
 
 function wmFlagSprite(type) {
     return WMX_REG.sprite(type);
@@ -618,33 +612,44 @@ function wmFlagSprite(type) {
 function injectWormatrixConnectUI() {
     $(".description-text").replaceWith(
         '<div class="description-text">' +
+            '<div id="load_page_apoiador">' +
+                '<div class="wm-connect-title-bg"></div>' +
+                '<div class="title-worm-world-connect">' +
+                    '<img src="https://wormy.wormatrix.fun/images/logo.png" width="20" align="center" alt="" />' +
+                    ' Worm Matrix Connect' +
+                '</div>' +
+            '</div>' +
 
-        '<div id="load_page_apoiador">' +
-        '<div class="wm-connect-title-bg"></div>' +
-        '<div class="title-worm-world-connect">' +
-        '<img src="https://wormy.wormatrix.fun/images/logo.png" width="20"> Worm Matrix Connect' +
-        '</div>' +
-        '</div>' +
+            '<div id="wormatrix_tabs">' +
+                '<div class="wormatrix-grid">' +
+                    '<a href="#tabs10" data-flag="lt">' + wmFlagSprite("lt") + '</a>' +
+                    '<a href="#tabs9" data-flag="ae">' + wmFlagSprite("ae") + '</a>' +
+                    '<a href="#tabs0" data-flag="br">' + wmFlagSprite("br") + '</a>' +
+                    '<a href="#tabs1" data-flag="us">' + wmFlagSprite("us") + '</a>' +
+                    '<a href="#tabs4" class="active" data-flag="de">' + wmFlagSprite("de") + '</a>' +
+                    '<a href="#tabs6" data-flag="sg">' + wmFlagSprite("sg") + '</a>' +
+                    '<a href="#tabs7" data-flag="jp">' + wmFlagSprite("jp") + '</a>' +
+                    '<a href="#tabs8" data-flag="au">' + wmFlagSprite("au") + '</a>' +
+                    '<a href="#tabs11" data-flag="in">' + wmFlagSprite("in") + '</a>' +
+                    '<a href="#tabs5" data-flag="fr">' + wmFlagSprite("fr") + '</a>' +
+                '</div>' +
 
-        '<div id="wormatrix_tabs">' +
-
-        '<div class="wormatrix-grid">' +
-        '<a href="#tabs4" class="active">' + wmFlagSprite("de") + '</a>' +
-        '</div>' +
-
-        '<div class="tab-pane servers-germany active" id="tabs4"></div>' +
-
-        /* 🔥 HS KILL BOX */
-        '<div id="hs_kill_box">' +
-        '<div class="hs-title">HS KILL</div>' +
-        '<div id="hs_kill_list"></div>' +
-        '</div>' +
-
-        '</div></div>'
+                '<div class="tab-pane servers-brazil" id="tabs0"></div>' +
+                '<div class="tab-pane servers-eeuu" id="tabs1"></div>' +
+                '<div class="tab-pane servers-canada" id="tabs2"></div>' +
+                '<div class="tab-pane servers-mexico" id="tabs3"></div>' +
+                '<div class="tab-pane active servers-germany" id="tabs4"></div>' +
+                '<div class="tab-pane servers-france" id="tabs5"></div>' +
+                '<div class="tab-pane servers-singapore" id="tabs6"></div>' +
+                '<div class="tab-pane servers-japan" id="tabs7"></div>' +
+                '<div class="tab-pane servers-australia" id="tabs8"></div>' +
+                '<div class="tab-pane servers-ae" id="tabs9"></div>' +
+                '<div class="tab-pane servers-lithuania" id="tabs10"></div>' +
+                '<div class="tab-pane servers-india" id="tabs11"></div>' +
+            '</div>' +
+        '</div>'
     );
 }
-
-/* ===================== SERVERS ===================== */
 
 function getRegionContainer(region) {
     return WMX_REG.box(region);
@@ -654,36 +659,84 @@ function createServerList() {
     $(".tab-pane").empty();
 
     WMX_REG.each(servers.Api_listServer, function (srv, a) {
+        srv = srv || {};
+
+        const serverUrl = srv.serverUrl;
+        if (!serverUrl) return;
+
+        const serverName = srv.name || serverUrl;
+        const region = WMX_REG.normalize(srv.region);
+        const image = WMX_REG.img(srv.image);
 
         const item = document.createElement("p");
+        item.id = "wormatrix_room_item_" + a;
         item.className = "selectSala";
+        item.value = serverUrl;
 
         item.innerHTML =
             '<div class="wm-server-row">' +
-            '<span>' + wmFlagSprite(srv.region) + '</span>' +
-            '<div>' + WMX_REG.escape(srv.name) + '</div>' +
+                '<span class="wm-server-region-flag">' + wmFlagSprite(region) + '</span>' +
+                '<img class="wm-server-img" src="' + WMX_REG.escape(image) + '" onerror="this.style.display=\'none\';">' +
+                '<div class="wm-server-info">' +
+                    '<div class="wm-server-name">' + WMX_REG.escape(serverName) + '</div>' +
+                    '<div class="wm-server-url">' + WMX_REG.escape(serverUrl) + '</div>' +
+                '</div>' +
             '</div>';
 
-        $(item).on("click", function () {
+        $(item).attr("data-region", region);
+        $(item).attr("data-server-url", serverUrl);
+        $(item).attr("title", serverUrl);
 
-            saveHSKill({
-                server: srv.serverUrl,
-                kills: 1,
-                headshots: 1,
-                time: Date.now()
-            });
+        $(getRegionContainer(region)).prepend(item);
 
+        $(item).off("click").on("click", function () {
+            const selectedServer = $(this).attr("data-server-url") || this.value;
+
+            $(".selectSala").removeClass("wm-selected-server");
+            $(this).addClass("wm-selected-server");
+
+            if (window._x7 && typeof window._x7.setServer === "function") {
+                window._x7.setServer(selectedServer);
+            }
+
+            if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
+                window._x7.containerImgS.texture = window._x7.onclickServer;
+            }
+
+            if (typeof retundFlagError === "function") retundFlagError();
+
+            window.server_url = selectedServer;
+            $("#mm-action-play").click();
         });
-
-        $(".servers-germany").append(item);
     });
 }
 
-/* ===================== INIT ===================== */
+function bindWormatrixTabs() {
+    $("#wormatrix_tabs .wormatrix-grid a").off("click").on("click", function (e) {
+        e.preventDefault();
+
+        const target = $(this).attr("href");
+        const flagKey = $(this).attr("data-flag");
+
+        $("#wormatrix_tabs .wormatrix-grid a").removeClass("active");
+        $(this).addClass("active");
+
+        $("#wormatrix_tabs .tab-pane").removeClass("active").hide();
+        $(target).addClass("active").fadeIn(160);
+
+        if (typeof theoKzObjects !== "undefined") theoKzObjects.flag = flagKey;
+
+        if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
+            window._x7.containerImgS.texture = window._x7.onclickServer;
+        }
+
+        if (typeof retundFlagError === "function") retundFlagError();
+    });
+}
 
 injectWormatrixConnectUI();
+bindWormatrixTabs();
 loadServers();
-setTimeout(renderHSKill, 500);
 
         (function () {
           var v15;
