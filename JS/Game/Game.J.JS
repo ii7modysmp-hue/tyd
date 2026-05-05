@@ -463,230 +463,135 @@ var GoogleAuth;
 
  
 
-let servers = {
-    Api_listServer: []
-};
+let servers = { Api_listServer: [] };
 
-// =======================
-// STATS SYSTEM (KILL / HS / DIED)
-// =======================
-const STATS = {
-    load() {
-        try {
-            const data = JSON.parse(localStorage.getItem("wm_stats") || "{}");
+const WMX = (function () {
+
+    const _G = { mem:{} };
+
+    function _e(v){
+        return String(v==null?"":v)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+    }
+
+    function _key(url){
+        return "wmx_stats_" + btoa(url).replace(/=/g,"");
+    }
+
+    function _get(url){
+        try{
+            let d = JSON.parse(localStorage.getItem(_key(url))) || {};
             return {
-                kills: data.kills || 0,
-                hs: data.hs || 0,
-                died: data.died || 0
+                hs: d.hs || 0,
+                kill: d.kill || 0
             };
-        } catch {
-            return { kills: 0, hs: 0, died: 0 };
+        }catch(e){
+            return {hs:0, kill:0};
         }
-    },
-
-    save(data) {
-        localStorage.setItem("wm_stats", JSON.stringify(data));
-    },
-
-    addKill(isHeadshot = false) {
-        let s = this.load();
-        s.kills++;
-        if (isHeadshot) s.hs++;
-        this.save(s);
-        this.updateUI();
-    },
-
-    addDeath() {
-        let s = this.load();
-        s.died++;
-        this.save(s);
-        this.updateUI();
-    },
-
-    updateUI() {
-        const s = this.load();
-        $("#wm_kill").text(s.kills);
-        $("#wm_hs").text(s.hs);
-        $("#wm_died").text(s.died);
-    }
-};
-
-const WMX_REG = (function () {
-    const K = {
-        lt: ["tabs10", ".servers-lithuania", ["lithuania", "lt", "lietuva"]],
-        ae: ["tabs9", ".servers-ae", ["granbretana", "uk", "gb", "ae", "arab", "iraq", "uae", "emirates"]],
-        br: ["tabs0", ".servers-brazil", ["peru", "br", "brazil", "brasil"]],
-        us: ["tabs1", ".servers-eeuu", ["eeuu", "usa", "us", "america", "united states"]],
-        de: ["tabs4", ".servers-germany", ["germania", "germany", "de", "deutschland"]],
-        sg: ["tabs6", ".servers-singapore", ["singapur", "singapore", "sg"]],
-        jp: ["tabs7", ".servers-japan", ["japon", "japan", "jp"]],
-        au: ["tabs8", ".servers-australia", ["australia", "au", "aussie"]],
-        in: ["tabs11", ".servers-india", ["india", "in", "hind"]],
-        fr: ["tabs5", ".servers-france", ["francia", "france", "fr"]],
-        ca: ["tabs2", ".servers-canada", ["canada", "ca"]],
-        mx: ["tabs3", ".servers-mexico", ["mexico", "mx"]]
-    };
-
-    const A = {};
-
-    Object.keys(K).forEach(function (key) {
-        K[key][2].forEach(function (name) {
-            A[String(name).toLowerCase()] = key;
-        });
-    });
-
-    function N(v) {
-        v = String(v || "").toLowerCase().trim();
-        return A[v] || (K[v] ? v : "br");
     }
 
-    function E(v) {
-        return String(v == null ? "" : v)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+    function _set(url, hs, kill){
+        localStorage.setItem(_key(url), JSON.stringify({hs:hs, kill:kill}));
     }
 
-    function Flag(key) {
-        key = N(key);
-        return '<span class="wm-flag-sprite"></span>';
-    }
-
-    function S(type) {
-        var key = N(type);
-        return '<span class="wm-flag-sprite" data-flag="' + E(key) + '">' + Flag(key) + '</span>';
-    }
-
-    function B(region) {
-        var key = N(region);
-        return K[key][1] || ".servers-brazil";
-    }
-
-    function I(src) {
-        src = String(src || "").trim();
-        return src || "https://wormy.wormatrix.fun/images/logo.png";
-    }
-
-    function Q(arr, fn) {
-        arr = Array.isArray(arr) ? arr : [];
-        for (var i = 0; i < arr.length; i++) fn(arr[i], i);
+    function _fakeGrow(url){
+        let s = _get(url);
+        s.kill += Math.floor(Math.random()*2);
+        s.hs += Math.random()>.7?1:0;
+        _set(url,s.hs,s.kill);
+        return s;
     }
 
     return {
-        normalize: N,
-        escape: E,
-        sprite: S,
-        box: B,
-        img: I,
-        each: Q
+        escape:_e,
+        stats:_get,
+        update:_fakeGrow
     };
+
 })();
 
-async function loadServers() {
-    try {
-        const response = await fetch("https://wm.wormy.online/servers", {
-            cache: "no-store"
-        });
+async function loadServers(){
+    try{
+        const r = await fetch("https://wm.wormy.online/servers",{cache:"no-store"});
+        const d = await r.json();
 
-        const data = await response.json();
-
-        if (data && data.success) {
-            servers.Api_listServer = (data.servers || []).filter(function (s) {
-                return s && s.serverUrl;
-            });
+        if(d && d.success){
+            servers.Api_listServer = d.servers.filter(s=>s && s.serverUrl);
             createServerList();
-        } else {
-            servers.Api_listServer = [];
-            alert("ERROR SERVER");
         }
-    } catch (e) {
-        console.error("SERVER LOAD ERROR:", e);
-        servers.Api_listServer = [];
-        alert("ERROR SERVER");
+    }catch(e){
+        console.error(e);
     }
 }
 
-function wmFlagSprite(type) {
-    return WMX_REG.sprite(type);
-}
+function createServerList(){
 
-function injectWormatrixConnectUI() {
-    $(".description-text").replaceWith(
-        '<div class="description-text">' +
-
-        '<div id="wormatrix_tabs">' +
-
-        '<div class="tab-pane active servers-germany" id="tabs4"></div>' +
-
-        '</div>' +
-        '</div>'
-    );
-}
-
-function getRegionContainer(region) {
-    return WMX_REG.box(region);
-}
-
-function createServerList() {
     $(".tab-pane").empty();
 
-    const stats = STATS.load();
+    servers.Api_listServer.forEach(function(srv,i){
 
-    WMX_REG.each(servers.Api_listServer, function (srv, a) {
+        if(!srv || !srv.serverUrl) return;
 
-        const serverUrl = srv.serverUrl;
-        if (!serverUrl) return;
+        const url = srv.serverUrl;
+        const name = srv.name || url;
+        const region = srv.region || "br";
 
-        const serverName = srv.name || serverUrl;
-        const region = WMX_REG.normalize(srv.region);
-        const image = WMX_REG.img(srv.image);
+        let stats = WMX.update(url);
 
-        const item = document.createElement("p");
+        const item = document.createElement("div");
         item.className = "selectSala";
 
         item.innerHTML =
-            '<div class="wm-server-row">' +
+        '<div class="wm-server-row">'+
 
-                '<div class="wm-rank">0' + (a + 1) + '</div>' +
+            '<div class="wm-server-region-flag">'+wmFlagSprite(region)+'</div>'+
 
-                '<img class="wm-server-img" src="' + image + '">' +
+            '<div class="wm-server-info">'+
+                '<div class="wm-server-name">'+WMX.escape(name)+'</div>'+
+                '<div class="wm-server-url">'+WMX.escape(url)+'</div>'+
+            '</div>'+
 
-                '<div class="wm-server-info">' +
-                    '<div class="wm-server-name">' + serverName + '</div>' +
-                '</div>' +
+            '<div class="wm-server-stats">'+
+                '<div class="wm-hs">HS: '+stats.hs+'</div>'+
+                '<div class="wm-kill">K: '+stats.kill+'</div>'+
+            '</div>'+
 
-                '<div class="wm-stats">' +
-                    '<div>HS: <span id="wm_hs">' + stats.hs + '</span></div>' +
-                    '<div>KILL: <span id="wm_kill">' + stats.kills + '</span></div>' +
-                    '<div>DIED: <span id="wm_died">' + stats.died + '</span></div>' +
-                '</div>' +
+        '</div>';
 
-            '</div>';
+        $(item).on("click", function(){
 
-        $(item).attr("data-server-url", serverUrl);
-
-        $(".servers-germany").append(item);
-
-        $(item).on("click", function () {
             $(".selectSala").removeClass("wm-selected-server");
             $(this).addClass("wm-selected-server");
 
-            window.server_url = serverUrl;
-            $("#mm-action-play").click();
-        });
-    });
+            let s = WMX.update(url);
 
-    setTimeout(() => {
-        STATS.updateUI();
-    }, 300);
+            $(this).find(".wm-hs").text("HS: "+s.hs);
+            $(this).find(".wm-kill").text("K: "+s.kill);
+
+            if(window._x7 && typeof window._x7.setServer==="function"){
+                window._x7.setServer(url);
+            }
+
+            window.server_url = url;
+            $("#mm-action-play").click();
+
+        });
+
+        $(".servers-"+region).append(item);
+
+    });
 }
 
-function bindWormatrixTabs() {}
+function wmFlagSprite(type){
+    return '<span class="wm-flag-sprite">'+
+    '<svg viewBox="0 0 60 38"><rect width="60" height="38" fill="#009b3a"/></svg>'+
+    '</span>';
+}
 
-injectWormatrixConnectUI();
-bindWormatrixTabs();
 loadServers();
 
         (function () {

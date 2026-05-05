@@ -5084,3 +5084,22 @@ input[type="color"]::-moz-color-swatch {
     font-size: 11px;
   }
 }
+
+.wm-server-stats{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  font-size:10px;
+  color:#7FB02E;
+  min-width:45px;
+  text-align:right;
+}
+
+.wm-hs{
+  font-weight:bold;
+  color:#9cff4f;
+}
+
+.wm-kill{
+  color:#d6ffb3;
+}
