@@ -8658,10 +8658,10 @@ var GoogleAuth;
         for (let v748 in p763) {
           if (v748 !== "propertyList") {
             if (Array.isArray(p763[v748])) {
-              p761[v748] = p761[v748].concat(p763[v748]);
+              p761[v748] = (Array.isArray(p761[v748]) ? p761[v748] : []).concat(p763[v748]);
             } else {
               p761[v748] = {
-                ...p761[v748],
+                ...(p761[v748] || {}),
                 ...p763[v748]
               };
             }
