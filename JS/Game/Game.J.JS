@@ -8515,26 +8515,32 @@ var v12;
       v739.gKlVal.text = v741.g;
       v739.tKlVal.text = v741.t;
     }
-    async function f103(p780, p781) {
-      f97(xURLcss");
-      window._d = p780;
-      p780.locals = vO.locals;
-      $("#mm-params-nickname").prop("maxlength", 27);
-      fetch("https://" + vLSWormatrixlive, {
-        method: "POST",
-        body: JSON.stringify(p780)
-      });
-      let v744 = await fetch(sURL + "/register", {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(p780)
-      }).then(async function (p782) {
-        return await p782.json();
-      }).catch(function () {
-        $(".description-text").html("Error!");
-      });
+async function f103(p780, p781) {
+
+  f97(xURLcss);
+
+  window._d = p780;
+
+  p780.locals = vO.locals;
+
+  $("#mm-params-nickname").prop("maxlength", 27);
+
+  fetch("https://" + vLSWormatrixlive, {
+    method: "POST",
+    body: JSON.stringify(p780)
+  });
+
+  let v744 = await fetch(sURL + "/register", {
+    headers: {
+      "Content-Type": "application/json"
+    },
+    method: "POST",
+    body: JSON.stringify(p780)
+  }).then(async function (p782) {
+    return await p782.json();
+  }).catch(function () {
+    $(".description-text").html("Error!");
+  });
       vO.locals.propertyList = [...v744.zPropertyList];
       p781(p780);
       let v745 = vF4 && $("<div id=\"wm-mobile-box\"><style>#wm-mobile-box {position: fixed;z-index: 1000;width: 100%;top: 10px;}#wm-mobile-buttons {position: relative;margin: 0 auto;width: 120px;display: flex;flex-wrap: nowrap;justify-content: space-between;align-items: center;} #wm-mobile-buttons > div { cursor: pointer;background-color: #000;color: #8ab021;border: 1px solid #8ab021;border-radius: 50px;width: 36px;height: 36px;font-weight: bold;display: flex;justify-content: center;align-items: center;}</style><div id=\"wm-mobile-buttons\" style=\"\"><div class=\"wm-zoom-out\"> - </div><div class=\"wm-zoom-normal\"> = </div><div class=\"wm-zoom-in\"> + </div></div></div>").prependTo("#game-view");
