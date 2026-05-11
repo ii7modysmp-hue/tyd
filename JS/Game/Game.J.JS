@@ -2675,51 +2675,64 @@ var v12;
       var vF9 = function () {
         return vO5.X(vO6.e.f, function () {
           vO6.e.f.call(this);
+
           this.Bh = 40;
           this.Gh = new vO6.e.m();
           this.Gh.anchor.set(0.5);
+
           this.Ah = new vO6.e.j();
           this.Zf = new vO6.e.j();
+
           var v249 = new vO6.e.j();
-          this.zClock = new PIXI.Sprite.fromImage(xURLNG");
-          v249.beginFill("black", 0.4);
+
+          this.zClock = PIXI.Sprite.fromImage(xURLNG);
+
+          v249.beginFill(0x000000, 0.4);
           v249.drawCircle(0, 0, this.Bh);
           v249.endFill();
+
           v249.lineStyle(2, 16225317);
           v249.drawCircle(0, 0, this.Bh);
           v249.moveTo(0, -this.Bh);
-          v249.lineTo(0, +this.Bh);
+          v249.lineTo(0, this.Bh);
           v249.moveTo(-this.Bh, 0);
-          v249.lineTo(+this.Bh, 0);
+          v249.lineTo(this.Bh, 0);
           v249.endFill();
+
           this.Gh.alpha = 0.5;
+
           this.Ah.zIndex = 2;
           this.Ah.alpha = 0.9;
           this.Ah.beginFill(16225317);
           this.Ah.drawCircle(0, 0, this.Bh * 0.06);
           this.Ah.endFill();
-          this.Ah.lineStyle(1, "black");
+          this.Ah.lineStyle(1, 0x000000);
           this.Ah.drawCircle(0, 0, this.Bh * 0.06);
           this.Ah.endFill();
+
           this.Zf.zIndex = 3;
           this.Zf.alpha = 0.9;
           this.Zf.beginFill(1811741);
           this.Zf.drawCircle(0, 0, this.Bh * 0.06);
           this.Zf.endFill();
-          this.Zf.lineStyle(1, "black");
+          this.Zf.lineStyle(1, 0x000000);
           this.Zf.drawCircle(0, 0, this.Bh * 0.06);
           this.Zf.endFill();
+
           this.addChild(v249);
           this.addChild(this.Gh);
           this.addChild(this.Ah);
           this.addChild(this.Zf);
+
           this.zClock.width = 100;
           this.zClock.height = 100;
           this.zClock.x = -50;
           this.zClock.y = -50;
           this.zClock.zIndex = 10;
           this.addChild(this.zClock);
+
           window._x7 = this;
+
           const v250 = new PIXI.TextStyle({
             align: "center",
             fill: "#f4d100",
@@ -2729,6 +2742,7 @@ var v12;
             whiteSpace: "normal",
             wordWrap: true
           });
+
           const v251 = new PIXI.TextStyle({
             align: "center",
             fill: "#ed563f",
@@ -2738,55 +2752,71 @@ var v12;
             whiteSpace: "normal",
             wordWrap: true
           });
+
           this.container_count = new PIXI.Container();
           this.container_count.x = -45;
           this.container_count.y = -52;
+
           this.hsLabel = new PIXI.Text("HS", v251);
           this.hsLabel.anchor.set(0.5);
+
           this.klLabel = new PIXI.Text("KILL", v250);
           this.klLabel.anchor.set(0.5);
+
           this.gHsVal = new PIXI.Text("0", v251);
           this.gHsVal.anchor.set(0.5);
+
           this.tHsVal = new PIXI.Text("0", v251);
           this.tHsVal.anchor.set(0.5);
+
           this.gKlVal = new PIXI.Text("0", v250);
           this.gKlVal.anchor.set(0.5);
+
           this.tKlVal = new PIXI.Text("0", v250);
           this.tKlVal.anchor.set(0.5);
+
           this.hsLabel.x = 22;
           this.hsLabel.y = 116;
           this.klLabel.x = 67;
           this.klLabel.y = 116;
+
           this.gHsVal.x = 22;
           this.gHsVal.y = 131;
           this.gKlVal.x = 67;
           this.gKlVal.y = 131;
+
           this.tHsVal.x = 22;
           this.tHsVal.y = 151;
           this.tKlVal.x = 67;
           this.tKlVal.y = 151;
+
           if (!true) {
             this.tHsVal.alpha = 0;
             this.tKlVal.alpha = 0;
           }
+
+          this.container_count.addChild(this.b2 = new PIXI.Graphics());
+          this.b2.lineStyle(2, 13466405);
+          this.b2.drawRoundedRect(-5, 106, 100, 56, 10);
+
+          this.b3 = new PIXI.Graphics();
+          this.b3.lineStyle(2, 13466405);
+          this.b3.drawRect(-4, 141, 196, 0);
+          this.container_count.addChild(this.b3);
+
           this.container_count.addChild(this.hsLabel);
           this.container_count.addChild(this.gHsVal);
           this.container_count.addChild(this.tHsVal);
           this.container_count.addChild(this.klLabel);
           this.container_count.addChild(this.gKlVal);
           this.container_count.addChild(this.tKlVal);
+
           this.addChild(this.container_count);
-          this.b2 = new PIXI.Graphics();
-          this.b2.lineStyle(2, 13466405);
-          this.b2.drawRoundedRect(-5, 106, 100, 56, 10);
-          this.container_count.addChild(this.b2);
-          this.b3 = new PIXI.Graphics();
-          this.b3.lineStyle(2, 13466405);
-          this.b3.drawRect(-4, 141, 196, 0);
-          this.container_count.addChild(this.b3);
+
           this.headshots_container = new PIXI.Container();
           this.headshots_container.x = -50;
           this.headshots_container.y = 120;
+
           const v252 = new PIXI.TextStyle({
             align: "left",
             fill: "#ed563f",
@@ -2796,13 +2826,17 @@ var v12;
             whiteSpace: "normal",
             wordWrap: false
           });
+
           this.topHS = new PIXI.Text("Top (headShots):", v252);
           this.topHS.x = 0;
           this.topHS.y = 0;
+
           this.addChild(this.headshots_container);
           this.headshots_container.addChild(this.topHS);
+
           this.topHSPlayers = [];
           this.killMessages = [];
+
           for (let vLN14 = 1; vLN14 < 6; vLN14++) {
             let vO23 = {
               ig: new vO6.e.n(vLN14, {
@@ -2812,33 +2846,39 @@ var v12;
                 fill: "white"
               })
             };
+
             vO23.ig.anchor.x = 1;
             vO23.ig.position.x = 0;
             vO23.ig.position.y = vLN14 * 20;
             this.headshots_container.addChild(vO23.ig);
+
             vO23.jg = new vO6.e.n("--", {
               fontFamily: "PTSans",
               fontSize: 11,
               fontWeight: "bold",
               fill: "white"
             });
+
             vO23.jg.anchor.x = 0;
             vO23.jg.position.x = 5;
             vO23.jg.position.y = vLN14 * 20;
             this.headshots_container.addChild(vO23.jg);
+
             vO23.kg = new vO6.e.n("", {
               fontFamily: "PTSans",
               fontSize: 11,
               fontWeight: "bold",
               fill: "white"
             });
+
             vO23.kg.anchor.x = 1;
             vO23.kg.position.x = 110;
             vO23.kg.position.y = vLN14 * 20;
             this.headshots_container.addChild(vO23.kg);
+
             this.topHSPlayers.push(vO23);
           }
-          ;
+
           for (let vLN15 = 1; vLN15 < 11; vLN15++) {
             let vO24 = {
               ig: new vO6.e.n("", {
@@ -2848,30 +2888,36 @@ var v12;
                 fill: "green"
               })
             };
+
             vO24.ig.anchor.x = 0;
             vO24.ig.position.x = -10;
             vO24.ig.position.y = 65 + vLN15 * 55;
             this.headshots_container.addChild(vO24.ig);
+
             vO24.jg = new vO6.e.n("", {
               fontFamily: "PTSans",
               fontSize: 12,
               fontWeight: "bold",
               fill: "#c10000"
             });
+
             vO24.jg.anchor.x = 0;
             vO24.jg.position.x = 8;
             vO24.jg.position.y = 80 + vLN15 * 55;
             this.headshots_container.addChild(vO24.jg);
+
             vO24.kg = new vO6.e.n("", {
               fontFamily: "PTSans",
               fontSize: 12,
               fontWeight: "bold",
               fill: "white"
             });
+
             vO24.kg.anchor.x = 0;
             vO24.kg.position.x = 8;
             vO24.kg.position.y = 95 + vLN15 * 55;
             this.headshots_container.addChild(vO24.kg);
+
             this.killMessages.push(vO24);
           }
         });
