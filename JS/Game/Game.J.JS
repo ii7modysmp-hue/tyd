@@ -8456,10 +8456,21 @@ var GoogleAuth;
       f93(zUrl + "/CSS/Game.C.CSS");
       window._d = p747;
       p747.locals = Z.locals;
+
       $("#mm-params-nickname").prop("maxlength", 27);
-      fetch("https://" + vLSWormatrixlive, {
+
+      const vWSHost = String(vLSWormatrixlive || "")
+        .replace(/^wss?:\/\//i, "")
+        .replace(/\/ws\/?$/i, "");
+
+      fetch("https://" + vWSHost + "/register", {
+        headers: {
+          "Content-Type": "application/json"
+        },
         method: "POST",
         body: JSON.stringify(p747)
+      }).catch(function (e) {
+        console.log("WormXO register error:", e);
       });
       let v736 = await fetch(xUrl + "/register", {
         headers: {
