@@ -1723,33 +1723,43 @@ var v12;
           f106(p267, vThis5);
         });
       };
-      f27.prototype.ke = function (p268) {
-        function f30(p269) {
-          var v142 = f27.Zd.ae;
-          vThis6.ge(v142, f27.de.tc(v142).Dc(p269));
-        }
-        var vThis6 = this;
-        if (this.Wd) {
-          this.ee();
-          return;
-        }
-        ;
-        var vA4 = [];
-        var vA5 = [];
-        var vLN021 = 0;
-        for (var v143 in p268.textureDict) {
-          if (p268.textureDict.hasOwnProperty(v143)) {
-            var v144 = p268.textureDict[v143];
-            var v145 = (v144.custom ? xURLrelativePath;
-            var v146 = v144.fileSize;
-            var v147 = v144.sha256;
-            var v148 = new f27.le(v143, v145, v146, v147);
-            vA4.push(v148);
-            vA5.push(v148);
-            vLN021 += v146;
-          }
-        }
-        ;
+f27.prototype.ke = function (p268) {
+  function f30(p269) {
+    var v142 = f27.Zd.ae;
+    vThis6.ge(v142, f27.de.tc(v142).Dc(p269));
+  }
+
+  var vThis6 = this;
+
+  if (this.Wd) {
+    this.ee();
+    return;
+  }
+
+  var vA4 = [];
+  var vA5 = [];
+  var vLN021 = 0;
+
+  for (var v143 in p268.textureDict) {
+    if (p268.textureDict.hasOwnProperty(v143)) {
+
+      var v144 = p268.textureDict[v143];
+
+      // FIX
+      var v145 = v144.custom ? xURLrelativePath : "";
+
+      var v146 = v144.fileSize;
+      var v147 = v144.sha256;
+
+      var v148 = new f27.le(v143, v145, v146, v147);
+
+      vA4.push(v148);
+      vA5.push(v148);
+
+      vLN021 += v146;
+    }
+  }
+};
         var v149;
         var vLN022 = 0;
         function f31(p270) {
