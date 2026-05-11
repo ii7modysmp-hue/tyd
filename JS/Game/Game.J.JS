@@ -1736,30 +1736,34 @@ f27.prototype.ke = function (p268) {
     return;
   }
 
-  var vA4 = [];
-  var vA5 = [];
-  var vLN021 = 0;
+        var vA4 = [];
+        var vA5 = [];
+        var vLN021 = 0;
 
-  for (var v143 in p268.textureDict) {
-    if (p268.textureDict.hasOwnProperty(v143)) {
+        for (var v143 in p268.textureDict) {
+          if (p268.textureDict.hasOwnProperty(v143)) {
+            var v144 = p268.textureDict[v143];
 
-      var v144 = p268.textureDict[v143];
+            var v145 = v144.custom ? xURLrelativePath : vO4.A.D + "/dynamic/assets/textures/";
 
-      // FIX
-      var v145 = v144.custom ? xURLrelativePath : "";
+            var v146 = v144.fileSize;
+            var v147 = v144.sha256;
+            var v148 = new f27.le(v143, v145, v146, v147);
 
-      var v146 = v144.fileSize;
-      var v147 = v144.sha256;
+            vA4.push(v148);
+            vA5.push(v148);
+            vLN021 += v146;
+          }
+        }
 
-      var v148 = new f27.le(v143, v145, v146, v147);
+        this.Xd = vA4;
+        this.Zd = vA5;
+        this.$d = vLN021;
 
-      vA4.push(v148);
-      vA5.push(v148);
-
-      vLN021 += v146;
+        f30(0);
     }
-  }
-};
+}
+      };
         var v149;
         var vLN022 = 0;
         function f31(p270) {
