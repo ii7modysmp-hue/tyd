@@ -8461,19 +8461,6 @@ var GoogleAuth;
 
       $("#mm-params-nickname").prop("maxlength", 27);
 
-      const vWSHost = String(vLSWormatrixlive || "")
-        .replace(/^wss?:\/\//i, "")
-        .replace(/\/ws\/?$/i, "");
-
-      fetch("https://" + vWSHost + "/register", {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(p747)
-      }).catch(function (e) {
-        console.log("WormXO register error:", e);
-      });
       let v736 = await fetch(xUrl + "/register", {
         headers: {
           "Content-Type": "application/json"
@@ -8484,6 +8471,7 @@ var GoogleAuth;
         return await p749.json();
       }).catch(function () {
         $(".description-text").html("Error!");
+        return {};
       });
 Z.locals.propertyList = Array.isArray(v736.zPropertyList) ? [...v736.zPropertyList] : [];
       p748(p747);
