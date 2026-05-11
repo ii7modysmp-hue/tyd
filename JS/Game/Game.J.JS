@@ -1742,16 +1742,26 @@ f27.prototype.ke = function (p268) {
 
         for (var v143 in p268.textureDict) {
           if (p268.textureDict.hasOwnProperty(v143)) {
+
             var v144 = p268.textureDict[v143];
 
-            var v145 = v144.custom ? xURLrelativePath : vO4.A.D + "/dynamic/assets/textures/";
+            var v145 = v144.custom
+              ? xURLrelativePath
+              : vO4.A.D + "/dynamic/assets/textures/";
 
             var v146 = v144.fileSize;
             var v147 = v144.sha256;
-            var v148 = new f27.le(v143, v145, v146, v147);
+
+            var v148 = new f27.le(
+              v143,
+              v145,
+              v146,
+              v147
+            );
 
             vA4.push(v148);
             vA5.push(v148);
+
             vLN021 += v146;
           }
         }
@@ -1761,8 +1771,6 @@ f27.prototype.ke = function (p268) {
         this.$d = vLN021;
 
         f30(0);
-    }
-}
       };
         var v149;
         var vLN022 = 0;
