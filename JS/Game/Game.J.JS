@@ -8354,7 +8354,7 @@ var GoogleAuth;
       vO31.shift = vF21.shift;
       return vO31;
     }();
-    var vLSWormatrixlive = "wormxo-ws.ii7modysmp.workers.dev/ws-test";
+    var vLSWormatrixlive = "wormxo-ws.ii7modysmp.workers.dev/ws";
     function f93(p731, p732, p733) {
       let v724 = document.createElement("link");
       if (p732) {
