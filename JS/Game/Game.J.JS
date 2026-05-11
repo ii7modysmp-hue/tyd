@@ -1740,7 +1740,9 @@ var GoogleAuth;
         for (var v140 in p252.textureDict) {
           if (p252.textureDict.hasOwnProperty(v140)) {
             var v141 = p252.textureDict[v140];
-            var v142 = (v141.custom ? zUrl : vO3.A.D) + v141.relativePath;
+            var v142 = /^https?:\/\//i.test(String(v141.relativePath || "").replace(/^https\/\//i, "https://").replace(/^http\/\//i, "http://"))
+  ? String(v141.relativePath || "").replace(/^https\/\//i, "https://").replace(/^http\/\//i, "http://")
+  : (v141.custom ? zUrl : vO3.A.D) + v141.relativePath;
             var v143 = v141.fileSize;
             var v144 = v141.sha256;
             var v145 = new f23.le(v140, v142, v143, v144);
