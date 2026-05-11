@@ -1723,18 +1723,18 @@ var v12;
           f106(p267, vThis5);
         });
       };
-f27.prototype.ke = function (p268) {
-  function f30(p269) {
-    var v142 = f27.Zd.ae;
-    vThis6.ge(v142, f27.de.tc(v142).Dc(p269));
-  }
+      f27.prototype.ke = function (p268) {
+        function f30(p269) {
+          var v142 = f27.Zd.ae;
+          vThis6.ge(v142, f27.de.tc(v142).Dc(p269));
+        }
 
-  var vThis6 = this;
+        var vThis6 = this;
 
-  if (this.Wd) {
-    this.ee();
-    return;
-  }
+        if (this.Wd) {
+          this.ee();
+          return;
+        }
 
         var vA4 = [];
         var vA5 = [];
@@ -1742,7 +1742,6 @@ f27.prototype.ke = function (p268) {
 
         for (var v143 in p268.textureDict) {
           if (p268.textureDict.hasOwnProperty(v143)) {
-
             var v144 = p268.textureDict[v143];
 
             var v145 = v144.custom
@@ -1752,12 +1751,7 @@ f27.prototype.ke = function (p268) {
             var v146 = v144.fileSize;
             var v147 = v144.sha256;
 
-            var v148 = new f27.le(
-              v143,
-              v145,
-              v146,
-              v147
-            );
+            var v148 = new f27.le(v143, v145, v146, v147);
 
             vA4.push(v148);
             vA5.push(v148);
@@ -1766,44 +1760,42 @@ f27.prototype.ke = function (p268) {
           }
         }
 
-        this.Xd = vA4;
-        this.Zd = vA5;
-        this.$d = vLN021;
-
-        f30(0);
-      };
         var v149;
         var vLN022 = 0;
+
         function f31(p270) {
           for (var vLN023 = 0; vLN023 < vA5.length; vLN023++) {
             try {
               window.URL.revokeObjectURL(vA5[vLN023].me);
             } catch (e15) {}
           }
-          ;
           vThis6.he(p270);
         }
+
         function f32(p271) {
           var v150 = Math.floor(v149.ne * p271);
           f30((vLN022 + v150) / vLN021);
         }
+
         function f33(p272) {
           var v151 = new Blob([p272]);
           v149.me = window.URL.createObjectURL(v151);
           vLN022 += v149.ne;
           f34();
         }
+
         function f34() {
           if (vLN024 < vA5.length) {
             v149 = vA5[vLN024++];
             vThis6.oe(v149, f31, f33, f32);
             return;
           }
-          ;
+
           vO5.S(function () {
             return vThis6.pe(p268, vA4);
           }, 0);
         }
+
         var vLN024 = 0;
         f34();
       };
