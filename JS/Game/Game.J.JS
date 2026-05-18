@@ -1,83 +1,157 @@
 'use strict';
 
 const zUrl = "https://wormy.wormatrix.fun";
-const xUrl = "https://wm.wormy.online";
+const xUrl = "https://wormy.wormatrix.fun";
+
 var Z = {
   positions: {
     m: 190,
     l: 250,
     p: 170
   },
-  aMp: [..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"],
-  playerList: [],
-  freezePlayerList: false,
-  locals: {
-    hs: {
-      g: 0,
-      t: 0
-    },
-    kills: {
-      g: 0,
-      t: 0
-    },
-    died: 0,
-    start: new Date(),
-    finish: 0,
-    saveGame: false,
-    idReplaceSkin: null,
-    t: false,
-    streamer: false,
-    show_players_around: false,
-    propertyIds: {},
-    blackList: [],
-    blackListShowName: [],
-    bName: "ירושלים IL",
-    bSkin: 131
+aMp: [..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"],
+playerList: [],
+freezePlayerList: false,
+
+locals: {
+  hs: {
+    g: 0,
+    t: 0
   },
-  bName: "✡️ {{ID}} ✡️🕎✅✅",
-  encodeOffset: 61697,
-  validSkinId: function (p) {
-    if (p >= 399 && p <= 999) {
-      return 32;
+  kills: {
+    g: 0,
+    t: 0
+  },
+  died: 0,
+  start: new Date(),
+  finish: 0,
+  saveGame: false,
+  idReplaceSkin: null,
+  t: false,
+  streamer: false,
+  show_players_around: false,
+  propertyIds: {},
+  blackList: [],
+  blackListShowName: [],
+  bName: "ירושלים IL",
+  bSkin: 131
+},
+
+bName: "✡️ {{ID}} ✡️🕎✅✅",
+encodeOffset: 61697,
+
+validSkinId: function (p) {
+  p = parseInt(p, 10);
+  if (!Number.isFinite(p) || p <= 0) return 1001;
+  return p;
+},
+
+validPId: function (p2) {
+  let vParseInt = parseInt(this.locals.propertyIds[p2], 10);
+  return this.encodeOffset + (
+    Number.isFinite(vParseInt) && vParseInt > 0 ? vParseInt : 0
+  );
+},
+
+encodeName: function (p3) {
+  p3 = String(p3 || "").substring(0, 27);
+
+  this.locals.propertyIds = this.locals.propertyIds || {};
+  var propertyIds = this.locals.propertyIds;
+
+  var eyesId = parseInt(propertyIds.eyesId, 10);
+  var mouthId = parseInt(propertyIds.mouthId, 10);
+  var glassesId = parseInt(propertyIds.glassesId, 10);
+  var hatId = parseInt(propertyIds.hatId, 10);
+  var skinId = parseInt(propertyIds.skinId, 10);
+
+  if (!Number.isFinite(eyesId) || eyesId < 0) eyesId = 0;
+  if (!Number.isFinite(mouthId) || mouthId < 0) mouthId = 0;
+  if (!Number.isFinite(glassesId) || glassesId < 0) glassesId = 0;
+  if (!Number.isFinite(hatId) || hatId < 0) hatId = 0;
+
+  if (!Number.isFinite(skinId) || skinId <= 0) {
+    var savedSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
+
+    if (Number.isFinite(savedSkin) && savedSkin > 0) {
+      skinId = savedSkin;
+      propertyIds.skinId = savedSkin;
+
+      if (typeof this.saveLocal === "function") {
+        this.saveLocal();
+      }
     } else {
-      return p;
+      skinId = 21;
     }
-  },
-  validPId: function (p2) {
-    let vParseInt = parseInt(this.locals.propertyIds[p2]);
-    return this.encodeOffset + (vParseInt && vParseInt >= 399 && vParseInt <= 999 && vParseInt || 0);
-  },
-  encodeName: function (p3) {
-    p3 = p3.substring(0, 27);
-    return p3 + " ".repeat(27 - p3.length) + String.fromCharCode(..."eyesId,mouthId,glassesId,hatId,skinId".split(",").map(p4 => {
-      return this.validPId(p4);
-    }));
-  },
-  decodeName: function (p5) {
-    let v = p5.substring(27).split("").map(p6 => {
-      return p6.charCodeAt() - this.encodeOffset;
-    });
-    if (v.length == 5 && v.every(p7 => {
-      return p7 >= 0;
-    })) {
-      return [p5.substring(0, 27), v];
-    } else {
-      return [p5, Array(5).fill(0)];
-    }
-  },
-  loadLocals: function () {
-    let v2 = localStorage.getItem("zLocals");
-    let v3 = typeof v2 !== "undefined" && v2 !== null ? JSON.parse(v2) : {};
-    for (let v4 in v3) {
-      this.locals[v4] = v3[v4];
-    }
-  },
-  saveLocal: function () {
-    localStorage.setItem("zLocals", JSON.stringify(this.locals));
   }
+
+  return p3 + " ".repeat(27 - p3.length) + String.fromCharCode(
+    this.encodeOffset + eyesId,
+    this.encodeOffset + mouthId,
+    this.encodeOffset + glassesId,
+    this.encodeOffset + hatId,
+    this.encodeOffset + skinId
+  );
+},
+
+decodeName: function (p5) {
+  let v = p5.substring(27).split("").map(p6 => {
+    return p6.charCodeAt() - this.encodeOffset;
+  });
+
+  if (v.length == 5 && v.every(p7 => {
+    return p7 >= 0;
+  })) {
+    return [p5.substring(0, 27), v];
+  } else {
+    return [p5, Array(5).fill(0)];
+  }
+},
+
+loadLocals: function () {
+  let v2 = localStorage.getItem("zLocals");
+  let v3 = typeof v2 !== "undefined" && v2 !== null ? JSON.parse(v2) : {};
+
+  for (let v4 in v3) {
+    this.locals[v4] = v3[v4];
+  }
+
+  this.locals.propertyIds = this.locals.propertyIds || {};
+},
+
+saveLocal: function () {
+  this.locals.propertyIds = this.locals.propertyIds || {};
+  localStorage.setItem("zLocals", JSON.stringify(this.locals));
+}
 };
+
 Z.loadLocals();
 Z.localsLoded = false;
+
+(function restoreWormatrixAppearance() {
+  try {
+    Z.locals.propertyIds = Z.locals.propertyIds || {};
+
+    ["skinId", "hatId", "eyesId", "mouthId", "glassesId"].forEach(function (key) {
+      var saved = parseInt(localStorage.getItem("wormatrix_" + key), 10);
+
+      if (Number.isFinite(saved) && saved >= 0) {
+        Z.locals.propertyIds[key] = saved;
+      }
+    });
+
+    var oldSkin = parseInt(localStorage.getItem("wormatrix_selected_skin"), 10);
+    if (Number.isFinite(oldSkin) && oldSkin > 0) {
+      Z.locals.propertyIds.skinId = oldSkin;
+      localStorage.setItem("wormatrix_skinId", String(oldSkin));
+    }
+
+    Z.saveLocal();
+  } catch (e) {
+    console.error("restore appearance error:", e);
+  }
+})();
+
 Object.defineProperty(Object.prototype, "dig", {
   value: function (..._0x9f75x6) {
     let vThis = this;
@@ -88,73 +162,178 @@ Object.defineProperty(Object.prototype, "dig", {
   }
 });
 Z.zSkin = $("<div id=\"z-skin-id\"></div>").prependTo(".store-view-cont");
-Z.zWear = $("<div id=\"wear-id\" style=\"margin-top: 10px; margin-left: 2px; position: absolute;\"></div>").insertAfter("#wear-view .wear-types");
+Z.zWear = $("<div id=\"wear-id\" style=\"margin-top: 10px; margin-left: 0px; position: absolute;\"></div>").insertAfter("#wear-view .wear-types");
+
 Z.setPId = function (p9, p10, p11) {
-  if (p11 && this.localsLoded) {
-    this.locals.propertyIds[p10.toLowerCase() + "Id"] = p9;
+  p9 = parseInt(p9, 10);
+  p10 = String(p10 || "").toUpperCase();
+
+  if (!Number.isFinite(p9) || p9 < 0) return;
+
+  this.locals.propertyIds = this.locals.propertyIds || {};
+
+  var keyMap = {
+    SKIN: "skinId",
+    HAT: "hatId",
+    EYES: "eyesId",
+    MOUTH: "mouthId",
+    MOUNTH: "mouthId",
+    GLASSES: "glassesId"
+  };
+
+  var key = keyMap[p10] || (p10.toLowerCase() + "Id");
+
+  this.locals.propertyIds[key] = p9;
+  localStorage.setItem("wormatrix_" + key, String(p9));
+
+  if (p10 === "SKIN") {
+    localStorage.setItem("wormatrix_selected_skin", String(p9));
   }
-  (p10 == "SKIN" ? this.zSkin : this.zWear).html("ID: " + ("00" + p9).slice(-3));
+
+  if (typeof this.saveLocal === "function") {
+    this.saveLocal();
+  }
+
+  (p10 === "SKIN" ? this.zSkin : this.zWear)
+    .html("ID: " + ("00" + p9).slice(-3));
 };
+
+(function restoreWormatrixSelectedSkin() {
+  try {
+    Z.locals.propertyIds = Z.locals.propertyIds || {};
+
+    var savedSkin =
+      parseInt(localStorage.getItem("wormatrix_selected_skin"), 10) ||
+      parseInt(Z.locals.propertyIds.skinId, 10);
+
+    if (Number.isFinite(savedSkin) && savedSkin > 0) {
+      Z.locals.propertyIds.skinId = savedSkin;
+      Z.saveLocal();
+      Z.zSkin.html("ID: " + ("00" + savedSkin).slice(-3));
+    }
+  } catch (e) {
+    console.error("restore skin error:", e);
+  }
+})();
+
 Z.customSkin = function () {
   let v5 = localStorage.getItem("customSkin");
   return v5 && JSON.parse(v5);
 }();
+
 Z.customWear = function () {
   let v6 = localStorage.getItem("customWear");
   return v6 && JSON.parse(v6);
 }();
+
 var Zzm = 1;
+
 [...document.querySelectorAll("#loa831pibur0w4gv, #unl6wj4czdl84o9b")].map(p12 => {
   return p12.remove();
 });
+
 function loadJoy() {
-  let v7 = Z.locals.joystick || {};
-  let vF = function () {
-    let vO = {
-      checked: true,
-      color: v7.color || "red",
-      size: v7.size || 110
-    };
-    let v8 = (v7.pxy || 110) + "px";
-    if ((v7.mode || "dynamic") !== "dynamic") {
-      vO.mode = "static";
-      vO.position = {
-        bottom: v8
-      };
-      vO.position[v7.position === "L" ? "left" : "right"] = v8;
-    }
-    ;
-    return vO;
-  }();
-  let vF2 = function () {
-    joystick.on("start end", function (p13, p14) {
-      console.log("ZNippleJS", p13, p14);
-    }).on("move", function (p15, p16) {
-      let v9 = p16.angle.radian <= Math.PI ? p16.angle.radian * -1 : Math.PI - (p16.angle.radian - Math.PI);
-      Z.eventMain.Pn = v9;
-    });
-  };
-  let vF3 = function () {
-    if (joystick) {
-      joystick.destroy();
-    }
-    joystick = nipplejs.create(vF);
-    vF2();
-  };
-  if (isMobile && v7.checked) {
-    vF3();
+  if (!isMobile) return;
+
+  var gameView = document.getElementById("game-view");
+
+  if (!gameView || !gameWrap || gameView.style.display === "none") {
+    removeJoy();
+    return;
   }
-  try {} catch (e) {
-    console.error(e);
+
+  Z.locals.joystick = Z.locals.joystick || {
+    checked: true,
+    color: "red",
+    size: 90,
+    mode: "dynamic",
+    position: "L",
+    pxy: 95
+  };
+
+  if (typeof nipplejs === "undefined") {
+    console.error("nipplejs not loaded");
+    return;
   }
-}
-function removeJoy() {
+
   if (joystick) {
-    joystick.destroy();
+    try { joystick.destroy(); } catch (e) {}
+    joystick = null;
   }
+
+  joystick = nipplejs.create({
+    zone: gameWrap,
+    multitouch: false,
+    maxNumberOfNipples: 1,
+    color: "red",
+    size: 90,
+    threshold: 0.01,
+    fadeTime: 0,
+    restJoystick: true,
+    restOpacity: 0.85,
+    catchDistance: 190,
+    dynamicPage: true,
+    follow: true,
+    mode: "dynamic"
+  });
+
+  joystick.on("start", function () {
+    if (Z.eventMain) Z.eventMain.joystickActive = true;
+  });
+
+  joystick.on("move", function (e, data) {
+    if (!data || !data.angle) return;
+
+    let angle = data.angle.radian <= Math.PI
+      ? data.angle.radian * -1
+      : Math.PI - (data.angle.radian - Math.PI);
+
+    if (Z.eventMain) {
+      Z.eventMain.Pn = angle;
+      Z.eventMain.joystickActive = true;
+    }
+  });
+
+  joystick.on("end", function () {
+    if (Z.eventMain) Z.eventMain.joystickActive = false;
+  });
 }
-function setJoystickConig(p17) {
-  Z.locals.joystick = Z.locals.joystick || {};
+
+function removeJoy() {
+  try {
+    if (joystick) joystick.destroy();
+  } catch (e) {}
+  joystick = null;
+}
+
+function setJoystickConig() {
+  Z.locals.joystick = {
+    checked: true,
+    color: "red",
+    size: 90,
+    mode: "dynamic",
+    position: "L",
+    pxy: 95
+  };
+
+  Z.saveLocal();
+
+  if (!isMobile) return;
+
+  if (typeof nipplejs !== "undefined") {
+    removeJoy();
+    loadJoy();
+    return;
+  }
+
+  var s = document.createElement("script");
+  s.id = "mobileconfig";
+  s.src = "https://cdn.jsdelivr.net/npm/nipplejs@0.9.0/dist/nipplejs.min.js";
+  s.onload = function () {
+    removeJoy();
+    loadJoy();
+  };
+  document.head.appendChild(s);
 }
 var joystick;
 const isMobile = function () {
@@ -179,70 +358,89 @@ function _typeof(p19) {
     }
   })(p19);
 }
+
+
+
 var GoogleAuth;
+
 (function () {
   var vO2 = {};
   var vO3 = {};
   var vO4 = {};
   var vO5 = {};
+
   vO4.a = function (p22) {
     var v11 = new String();
     var vParseInt2 = parseInt(p22.substring(0, 2), 16);
+
     for (var vLN2 = 2; vLN2 < p22.length; vLN2 += 2) {
       var vParseInt3 = parseInt(p22.substring(vLN2, vLN2 + 2), 16);
-      vParseInt2 = 3793 + vParseInt2 * 4513 & 255;
+      vParseInt2 = (3793 + vParseInt2 * 4513) & 255;
       v11 += String.fromCharCode(vParseInt3 ^ vParseInt2);
     }
-    ;
+
     return v11;
   };
+
   window.addEventListener("load", function () {
-    document.getElementById("game-wrap").style.display = "block";
-    if (!function () {
-      (function (p23, p24, p25) {
-        function f(p26, p27) {
-          return _typeof(p26) === p27;
-        }
-        function f2() {
-          if (_typeof(p24.createElement) != "function") {
-            return p24.createElement(arguments[0]);
-          } else if (v14) {
-            return p24.createElementNS.call(p24, "http://www.w3.org/2000/svg", arguments[0]);
-          } else {
-            return p24.createElement.apply(p24, arguments);
+    var vGameWrap = document.getElementById("game-wrap");
+    if (vGameWrap) {
+      vGameWrap.style.display = "block";
+    }
+
+    if (
+      !function () {
+        (function (p23, p24, p25) {
+          function f(p26, p27) {
+            return _typeof(p26) === p27;
           }
-        }
-        var vA = [];
-        var vA2 = [];
-        var vO6 = {
-          _version: "3.3.1",
-          _config: {
-            classPrefix: "",
-            enableClasses: true,
-            enableJSClass: true,
-            usePrefixes: true
-          },
-          _q: [],
-          on: function (p28, p29) {
-            var vThis2 = this;
-            setTimeout(function () {
-              p29(vThis2[p28]);
-            }, 0);
-          },
-          addTest: function (p30, p31, p32) {
-            vA2.push({
-              name: p30,
-              fn: p31,
-              options: p32
-            });
-          },
-          addAsyncTest: function (p33) {
-            vA2.push({
-              name: null,
-              fn: p33
-            });
+
+          function f2() {
+            if (_typeof(p24.createElement) != "function") {
+              return p24.createElement(arguments[0]);
+            } else if (v14) {
+              return p24.createElementNS.call(
+                p24,
+                "http://www.w3.org/2000/svg",
+                arguments[0]
+              );
+            } else {
+              return p24.createElement.apply(p24, arguments);
+            }
           }
-        };
+
+          var vA = [];
+          var vA2 = [];
+
+          var vO6 = {
+            _version: "3.3.1",
+            _config: {
+              classPrefix: "",
+              enableClasses: true,
+              enableJSClass: true,
+              usePrefixes: true
+            },
+            _q: [],
+            on: function (p28, p29) {
+              var vThis2 = this;
+              setTimeout(function () {
+                p29(vThis2[p28]);
+              }, 0);
+            },
+            addTest: function (p30, p31, p32) {
+              vA2.push({
+                name: p30,
+                fn: p31,
+                options: p32
+              });
+            },
+            addAsyncTest: function (p33) {
+              vA2.push({
+                name: null,
+                fn: p33
+              });
+            }
+          };
         function f3() {}
         f3.prototype = vO6;
         f3 = new f3();
@@ -261,6 +459,418 @@ var GoogleAuth;
         f3.addTest("canvastext", function () {
           return f3.canvas !== false && _typeof(f2("canvas").getContext("2d").fillText) == "function";
         });
+      
+
+             let servers = {
+    Api_listServer: []
+};
+
+
+
+async function loadServers() {
+    try {
+        const response = await fetch("https://wm.wormy.online/servers");
+        const data = await response.json();
+
+        if (data && data.success) {
+            servers.Api_listServer = (data.servers || []).filter(s => s.serverUrl);
+            createServerList();
+        } else {
+            servers.Api_listServer = [];
+            alert("ERROR SERVER");
+        }
+    } catch (e) {
+        console.error("SERVER LOAD ERROR:", e);
+        servers.Api_listServer = [];
+        alert("ERROR SERVER");
+    }
+}
+
+const WM_FLAGS_SPRITE_URL = "https://wormy.wormatrix.fun/images/fl-ag.png";
+
+function wmFlagSprite(type) {
+    const flags = {
+        ae: 0,
+        br: 1,
+        us: 2,
+        de: 3,
+        fr: 4,
+        sg: 5,
+        jp: 6,
+        ca: 8,
+        au: 7,
+        mx: 9
+    };
+
+    const index = flags[String(type || "").toLowerCase()];
+    const safeIndex = typeof index === "number" ? index : flags.br;
+
+    return `<span class="wm-flag-sprite" data-flag="${type}" style="--flag-index:${safeIndex};"></span>`;
+}
+
+function injectWormatrixConnectUI() {
+    $(".description-text").replaceWith(`
+<div class="description-text">
+<style>
+  #load_page_apoiador {
+    position: relative;
+    width: 100%;
+    height: 12px;
+    margin: 0 auto;
+  }
+
+  #wormatrix_tabs {
+    width: 100%;
+    height: 285px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid rgba(127,176,46,.85);
+    margin: 6px auto;
+    padding: 4px;
+    background: rgba(0,0,0,.28);
+    border-radius: 8px;
+    box-sizing: border-box;
+    box-shadow: inset 0 0 10px rgba(127,176,46,.22);
+  }
+
+  .title-worm-world-connect img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+
+  .wormatrix-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    padding: 5px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(127,176,46,.65);
+    background: rgba(0,0,0,.22);
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+
+  .wormatrix-grid a {
+    width: 100%;
+    height: 33px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(127,176,46,.85);
+    border-radius: 9px;
+    padding: 3px;
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.18));
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: .15s ease;
+  }
+
+  .wormatrix-grid a:hover {
+    border-color: rgba(255,255,255,.9);
+    background: rgba(127,176,46,.24);
+    transform: translateY(-1px);
+  }
+
+  .wormatrix-grid a.active {
+    border: 2px solid #ff2424 !important;
+    box-shadow: none !important;
+    background: rgba(255,0,0,.08);
+  }
+
+  .wormatrix-flag {
+    width: 44px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    overflow: hidden;
+    background: rgba(255,255,255,.12);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.45),
+      0 1px 3px rgba(0,0,0,.35);
+  }
+
+  .wm-flag-sprite {
+    width: 32px;
+    height: 32px;
+    display: block;
+    background-image: url("${WM_FLAGS_SPRITE_URL}");
+    background-repeat: no-repeat;
+    background-size: 32px 320px;
+    background-position: 0 calc(var(--flag-index) * -32px);
+    transform: scale(.82);
+    transform-origin: center;
+  }
+
+  .tab-pane {
+    display: none;
+    padding: 2px;
+  }
+
+  .tab-pane.active {
+    display: block;
+  }
+
+  .selectSala {
+    width: calc(100% - 4px);
+    min-height: 76px;
+    margin: 4px 2px 7px;
+    padding: 8px 9px;
+    cursor: pointer;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 7px;
+    background: rgba(0,0,0,.24);
+    border: 1px solid rgba(127,176,46,.85);
+    text-align: left;
+    text-shadow: 0 1px 2px #000;
+    box-sizing: border-box;
+    overflow: hidden;
+    line-height: 1.45;
+  }
+
+  .selectSala:hover {
+    background: rgba(127,176,46,.35) !important;
+    color: #fff !important;
+    border-color: #ff2424 !important;
+  }
+
+  .selectSala img {
+    max-width: 34px !important;
+    max-height: 34px !important;
+    border-radius: 7px;
+    display: block;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 380px) {
+    #wormatrix_tabs {
+      height: 285px;
+      padding: 3px;
+    }
+
+    .wormatrix-grid {
+      gap: 4px;
+      padding: 4px;
+    }
+
+    .wormatrix-grid a {
+      height: 31px;
+      border-radius: 8px;
+      padding: 2px;
+    }
+
+    .wormatrix-flag {
+      width: 39px;
+      height: 23px;
+      border-radius: 6px;
+    }
+
+    .wm-flag-sprite {
+      transform: scale(.74);
+    }
+
+    .selectSala {
+      min-height: 72px;
+      font-size: 11px;
+    }
+  }
+</style>
+
+<div id="load_page_apoiador" style="position:relative;">
+  <div style="
+    position:absolute;
+    top:-35px;
+    left:50%;
+    transform:translateX(-50%);
+    width:106%;
+    height:40px;
+    background:#ffffff;
+    border-radius:6px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.25);
+    z-index:0;
+  "></div>
+
+  <div class="title-worm-world-connect" style="
+    position:absolute;
+    top:-19px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:1;
+    width:92%;
+    text-align:center;
+    font-weight:bold;
+    color:#222;
+    font-size:12px;
+    line-height:20px;
+    white-space:nowrap;
+  ">
+    <img src="https://wormy.wormatrix.fun/images/logo.png" width="20" align="center" alt="" />
+    Worm Matrix Connect
+  </div>
+</div>
+
+<div id="wormatrix_tabs">
+  <div class="wormatrix-grid">
+    <a href="#tabs9" class="active" data-flag="ae"><span class="wormatrix-flag">${wmFlagSprite("ae")}</span></a>
+    <a href="#tabs0" data-flag="br"><span class="wormatrix-flag">${wmFlagSprite("br")}</span></a>
+    <a href="#tabs1" data-flag="us"><span class="wormatrix-flag">${wmFlagSprite("us")}</span></a>
+    <a href="#tabs4" data-flag="de"><span class="wormatrix-flag">${wmFlagSprite("de")}</span></a>
+    <a href="#tabs5" data-flag="fr"><span class="wormatrix-flag">${wmFlagSprite("fr")}</span></a>
+
+    <a href="#tabs6" data-flag="sg"><span class="wormatrix-flag">${wmFlagSprite("sg")}</span></a>
+    <a href="#tabs7" data-flag="jp"><span class="wormatrix-flag">${wmFlagSprite("jp")}</span></a>
+    <a href="#tabs2" data-flag="ca"><span class="wormatrix-flag">${wmFlagSprite("ca")}</span></a>
+    <a href="#tabs8" data-flag="au"><span class="wormatrix-flag">${wmFlagSprite("au")}</span></a>
+    <a href="#tabs3" data-flag="mx"><span class="wormatrix-flag">${wmFlagSprite("mx")}</span></a>
+  </div>
+
+  <div class="tab-pane servers-brazil" id="tabs0"></div>
+  <div class="tab-pane servers-eeuu" id="tabs1"></div>
+  <div class="tab-pane servers-canada" id="tabs2"></div>
+  <div class="tab-pane servers-mexico" id="tabs3"></div>
+  <div class="tab-pane servers-germany" id="tabs4"></div>
+  <div class="tab-pane servers-france" id="tabs5"></div>
+  <div class="tab-pane servers-singapore" id="tabs6"></div>
+  <div class="tab-pane servers-japan" id="tabs7"></div>
+  <div class="tab-pane servers-australia" id="tabs8"></div>
+  <div class="tab-pane active servers-ae" id="tabs9"></div>
+</div>
+</div>
+`);
+}
+
+function getRegionContainer(region) {
+    const map = {
+        peru: ".servers-brazil", br: ".servers-brazil", brazil: ".servers-brazil",
+        eeuu: ".servers-eeuu", usa: ".servers-eeuu", us: ".servers-eeuu",
+        canada: ".servers-canada", ca: ".servers-canada",
+        mexico: ".servers-mexico", mx: ".servers-mexico",
+        germania: ".servers-germany", germany: ".servers-germany", de: ".servers-germany",
+        francia: ".servers-france", france: ".servers-france", fr: ".servers-france",
+        singapur: ".servers-singapore", singapore: ".servers-singapore", sg: ".servers-singapore",
+        japon: ".servers-japan", japan: ".servers-japan", jp: ".servers-japan",
+        australia: ".servers-australia", au: ".servers-australia",
+        granbretana: ".servers-ae", uk: ".servers-ae", gb: ".servers-ae", ae: ".servers-ae"
+    };
+    return map[String(region || "").toLowerCase()] || ".servers-brazil";
+}
+
+function createServerList() {
+    $(".tab-pane").empty();
+
+    for (let a = 0; a < servers.Api_listServer.length; a++) {
+        const serverUrl = servers.Api_listServer[a].serverUrl;
+        const serverName = servers.Api_listServer[a].name || serverUrl;
+        const region = servers.Api_listServer[a].region;
+        const image = servers.Api_listServer[a].image || "";
+
+        const item = document.createElement("p");
+        item.id = "wormatrix_room_item_" + a;
+        item.className = "selectSala";
+        item.value = serverUrl;
+
+        item.innerHTML = `
+            <div style="
+                width:100%;
+                display:flex;
+                align-items:center;
+                gap:8px;
+                overflow:hidden;
+            ">
+                <img src="${image}"
+                     onerror="this.style.display='none';"
+                     style="
+                        width:34px;
+                        height:34px;
+                        min-width:34px;
+                        min-height:34px;
+                        object-fit:cover;
+                        border-radius:7px;
+                        border:1px solid rgba(127,176,46,.85);
+                        background:rgba(0,0,0,.25);
+                     ">
+                <div style="
+                    flex:1;
+                    overflow:hidden;
+                    white-space:normal;
+                    line-height:1.35;
+                ">
+                    <div style="
+                        color:#fff;
+                        font-weight:bold;
+                        font-size:13px;
+                        text-shadow:0 1px 2px #000;
+                    ">${serverName}</div>
+
+                    <div style="
+                        color:rgba(255,255,255,.65);
+                        font-size:10px;
+                        margin-top:2px;
+                        overflow:hidden;
+                        text-overflow:ellipsis;
+                        white-space:nowrap;
+                    ">${serverUrl}</div>
+                </div>
+            </div>
+        `;
+
+        $(item).attr("data-region", region);
+        $(item).attr("data-server-url", serverUrl);
+        $(item).attr("title", serverUrl);
+
+        $(getRegionContainer(region)).prepend(item);
+
+        $(item).on("click", function () {
+            const selectedServer = $(this).attr("data-server-url") || this.value;
+
+            if (window._x7 && typeof window._x7.setServer === "function") {
+                window._x7.setServer(selectedServer);
+            }
+
+            if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
+                window._x7.containerImgS.texture = window._x7.onclickServer;
+            }
+
+            if (typeof retundFlagError === "function") retundFlagError();
+
+            window.server_url = selectedServer;
+$("#mm-action-play").click();
+        });
+    }
+}
+
+function bindWormatrixTabs() {
+    $("#wormatrix_tabs .wormatrix-grid a").off("click").on("click", function (e) {
+        e.preventDefault();
+
+        const target = $(this).attr("href");
+        const flagKey = $(this).attr("data-flag");
+
+        $("#wormatrix_tabs .wormatrix-grid a").removeClass("active");
+        $(this).addClass("active");
+
+        $("#wormatrix_tabs .tab-pane").removeClass("active").hide();
+        $(target).addClass("active").fadeIn(160);
+
+        if (typeof theoKzObjects !== "undefined") theoKzObjects.flag = flagKey;
+
+        if (window._x7 && window._x7.containerImgS && window._x7.onclickServer) {
+            window._x7.containerImgS.texture = window._x7.onclickServer;
+        }
+
+        if (typeof retundFlagError === "function") retundFlagError();
+    });
+}
+
+injectWormatrixConnectUI();
+bindWormatrixTabs();
+loadServers();
+
         (function () {
           var v15;
           var v16;
@@ -685,91 +1295,28 @@ var GoogleAuth;
       };
       return _0x9f75x19;
     }();
-    vO4.ya = function () {
-      function _0x9f75x19() {
-        $("#adbl-1").text(vO4.O("index.game.antiadblocker.msg1"));
-        $("#adbl-2").text(vO4.O("index.game.antiadblocker.msg2"));
-        $("#adbl-3").text(vO4.O("index.game.antiadblocker.msg3"));
-        $("#adbl-4").text(vO4.O("index.game.antiadblocker.msg4").replace("{0}", 10));
-        $("#adbl-continue span").text(vO4.O("index.game.antiadblocker.continue"));
-        vO5.b.d($("#adbl-continue"), 1);
-        vO5.b.c(v$2, 500);
-        var f6 = 10;
-        for (var vLN02 = 0; vLN02 < 10; vLN02++) {
-          vO4.S(function () {
-            f6--;
-            $("#adbl-4").text(vO4.O("index.game.antiadblocker.msg4").replace("{0}", f6));
-            if (f6 === 0) {
-              try {
-                ga("send", "event", "antiadblocker", vO3.A.B + "_complete");
-              } catch (e4) {}
-              ;
-              vO5.b.c($("#adbl-continue"), 200);
-            }
-          }, (vLN02 + 1) * 1000);
-        }
+vO4.ya = function () {
+  var vO7 = {};
+
+  vO7.za = function (p99) {
+    try {
+      if (typeof p99 === "function") {
+        p99(true);
       }
-      var v62 = false;
-      function f7() {}
-      var vO7 = {};
-      var vLS1eaom01c3pxu9wd3 = "1eaom01c3pxu9wd3";
-      var v$ = $("#" + vLS1eaom01c3pxu9wd3);
-      var vLSJDHnkHtYwyXyVgG9 = "JDHnkHtYwyXyVgG9";
-      var v$2 = $("#" + vLSJDHnkHtYwyXyVgG9);
-      $("#adbl-continue").click(function () {
-        v$2.fadeOut(500);
-        f7(false);
-      });
-      vO7.za = function (p99) {
-        f7 = p99;
-        if (!v62) {
-          try {
-            aiptag.cmd.player.push(function () {
-              var vO8 = {
-                AD_WIDTH: 960,
-                AD_HEIGHT: 540,
-                AD_FULLSCREEN: true,
-                AD_CENTERPLAYER: false,
-                LOADING_TEXT: "loading advertisement"
-              };
-              vO8.PREROLL_ELEM = function () {
-                return document.getElementById(vLS1eaom01c3pxu9wd3);
-              };
-              vO8.AIP_COMPLETE = function (p100) {
-                f7(true);
-                vO5.b.d(v$, 1);
-                vO5.b.d(v$2, 1);
-                try {
-                  ga("send", "event", "preroll", vO3.A.B + "_complete");
-                } catch (e5) {}
-              };
-              vO8.AIP_REMOVE = function () {};
-              aiptag.adplayer = new aipPlayer(vO8);
-            });
-            v62 = true;
-          } catch (e6) {}
-        }
-      };
-      vO7.Aa = function () {
-        if (_typeof(aiptag.adplayer) !== "undefined") {
-          try {
-            ga("send", "event", "preroll", vO3.A.B + "_request");
-          } catch (e7) {}
-          ;
-          vO5.b.c(v$, 1);
-          aiptag.cmd.player.push(function () {
-            aiptag.adplayer.startPreRoll();
-          });
-        } else {
-          try {
-            ga("send", "event", "antiadblocker", vO3.A.B + "_start");
-          } catch (e8) {}
-          ;
-          _0x9f75x19();
-        }
-      };
-      return vO7;
-    };
+    } catch (e) {}
+  };
+
+  vO7.Aa = function () {
+    try {
+      $("#JDHnkHtYwyXyVgG9").hide();
+      $("#adbl-continue").show();
+      $("#adbl-continue").trigger("click");
+    } catch (e) {}
+    return true;
+  };
+
+  return vO7;
+};
     vO4.Ba = function (p101, p102) {
       var v$3 = $("#" + p101);
       var vP102 = p102;
@@ -1408,7 +1955,7 @@ var GoogleAuth;
           this._c.visible = false;
         };
         v114.prototype.md = function (p222, p223, p224, p225) {
-          this.dd.Pc.visible = true;
+        this.dd.Pc.visible = true;
           this.dd.Pc.alpha = vO4._(this.dd.Pc.alpha, p222.nd ? 0.9 : 0.2, p225, 0.0025);
           this.dd.jd(p223);
         };
@@ -1740,9 +2287,18 @@ var GoogleAuth;
         for (var v140 in p252.textureDict) {
           if (p252.textureDict.hasOwnProperty(v140)) {
             var v141 = p252.textureDict[v140];
-            var v142 = /^https?:\/\//i.test(String(v141.relativePath || "").replace(/^https\/\//i, "https://").replace(/^http\/\//i, "http://"))
-  ? String(v141.relativePath || "").replace(/^https\/\//i, "https://").replace(/^http\/\//i, "http://")
-  : (v141.custom ? zUrl : vO3.A.D) + v141.relativePath;
+            var vPath = String(v141.relativePath || "").trim();
+var vBase = v141.custom ? zUrl : vO3.A.D;
+var vIsFullUrl =
+  /^https?:\/\//i.test(vPath) ||
+  /^data:/i.test(vPath) ||
+  /^blob:/i.test(vPath);
+
+if (!vIsFullUrl && vPath && vPath.charAt(0) !== "/") {
+  vPath = "/" + vPath;
+}
+
+var v142 = vIsFullUrl ? vPath : (vBase + vPath);
             var v143 = v141.fileSize;
             var v144 = v141.sha256;
             var v145 = new f23.le(v140, v142, v143, v144);
@@ -1788,23 +2344,62 @@ var GoogleAuth;
         f30();
       };
       f23.prototype.oe = function (p257, p258, p259, p260) {
-        $.ajax({
-          type: "GET",
-          url: p257.qe,
-          xhrFields: {
-            responseType: "arraybuffer",
-            onprogress: function (p261) {
-              if (p261.lengthComputable) {
-                p260(p261.loaded / p261.total);
-              }
-            }
-          }
-        }).fail(function () {
-          p258(new Error());
-        }).done(function (p262) {
-          p259(p262);
-        });
-      };
+  function b64ToArrayBuffer(b64) {
+    var binary = atob(b64);
+    var len = binary.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  function useFallback() {
+    try {
+      console.warn("BMW fallback image used for missing asset:", p257 && p257.qe);
+      if (typeof p260 === "function") {
+        p260(1);
+      }
+
+      // 1x1 transparent PNG
+      var fallbackBuffer = b64ToArrayBuffer(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4////fwAJ+wP9KobjigAAAABJRU5ErkJggg=="
+      );
+
+      p259(fallbackBuffer);
+    } catch (e) {
+      console.error("BMW fallback build error:", e);
+      p258(new Error("fallback_failed"));
+    }
+  }
+
+  $.ajax({
+    type: "GET",
+    url: p257.qe,
+    xhrFields: {
+      responseType: "arraybuffer",
+      onprogress: function (p261) {
+        if (p261.lengthComputable && typeof p260 === "function") {
+          p260(p261.loaded / p261.total);
+        }
+      }
+    }
+  }).fail(function (xhr) {
+    var status = xhr && xhr.status;
+    if (status === 404 || status === 0 || status === 403) {
+      useFallback();
+      return;
+    }
+
+    useFallback();
+  }).done(function (p262) {
+    if (!p262 || (p262.byteLength || 0) === 0) {
+      useFallback();
+      return;
+    }
+    p259(p262);
+  });
+};
       f23.prototype.pe = function (p263, p264) {
         function f31(p265) {
           var v149 = f23.Zd.be;
@@ -2404,17 +2999,32 @@ var GoogleAuth;
         }
       };
       v217.prototype.Dg = function (p336, p337) {
-        f97("count", p336, p337);
-        if (p336) {
-          var vF43 = f43(vO4.O("index.game.floating.headshot"), true);
-          this.addChild(vF43);
-          this.Ag.push(vF43);
-        } else {
-          var vF432 = f43(vO4.O("index.game.floating.wellDone"), false);
-          this.addChild(vF432);
-          this.Ag.push(vF432);
-        }
-      };
+    f97("count", p336, p337);
+    
+    var killStyle = localStorage.getItem("wm_kill_msg_type") || "default";
+    var hText, wText;
+
+    if (killStyle === "arabic1") {
+        hText = "ابلع هيدشوت بوت";
+        wText = "ولك الحيط يابوت";
+    } else if (killStyle === "arabic2") {
+        hText = "هاي شنوو هيدشوت";
+        wText = "هابوت تريد تبلعني";
+    } else {
+        hText = vO4.O("index.game.floating.headshot");
+        wText = vO4.O("index.game.floating.wellDone");
+    }
+
+    if (p336) {
+        var vF43 = f43(hText, true);
+        this.addChild(vF43);
+        this.Ag.push(vF43);
+    } else {
+        var vF432 = f43(wText, false);
+        this.addChild(vF432);
+        this.Ag.push(vF432);
+    }
+};
       v217.prototype.jg = function (p338, p339) {
         var v219 = vO3.L.Fg.sf.Eg;
         var v220 = v219.Df.width / v219.Df.resolution;
@@ -2723,9 +3333,23 @@ var GoogleAuth;
             whiteSpace: "normal",
             wordWrap: true
           });
+          const name = new PIXI.TextStyle({
+            fill: "#eefa4500",
+            fontSize: 11,
+            lineJoin: "round",
+            stroke: "#eefa4500",
+            fontFamily: "vuonghiep",
+            fontWeight: "bold"
+          });
           this.container_count = new PIXI.Container();
           this.container_count.x = -45;
           this.container_count.y = -52;
+          
+          this.value_server = new PIXI.Text("WFC", name);
+          this.value_server.x = 55;
+          this.value_server.y = 0;
+
+          
           this.hsLabel = new PIXI.Text("HS", v247);
           this.hsLabel.anchor.set(0.5);
           this.klLabel = new PIXI.Text("KILL", v246);
@@ -2750,6 +3374,9 @@ var GoogleAuth;
           this.tHsVal.y = 151;
           this.tKlVal.x = 67;
           this.tKlVal.y = 151;
+          this.setServer = function (_0xcc2052) {
+          this.value_server.text = _0xcc2052 || "WXY";
+        };
           if (!true) {
             this.tHsVal.alpha = 0;
             this.tKlVal.alpha = 0;
@@ -2760,6 +3387,19 @@ var GoogleAuth;
           this.container_count.addChild(this.klLabel);
           this.container_count.addChild(this.gKlVal);
           this.container_count.addChild(this.tKlVal);
+          this.container_count.addChild(this.value_server);
+
+          this.imgServerbase = PIXI.Texture.fromImage("https://wormy.wormatrix.fun/images/fl-g.png");
+
+
+          this.containerImgS = new PIXI.Sprite(this.imgServerbase);
+          this.containerImgS.anchor.set(0.5);
+          this.containerImgS.x = 0;
+          this.containerImgS.y = 8;
+          this.containerImgS.width = 0;
+          this.containerImgS.height = 0;
+          
+
           this.addChild(this.container_count);
           this.b2 = new PIXI.Graphics();
           this.b2.lineStyle(2, 13466405);
@@ -2787,6 +3427,7 @@ var GoogleAuth;
           this.addChild(this.headshots_container);
           this.headshots_container.addChild(this.topHS);
           this.topHSPlayers = [];
+          window.WormatrixHSTopUI = this;
           this.killMessages = [];
           for (let vLN13 = 1; vLN13 < 6; vLN13++) {
             let vO22 = {
@@ -6626,78 +7267,106 @@ var GoogleAuth;
           }
         }
       };
-      v549.prototype.bp = function (p637) {
-        var v568 = vO3.L.ao.Oj();
-        var v569 = this.hp();
-        if (v569.kj()) {
-          var v570 = v569.tc();
-          var v571 = vO3.L.ao.Wj(v570, vO2.Jj.Ij);
-          var v572 = false;
-          if (vO3.L.ao.Sj(v570, vO2.Jj.Ij)) {
-            v$84.hide();
-            v$86.hide();
-          } else if (v571 == null || v571.$j()) {
-            v572 = true;
-            v$84.show();
-            v$86.hide();
-            v$85.text(vO4.O("index.game.popup.menu.store.locked"));
-            if (v571 != null && v571.$j()) {
-              var v573 = vO3.L.bd.nc().textDict[v571.Um()];
-              if (v573 != null) {
-                v$85.text(vO4.P(v573));
-              }
-            }
-          } else {
-            v$84.hide();
-            v$86.show();
-            v$87.html(v571.Zj());
-          }
-          ;
-          v$82.html("");
-          if (v571 != null && v571.Vm() != null) {
-            var v574 = vO3.L.bd.nc().textDict[v571.Vm()];
-            if (v574 != null) {
-              v$82.html(vO4.V(vO4.P(v574)));
-            }
-          }
-          ;
-          this.Yo.om(v568.jn(v570));
-          this.Yo.Km(v572);
-          if (p637) {
-            vO3.L.ao.Vj(v570, vO2.Jj.Ij);
-          }
+v549.prototype.bp = function (p637) {
+  var v568 = vO3.L.ao.Oj();
+  var v569 = this.hp();
+
+  if (v569.kj()) {
+    var v570 = parseInt(v569.tc(), 10);
+    if (!Number.isFinite(v570) || v570 <= 0) return;
+
+    var v571 = vO3.L.ao.Wj(v570, vO2.Jj.Ij);
+
+    if (v571 != null) {
+      try {
+        v571.Rm = false;
+        v571.Sm = null;
+        v571.Pm = 0;
+      } catch (e) {}
+    }
+
+    if (vO3.L.ao.Sj(v570, vO2.Jj.Ij)) {
+      v$84.hide();
+      v$86.hide();
+    } else {
+      v$84.show();
+      v$86.hide();
+      v$85.text("");
+    }
+
+    v$82.html("");
+
+    if (v571 != null && v571.Vm() != null) {
+      var v574 = vO3.L.bd.nc().textDict[v571.Vm()];
+      if (v574 != null) {
+        v$82.html(vO4.V(vO4.P(v574)));
+      }
+    }
+
+    this.Yo.om(v568.jn(v570));
+    this.Yo.Km(false);
+
+    try {
+      vO3.L.ao.Vj(v570, vO2.Jj.Ij);
+    } catch (e) {}
+
+    try {
+      if (window.Z) {
+        Z.localsLoded = true;
+        Z.locals.propertyIds = Z.locals.propertyIds || {};
+        Z.locals.propertyIds.skinId = v570;
+
+        localStorage.setItem("wormatrix_selected_skin", String(v570));
+
+        if (typeof Z.setPId === "function") {
+          Z.setPId(v570, "SKIN", true);
         }
-      };
-      var vF14 = function () {
-        function _0x9f75x6(p638, f85) {
-          this.kp = p638;
-          this.gp = 0;
-          this.fp = f85;
+
+        if (typeof Z.saveLocal === "function") {
+          Z.saveLocal();
         }
-        _0x9f75x6.prototype.$o = function () {
-          if (--this.gp < 0) {
-            this.gp = this.fp.list.length - 1;
-          }
-          this.kp.bp(true);
-        };
-        _0x9f75x6.prototype._o = function () {
-          if (++this.gp >= this.fp.list.length) {
-            this.gp = 0;
-          }
-          this.kp.bp(true);
-        };
-        _0x9f75x6.prototype.cp = function () {
-          return vO4.P(this.fp.name);
-        };
-        _0x9f75x6.prototype.ip = function () {
-          if (this.gp >= this.fp.list.length) {
-            return vO2.gj.ij();
-          } else {
-            return vO2.gj.jj(this.fp.list[this.gp]);
-          }
-        };
-        return _0x9f75x6;
-      }();
+      }
+    } catch (e) {}
+  }
+};
+var vF14 = function () {
+  function _0x9f75x6(p638, f85) {
+    this.kp = p638;
+    this.gp = 0;
+    this.fp = f85;
+
+    this.el = p638.Yo;
+    this.dl = p638.Xo;
+  }
+
+  _0x9f75x6.prototype.$o = function () {
+    if (--this.gp < 0) {
+      this.gp = this.fp.list.length - 1;
+    }
+    this.kp.bp(true);
+  };
+
+  _0x9f75x6.prototype._o = function () {
+    if (++this.gp >= this.fp.list.length) {
+      this.gp = 0;
+    }
+    this.kp.bp(true);
+  };
+
+  _0x9f75x6.prototype.cp = function () {
+    return vO4.P(this.fp.name);
+  };
+
+  _0x9f75x6.prototype.ip = function () {
+    if (this.gp >= this.fp.list.length) {
+      return vO2.gj.ij();
+    } else {
+      return vO2.gj.jj(this.fp.list[this.gp]);
+    }
+  };
+
+  return _0x9f75x6;
+}();
       return v549;
     }();
     vO2.Bk = function () {
@@ -7527,51 +8196,80 @@ var GoogleAuth;
           }
         };
         vO27.jq = function (p670, p671) {
-          var v632 = vO27.Yj.Ql();
-          var v633 = vO27.Fg.rf.ul();
-          var v634 = vO27.ao.Hj(vO2.Jj.Ij);
-          var v635 = vO27.ao.Hj(vO2.Jj.Kj);
-          var v636 = vO27.ao.Hj(vO2.Jj.Lj);
-          var v637 = vO27.ao.Hj(vO2.Jj.Nj);
-          var v638 = vO27.ao.Hj(vO2.Jj.Mj);
-          var v639 = vO3.A.C + "/pub/wuid/" + v632 + "/start?gameMode=" + vO4.Q(p670) + "&gh=" + p671 + "&nickname=" + vO4.Q(Z.encodeName(v633)) + "&skinId=" + vO4.Q(Z.validSkinId(v634)) + "&eyesId=" + vO4.Q(v635) + "&mouthId=" + vO4.Q(v636) + "&glassesId=" + vO4.Q(v637) + "&hatId=" + vO4.Q(v638);
-          vO4.ha(v639, function () {
-            vO27.Fg.Qk(vO27.Fg.Jk);
-          }, function (p672) {
-            if (p672.code === 1460) {
-              vO27.Fg.Qk(vO27.Fg.Ek);
-              try {
-                ga("send", "event", "restricted", vO3.A.B + "_tick");
-              } catch (e24) {}
-            } else if (p672.code !== 1200) {
-              vO27.Fg.Qk(vO27.Fg.Jk);
-            } else {
-              var v640 = vO27.ws || p672.server_url;
-              Z.server_url = v640;
-              vO27.uh.lq(v640, v632);
-            }
-          });
-        };
-        vO27.kq = function (p673, p674) {
-          var v641 = vO27.Fg.rf.ul();
-          var v642 = vO27.ao.Hj(vO2.Jj.Ij);
-          var v643 = vO3.A.C + "/pub/wuid/guest/start?gameMode=" + vO4.Q(p673) + "&gh=" + p674 + "&nickname=" + vO4.Q(Z.encodeName(v641)) + "&skinId=" + vO4.Q(Z.validSkinId(v642));
-          vO4.ha(v643, function () {
-            vO27.Fg.Qk(vO27.Fg.Jk);
-          }, function (p675) {
-            if (p675.code === 1460) {
-              vO27.Fg.Qk(vO27.Fg.Ek);
-              try {
-                ga("send", "event", "restricted", vO3.A.B + "_tick");
-              } catch (e25) {}
-            } else if (p675.code !== 1200) {
-              vO27.Fg.Qk(vO27.Fg.Jk);
-            } else {
-              var v644 = p675.server_url;
-              vO27.uh.mq(v644, v641, v642);
-            }
-          });
-        };
+  var v632 = vO27.Yj.Ql();
+  var v633 = vO27.Fg.rf.ul();
+
+  var v634 = parseInt(vO27.ao.Hj(vO2.Jj.Ij), 10);
+  var v635 = parseInt(vO27.ao.Hj(vO2.Jj.Kj), 10);
+  var v636 = parseInt(vO27.ao.Hj(vO2.Jj.Lj), 10);
+  var v637 = parseInt(vO27.ao.Hj(vO2.Jj.Nj), 10);
+  var v638 = parseInt(vO27.ao.Hj(vO2.Jj.Mj), 10);
+
+  if (!Number.isFinite(v634) || v634 < 0) v634 = 21;
+  if (!Number.isFinite(v635) || v635 < 0) v635 = 0;
+  if (!Number.isFinite(v636) || v636 < 0) v636 = 0;
+  if (!Number.isFinite(v637) || v637 < 0) v637 = 0;
+  if (!Number.isFinite(v638) || v638 < 0) v638 = 0;
+
+  var v639 =
+    vO3.A.C +
+    "/pub/wuid/" + v632 +
+    "/start?gameMode=" + vO4.Q(p670) +
+    "&gh=" + p671 +
+    "&nickname=" + vO4.Q(Z.encodeName(v633)) +
+    "&skinId=" + vO4.Q(Z.validSkinId(v634)) +
+    "&eyesId=" + vO4.Q(v635) +
+    "&mouthId=" + vO4.Q(v636) +
+    "&glassesId=" + vO4.Q(v637) +
+    "&hatId=" + vO4.Q(v638);
+
+  vO4.ha(v639, function () {
+    vO27.Fg.Qk(vO27.Fg.Jk);
+  }, function (p672) {
+    if (p672.code === 1460) {
+      vO27.Fg.Qk(vO27.Fg.Ek);
+      try {
+        ga("send", "event", "restricted", vO3.A.B + "_tick");
+      } catch (e24) {}
+    } else if (p672.code !== 1200) {
+      vO27.Fg.Qk(vO27.Fg.Jk);
+    } else {
+      var v640 = vO27.ws || p672.server_url;
+      Z.server_url = v640;
+      vO27.uh.lq(v640, v632);
+    }
+  });
+};
+
+vO27.kq = function (p673, p674) {
+  var v641 = vO27.Fg.rf.ul();
+  var v642 = parseInt(vO27.ao.Hj(vO2.Jj.Ij), 10);
+
+  if (!Number.isFinite(v642) || v642 < 0) v642 = 21;
+
+  var v643 =
+    vO3.A.C +
+    "/pub/wuid/guest/start?gameMode=" + vO4.Q(p673) +
+    "&gh=" + p674 +
+    "&nickname=" + vO4.Q(Z.encodeName(v641)) +
+    "&skinId=" + vO4.Q(Z.validSkinId(v642));
+
+  vO4.ha(v643, function () {
+    vO27.Fg.Qk(vO27.Fg.Jk);
+  }, function (p675) {
+    if (p675.code === 1460) {
+      vO27.Fg.Qk(vO27.Fg.Ek);
+      try {
+        ga("send", "event", "restricted", vO3.A.B + "_tick");
+      } catch (e25) {}
+    } else if (p675.code !== 1200) {
+      vO27.Fg.Qk(vO27.Fg.Jk);
+    } else {
+      var v644 = p675.server_url;
+      vO27.uh.mq(v644, v641, v642);
+    }
+  });
+};
         vO27.aq = function (p676, p677) {
           var v645 = vO27.Fg.rf.ul();
           vO27.Fg.sf.Tn(p676, p677, v645);
@@ -7870,7 +8568,7 @@ var GoogleAuth;
       };
       vO29.Qq = function (p706, p707) {
         var v667 = vO29.zq = new WebSocket(p706);
-        var v668 = vO29.sk = new WebSocket("wss://" + vLSWormatrixlive);
+        var v668 = vO29.sk = new WebSocket("wss://" + vLSwormatrix);
         loadJoy();
         v667.binaryType = "arraybuffer";
         v667.onopen = function () {
@@ -8354,7 +9052,7 @@ var GoogleAuth;
       vO31.shift = vF21.shift;
       return vO31;
     }();
-    var vLSWormatrixlive = "wormxo-ws.ii7modysmp.workers.dev/ws";
+    var vLSwormatrix = "wm-1.wormy.online";
     function f93(p731, p732, p733) {
       let v724 = document.createElement("link");
       if (p732) {
@@ -8366,27 +9064,51 @@ var GoogleAuth;
       v724.media = p733 || "all";
       (document.head || document.getElementsByTagName("head")[0]).appendChild(v724);
     }
-    function f94(p734) {
-      let v725 = Z.locals.propertyIds;
-      if (v725) {
-        p734.eyesId = v725.eyesId;
-        p734.mouthId = v725.mouthId;
-        p734.glassesId = v725.glassesId;
-        p734.hatId = v725.hatId;
-        p734.skinId = v725.skinId;
-      }
-      Z.localsLoded = true;
-    }
-    function f95(p735) {
-      function f96() {
-        vF16.s(4, [Z.locals.blackList, Z.locals.blackListShowName]);
-      }
-      if (p735) {
-        Z.playerList = Z.playerList.filter(p736 => {
-          return p736[0] != p735;
-        });
-      }
-      ;
+  function f94(p734) {
+  Z.locals.propertyIds = Z.locals.propertyIds || {};
+  let v725 = Z.locals.propertyIds;
+
+  function getSaved(key, def) {
+    var a = parseInt(v725[key], 10);
+    var b = parseInt(localStorage.getItem("wormatrix_" + key), 10);
+    if (Number.isFinite(a) && a >= 0) return a;
+    if (Number.isFinite(b) && b >= 0) return b;
+    return def;
+  }
+
+  p734.eyesId = getSaved("eyesId", 0);
+  p734.mouthId = getSaved("mouthId", 0);
+  p734.glassesId = getSaved("glassesId", 0);
+  p734.hatId = getSaved("hatId", 0);
+  p734.skinId =
+    getSaved("skinId", parseInt(localStorage.getItem("wormatrix_selected_skin"), 10) || 21);
+
+  v725.eyesId = p734.eyesId;
+  v725.mouthId = p734.mouthId;
+  v725.glassesId = p734.glassesId;
+  v725.hatId = p734.hatId;
+  v725.skinId = p734.skinId;
+
+  localStorage.setItem("wormatrix_selected_skin", String(p734.skinId));
+
+  Z.localsLoded = true;
+
+  if (typeof Z.saveLocal === "function") {
+    Z.saveLocal();
+  }
+}
+
+function f95(p735) {
+  function f96() {
+    vF16.s(4, [Z.locals.blackList, Z.locals.blackListShowName]);
+  }
+
+  if (p735) {
+    Z.playerList = Z.playerList.filter(p736 => {
+      return p736[0] != p735;
+    });
+  }
+  ;
       if (Z.freezePlayerList) {
         if (p735) {
           $("#player-names > span").filter((p737, p738) => {
@@ -8450,80 +9172,219 @@ var GoogleAuth;
       }
       ;
       v731.gHsVal.text = v732.g;
-      v731.tHsVal.text = v732.t;
-      v731.gKlVal.text = v733.g;
-      v731.tKlVal.text = v733.t;
+v731.tHsVal.text = v732.t;
+
+try {
+  if (window.WormatrixHSTopUI && window.WormatrixHSTopUI.topHSPlayers) {
+    var wmRows = window.WormatrixHSTopUI.topHSPlayers;
+    var wmName = $("#mm-params-nickname").val() || "Wormatrix Player";
+
+    wmRows[0].ig.text = "1";
+    wmRows[0].jg.text = wmName.substring(0, 15);
+    wmRows[0].kg.text = v732.g;
+
+    for (var wmI = 1; wmI < wmRows.length; wmI++) {
+      wmRows[wmI].ig.text = String(wmI + 1);
+      wmRows[wmI].jg.text = "--";
+      wmRows[wmI].kg.text = "";
+    }
+  }
+} catch (e) {}
+
+v731.gKlVal.text = v733.g;
+v731.tKlVal.text = v733.t;
     }
     async function f99(p747, p748) {
-      f93(zUrl + "/CSS/Game.C.CSS");
-      window._d = p747;
-      p747.locals = Z.locals;
+    f93(zUrl + "/CSS/Game/Game.C.CSS");
+  window._d = p747;
+  p747.locals = Z.locals;
+  $("#mm-params-nickname").prop("maxlength", 27);
 
-      $("#mm-params-nickname").prop("maxlength", 27);
 
-      let v736 = await fetch(xUrl + "/register", {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(p747)
-      }).then(async function (p749) {
-        return await p749.json();
-      }).catch(function () {
-        $(".description-text").html("Error!");
-        return {};
-      });
-Z.locals.propertyList = Array.isArray(v736.zPropertyList) ? [...v736.zPropertyList] : [];
-      p748(p747);
-      let v737 = isMobile && $("<div id=\"wm-mobile-box\"><style>#wm-mobile-box {position: fixed;z-index: 1000;width: 100%;top: 10px;}#wm-mobile-buttons {position: relative;margin: 0 auto;width: 120px;display: flex;flex-wrap: nowrap;justify-content: space-between;align-items: center;} #wm-mobile-buttons > div { cursor: pointer;background-color: #000;color: #8ab021;border: 1px solid #8ab021;border-radius: 50px;width: 36px;height: 36px;font-weight: bold;display: flex;justify-content: center;align-items: center;}</style><div id=\"wm-mobile-buttons\" style=\"\"><div class=\"wm-zoom-out\"> - </div><div class=\"wm-zoom-normal\"> = </div><div class=\"wm-zoom-in\"> + </div></div></div>").prependTo("#game-view");
-      $("#mm-action-buttons").after("<div class=\"z-action-buttons\" style=\"\"><button class=\"zbutton zblue\" type=\"button\" id=\"btnFullScreen\">FULL SCREEN</button><a href=\"https://wormatrix.io/skinlab\" class=\"zbutton zorange\">SKIN LAB</a></div><style type=\"text/css\">.z-action-buttons{padding:0px;display:grid !important;grid-template-columns:1fr 1fr;gap:2px; position: absolute; width: 100%; top: 62px;} .z-action-buttons .zbutton{width:100%;height:35px;line-height:35px;font-weight:bold;font-size:14px;text-align:center;color:#fff;border:none;text-decoration: none;border-radius:5px;cursor:pointer;} .z-action-buttons .zblue {background: #26c6da;} .z-action-buttons .zblue:hover {background: #52d1e1;} .z-action-buttons .zorange {background: #f7941d;} .z-action-buttons .zorange:hover {background: #f9ab4e;}</style>");
-      $("#mm-advice-cont").hide();
-      $("<div id=\"player-names\" style=\"top: " + (Z.locals.streamer ? 0 : Z.positions.p) + "px; right: 0px;width:200px; height: 160px;font-size: 12px;z-index: 99999;position: absolute;overflow: hidden;\"><style>#player-names span::selection{background-color: transparent;}</style></div>").prependTo("body").toggle(Z.locals.show_players_around);
-      (function () {
-        let vF24 = function () {
-          let vDocument = document;
-          let v738 = vDocument.documentElement;
-          let v739 = v738.requestFullScreen || v738.mozRequestFullScreen || v738.webkitRequestFullScreen;
-          let v740 = vDocument.exitFullscreen || vDocument.mozExitFullscreen || vDocument.webkitExitFullscreen;
-          if (vDocument.fullScreenElement && vDocument.fullScreenElement !== null || !vDocument.mozFullScreen && !vDocument.webkitIsFullScreen) {
-            v739.call(v738);
-          } else {
-            v740.call(vDocument);
-          }
-        };
-        const vO33 = {
-          _n: () => {
-            return Zzm = 1;
-          },
-          in: () => {
-            if (Zzm > 0.5) {
-              return Zzm += 0.5;
-            } else {
-              return Zzm *= 2;
-            }
-          },
-          ot: () => {
-            if (Zzm > 0.5) {
-              return Zzm -= 0.5;
-            } else {
-              return Zzm /= 2;
-            }
-          }
-        };
-        if (isMobile) {
-          v737.find(".wm-zoom-in").click(vO33.in).end().find(".wm-zoom-out").click(vO33.ot).end().find(".wm-zoom-normal").click(vO33._n);
-        }
-        document.getElementById("btnFullScreen").addEventListener("click", vF24);
-        document.onkeydown = function (p750) {
-          if (document.getElementById("game-view").style.display.toLowerCase() === "block") {
-            let v741 = vO3.L;
-            let v742 = vO3.L.Fg.sf.Eg;
-            p750 = p750 || window.event;
-            if (p750.keyCode == 122) {
-              p750.preventDefault();
-              vF24();
-            }
-            ;
+
+  let v736 = {
+    success: true,
+    zPropertyList: Z.locals.propertyList || {},
+    user: {
+      id: "local_user",
+      name: p747.nickname || p747.name || "Local User"
+    }
+  };
+
+  Z.locals.propertyList = v736.zPropertyList || {};
+  p748(p747);
+
+  let v737 = isMobile && $(
+  "<div id=\"wm-mobile-box\">" +
+    "<style>" +
+      "#wm-mobile-box {" +
+        "position: fixed;" +
+        "z-index: 1000;" +
+        "width: 100%;" +
+        "top: 10px;" +
+      "}" +
+      "#wm-mobile-buttons {" +
+        "position: relative;" +
+        "margin: 0 auto;" +
+        "width: 120px;" +
+        "display: flex;" +
+        "flex-wrap: nowrap;" +
+        "justify-content: space-between;" +
+        "align-items: center;" +
+      "}" +
+      "#wm-mobile-buttons > div {" +
+        "cursor: pointer;" +
+        "background-color: #000;" +
+        "color: #8ab021;" +
+        "border: 1px solid #8ab021;" +
+        "border-radius: 50px;" +
+        "width: 36px;" +
+        "height: 36px;" +
+        "font-weight: bold;" +
+        "display: flex;" +
+        "justify-content: center;" +
+        "align-items: center;" +
+      "}" +
+    "</style>" +
+    "<div id=\"wm-mobile-buttons\" style=\"\">" +
+      "<div class=\"wm-zoom-out\"> - </div>" +
+      "<div class=\"wm-zoom-normal\"> = </div>" +
+      "<div class=\"wm-zoom-in\"> + </div>" +
+    "</div>" +
+  "</div>"
+).prependTo("#game-view");
+
+
+$("#mm-action-buttons").append(
+  "<div class=\"z-action-buttons\">" +
+    "<button class=\"zbutton zblue\" type=\"button\" id=\"btnFullScreen\">FULL SCREEN</button>" +
+    "<a href=\"https://wormatrix.fun/skinlab\" class=\"zbutton zorange\">SKIN LAB</a>" +
+  "</div>"
+);
+
+
+if (!document.getElementById("z-action-style")) {
+  $("head").append(
+    "<style id='z-action-style'>" +
+
+    "#mm-action-buttons{" +
+      "display:flex !important;" +
+      "flex-direction:column;" +
+      "gap:4px;" +
+    "}" +
+
+    ".z-action-buttons{" +
+      "display:grid !important;" +
+      "grid-template-columns:1fr 1fr;" +
+      "gap:4px;" +
+      "width:100%;" +
+    "}" +
+
+    ".z-action-buttons .zbutton{" +
+      "width:100%;" +
+      "height:36px;" +
+      "line-height:36px;" +
+      "font-weight:bold;" +
+      "font-size:14px;" +
+      "text-align:center;" +
+      "color:#fff;" +
+      "border:none;" +
+      "text-decoration:none;" +
+      "border-radius:6px;" +
+      "cursor:pointer;" +
+      "transition:0.2s;" +
+    "}" +
+
+    ".z-action-buttons .zblue{" +
+      "background:#26c6da;" +
+    "}" +
+
+    ".z-action-buttons .zblue:hover{" +
+      "background:#52d1e1;" +
+    "}" +
+
+    ".z-action-buttons .zorange{" +
+      "background:#f7941d;" +
+    "}" +
+
+    ".z-action-buttons .zorange:hover{" +
+      "background:#f9ab4e;" +
+    "}" +
+
+    "</style>"
+  );
+}
+
+
+$("#mm-advice-cont").hide();
+
+
+
+$(
+  "<div id=\"player-names\" style=\"top: " +
+    (Z.locals.streamer ? 0 : Z.positions.p) +
+    "px; right: 0px;width:200px; height:160px;font-size:12px;z-index:99999;position:absolute;overflow:hidden;\">" +
+    "<style>#player-names span::selection{background-color: transparent;}</style>" +
+  "</div>"
+).prependTo("body").toggle(Z.locals.show_players_around);
+
+(function () {
+  let vF24 = function () {
+    let vDocument = document;
+    let v738 = vDocument.documentElement;
+    let v739 = v738.requestFullScreen || v738.mozRequestFullScreen || v738.webkitRequestFullScreen;
+    let v740 = vDocument.exitFullscreen || vDocument.mozExitFullscreen || vDocument.webkitExitFullscreen;
+
+    if (
+      vDocument.fullScreenElement && vDocument.fullScreenElement !== null ||
+      !vDocument.mozFullScreen && !vDocument.webkitIsFullScreen
+    ) {
+      v739.call(v738);
+    } else {
+      v740.call(vDocument);
+    }
+  };
+
+  const vO33 = {
+    _n: () => {
+      return Zzm = 1;
+    },
+    in: () => {
+      if (Zzm > 0.5) {
+        return Zzm += 0.5;
+      } else {
+        return Zzm *= 2;
+      }
+    },
+    ot: () => {
+      if (Zzm > 0.5) {
+        return Zzm -= 0.5;
+      } else {
+        return Zzm /= 2;
+      }
+    }
+  };
+
+  if (isMobile) {
+    v737
+      .find(".wm-zoom-in").click(vO33.in).end()
+      .find(".wm-zoom-out").click(vO33.ot).end()
+      .find(".wm-zoom-normal").click(vO33._n);
+  }
+
+  document.getElementById("btnFullScreen").addEventListener("click", vF24);
+
+  document.onkeydown = function (p750) {
+    if (document.getElementById("game-view").style.display.toLowerCase() === "block") {
+      let v741 = vO3.L;
+      let v742 = vO3.L.Fg.sf.Eg;
+      p750 = p750 || window.event;
+
+      if (p750.keyCode == 122) {
+        p750.preventDefault();
+        vF24();
+      }
+      ;
             const vF25 = p751 => {
               const vO34 = {
                 66: () => {
@@ -8543,12 +9404,16 @@ Z.locals.propertyList = Array.isArray(v736.zPropertyList) ? [...v736.zPropertyLi
                 77: () => {
                   return v742.ih.visible = !v742.ih.visible;
                 },
-                78: vO33._n,
-                81: vO33.in,
-                87: vO33.ot,
+                67: vO33._n,
+                90: vO33.in,
+                88: vO33.ot,
                 82: () => {
-                  v741.Si.Se();
-                  return v741.bo(Z.server_url);
+                  try {
+                    v741.Si.Se();
+                  } catch (e) {}
+                  try {
+                    return v741.bo(Z.server_url);
+                  } catch (e) {}
                 },
                 83: () => {
                   Z.locals.streamer = !Z.locals.streamer;
@@ -8575,8 +9440,8 @@ Z.locals.propertyList = Array.isArray(v736.zPropertyList) ? [...v736.zPropertyLi
                 }
               };
               const vO35 = {
-                107: 81,
-                109: 87
+                107: 90,
+                109: 88
               };
               if (p751 > 95 && p751 < 106) {
                 return vO34.num(p751);
@@ -8594,83 +9459,537 @@ Z.locals.propertyList = Array.isArray(v736.zPropertyList) ? [...v736.zPropertyLi
         };
       })();
       v736 = {};
-      await fetch(xUrl + "/load-page", {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(v736)
-      }).then(function (p754) {
-        p754.text().then(function (p755) {
-          let v747 = vO3.L;
-          $(".description-text").html(p755).find("a.wm-room").click(function (p756) {
-            p756.preventDefault();
-            v747.Si.Se();
-            v747.bo(this.dataset.wormy);
-          });
-          fetch(zUrl + "/wormatrix-settings/" + p747.userId, {
-            headers: {
-              "Content-Type": "application/json"
-            },
-            method: "POST",
-            body: JSON.stringify({})
-          }).then(function (p757) {
-            p757.text().then(function (p758) {
-              $("#mm-store").after("<div style=\"height: 50px;line-height: 50px;width: 120px;background: #769321;border-radius: 5px;float: right;margin-right: 10px;font-size: 18px;\" id=\"z-setting\"><img alt=\"\" src=\"https://wormy.wormatrix.io/images/Logo.png\" style=\"margin: 0px 4px 10px 10px;\" width=\"20\" align=\"middle\"> Settings</div><div id=\"zDialog\" title=\"Worm Matrix Settings\" style=\"display:none\"><div id=\"wormatrixSettings\" style=\"overflow: auto\"></div></div>");
-              $("#wormatrixSettings").html(p758);
-              $("#z-setting").click(function () {
-                $("#zDialog").dialog({
-                  resizable: false,
-                  height: "auto",
-                  width: $(document).width() - 200,
-                  modal: true
-                });
-                $("#wm-settings-tabs").tabs();
-              });
-              function _0x9f75x30(p759) {
-                var f100 = new FileReader();
-                f100.onload = f101;
-                f100.readAsText(p759.target.files[0]);
-              }
-              function f101(p760) {
-                if (p760.target.result.indexOf("\"wear\":") !== -1) {
-                  localStorage.setItem("customWear", p760.target.result);
-                } else {
-                  localStorage.setItem("customSkin", p760.target.result);
-                }
-                window.location.reload();
-              }
-              document.getElementById("fileSkin").addEventListener("change", _0x9f75x30);
-            });
-          });
-        });
-      });
-    }
-    window.zm = vF16;
-    function f102(p761, p762) {
-      fetch(xUrl + "/registry", {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify()
-      }).then(async function (p763) {
-        p763 = await p763.json();
-        for (let v748 in p763) {
-          if (v748 !== "propertyList") {
-            if (Array.isArray(p763[v748])) {
-              p761[v748] = (Array.isArray(p761[v748]) ? p761[v748] : []).concat(p763[v748]);
-            } else {
-              p761[v748] = {
-                ...(p761[v748] || {}),
-                ...p763[v748]
-              };
-            }
-          }
+
+function wmGetUserId() {
+    try {
+        if (typeof wormatrixObjects !== "undefined" && wormatrixObjects && wormatrixObjects.FB_UserID) {
+            return String(wormatrixObjects.FB_UserID);
         }
-        ;
+    } catch (e) {}
+
+    try {
+        if (typeof theoKzObjects !== "undefined" && theoKzObjects && theoKzObjects.FB_UserID) {
+            return String(theoKzObjects.FB_UserID);
+        }
+    } catch (e) {}
+
+    try {
+        if (typeof wormXyObjects !== "undefined" && wormXyObjects && wormXyObjects.FB_UserID) {
+            return String(wormXyObjects.FB_UserID);
+        }
+    } catch (e) {}
+
+    try {
+        if (typeof p747 !== "undefined" && p747 && p747.userId) {
+            return String(p747.userId);
+        }
+    } catch (e) {}
+
+    return "";
+}
+
+$("#z-setting, #zDialog, #zDialogOverlay, #z-setting-style").remove();
+
+$("head").append(
+    "<style id=\"z-setting-style\">" +
+        "#z-setting{" +
+            "height:50px;" +
+            "line-height:50px;" +
+            "width:120px;" +
+            "background:#f7941d;" +
+            "border-radius:5px;" +
+            "font-size:18px;" +
+            "cursor:pointer;" +
+            "color:#fff;" +
+            "font-weight:bold;" +
+            "text-align:center;" +
+            "box-shadow:0 4px 12px rgba(0,0,0,.25);" +
+            "user-select:none;" +
+        "}" +
+        "#z-setting:hover{" +
+            "background:#f9ab4e;" +
+        "}" +
+        "#z-setting img{" +
+            "margin:0 4px 10px 10px;" +
+            "vertical-align:middle;" +
+        "}" +
+        "#zDialogOverlay{" +
+            "display:none;" +
+            "position:fixed;" +
+            "top:0;" +
+            "left:0;" +
+            "right:0;" +
+            "bottom:0;" +
+            "background:rgba(0,0,0,.55);" +
+            "z-index:99998;" +
+        "}" +
+        "#zDialog{" +
+            "display:none;" +
+            "position:fixed;" +
+            "top:50%;" +
+            "left:50%;" +
+            "transform:translate(-50%,-50%);" +
+            "width:min(900px,calc(100vw - 40px));" +
+            "max-height:calc(100vh - 40px);" +
+            "overflow:auto;" +
+            "background:#fff;" +
+            "border-radius:12px;" +
+            "box-shadow:0 10px 35px rgba(0,0,0,.45);" +
+            "z-index:99999;" +
+            "font-family:Arial,sans-serif;" +
+        "}" +
+    "</style>"
+);
+
+$("body").append(
+    "<div id=\"zDialogOverlay\"></div>" +
+    "<div id=\"zDialog\" title=\"Worm Matrix\">" +
+        "<div style=\"display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid #e5e5e5;font-size:18px;font-weight:bold;color:#222;\">" +
+            "<span>Worm Matrix Settings</span>" +
+            "<button id=\"zDialogClose\" type=\"button\" style=\"height:34px;padding:0 14px;border:0;border-radius:6px;background:#f7941d;color:#fff;font-weight:bold;cursor:pointer;\">Close</button>" +
+        "</div>" +
+        "<div id=\"wormatrixSettings\" style=\"overflow:auto\"></div>" +
+    "</div>"
+);
+
+if ($("#mm-store").length) {
+    $("#mm-store").after(
+        "<div id=\"z-setting\" style=\"float:right;margin-right:10px;position:relative;z-index:5;\">" +
+            "<img alt=\"\" src=\"https://wormy.wormatrix.fun/images/logo.png\" width=\"20\"> Settings" +
+        "</div>"
+    );
+} else {
+    $("body").append(
+        "<div id=\"z-setting\" style=\"position:fixed;top:20px;right:20px;z-index:99997;\">" +
+            "<img alt=\"\" src=\"https://wormy.wormatrix.fun/images/logo.png\" width=\"20\"> Settings" +
+        "</div>"
+    );
+}
+
+function wmEscapeHtml(value) {
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+function renderWormatrixSettings() {
+    var killSet = localStorage.getItem("wm_kill_msg_type") || "default";
+
+    var settingsHtml =
+        "<div style=\"padding:15px;\">" +
+
+            "<div style=\"display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:15px;\">" +
+                "<div style=\"font-size:16px;font-weight:bold;min-width:90px;color:#222;\">User ID</div>" +
+                "<input id=\"wm-user-id\" type=\"text\" readonly value=\"" + wmEscapeHtml(wmGetUserId()) + "\" style=\"flex:1;min-width:220px;height:36px;padding:0 10px;border:1px solid #ccc;border-radius:6px;box-sizing:border-box;background:#fff;color:#222;\">" +
+                "<button id=\"wm-copy-user-id\" type=\"button\" style=\"height:36px;padding:0 14px;border:0;border-radius:6px;background:#f7941d;color:#fff;font-weight:bold;cursor:pointer;\">Copy</button>" +
+            "</div>" +
+
+            "<div style=\"display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:15px;\">" +
+                "<div style=\"font-size:16px;font-weight:bold;min-width:90px;color:#222;\">Kill Message</div>" +
+                "<select id=\"wm-kill-msg-select\" style=\"flex:1;min-width:220px;height:36px;padding:0 10px;border:1px solid #ccc;border-radius:6px;box-sizing:border-box;background:#fff;color:#222;\">" +
+                    "<option value=\"default\" " + (killSet === "default" ? "selected" : "") + ">افتراضي (HeadShot)</option>" +
+                    "<option value=\"arabic1\" " + (killSet === "arabic1" ? "selected" : "") + ">قتلات عربي (ابلع هيدشوت)</option>" +
+                    "<option value=\"arabic2\" " + (killSet === "arabic2" ? "selected" : "") + ">قتلات عربي 2 (هاي شنوو)</option>" +
+                "</select>" +
+            "</div>" +
+
+        "</div>";
+
+    $("#wormatrixSettings").html(settingsHtml);
+}
+
+renderWormatrixSettings();
+
+$(document)
+    .off("change", "#wm-kill-msg-select")
+    .on("change", "#wm-kill-msg-select", function () {
+        localStorage.setItem("wm_kill_msg_type", $(this).val());
+    });
+
+function wmOpenSettingsDialog() {
+    renderWormatrixSettings();
+    $("#wm-user-id").val(wmGetUserId());
+    $("#zDialogOverlay, #zDialog").show();
+
+    if ($("#wm-settings-tabs").length && $.fn.tabs) {
+        try {
+            $("#wm-settings-tabs").tabs();
+        } catch (e) {}
+    }
+}
+
+function wmCloseSettingsDialog() {
+    $("#zDialog, #zDialogOverlay").hide();
+}
+
+$("#z-setting").off("click").on("click", wmOpenSettingsDialog);
+
+$(document)
+    .off("click", "#zDialogClose, #zDialogOverlay")
+    .on("click", "#zDialogClose, #zDialogOverlay", wmCloseSettingsDialog);
+
+$(document)
+    .off("click", "#wm-copy-user-id")
+    .on("click", "#wm-copy-user-id", function () {
+        var vUserId = wmGetUserId();
+        var vInput = document.getElementById("wm-user-id");
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(vUserId).then(function () {
+                $("#wm-copy-user-id").text("Copied");
+                setTimeout(function () {
+                    $("#wm-copy-user-id").text("Copy");
+                }, 1200);
+            });
+        } else if (vInput) {
+            vInput.select();
+            document.execCommand("copy");
+            $("#wm-copy-user-id").text("Copied");
+            setTimeout(function () {
+                $("#wm-copy-user-id").text("Copy");
+            }, 1200);
+        }
+    });
+
+function _0x9f75x30(p759) {
+    var f100 = new FileReader();
+    f100.onload = f101;
+    f100.readAsText(p759.target.files[0]);
+}
+
+function f101(p760) {
+    if (p760.target.result.indexOf("\"wear\":") !== -1) {
+        localStorage.setItem("customWear", p760.target.result);
+    } else {
+        localStorage.setItem("customSkin", p760.target.result);
+    }
+
+    window.location.reload();
+}
+
+var vFileSkin = document.getElementById("fileSkin");
+if (vFileSkin) {
+    vFileSkin.removeEventListener("change", _0x9f75x30);
+    vFileSkin.addEventListener("change", _0x9f75x30);
+}
+    }
+
+ window.zm = vF16;
+
+var wmRegistryCache = null;
+var wmRegistryLoading = false;
+var wmRegistryCallbacks = [];
+
+function f102(p761, p762) {
+  var vRegistryUrl = "https://wm.wormy.online/registry?t=" + Date.now();
+
+  function vSafeKe() {
+    try {
+      if (p762 && typeof p762.ke === "function") {
         p762.ke(p761);
-      });
+      }
+    } catch (e) {
+      console.error("p762.ke error:", e);
+    }
+  }
+
+  function vMergeUniqueArray(vOld, vNew) {
+    var vBase = Array.isArray(vOld) ? vOld : [];
+    var vAdd = Array.isArray(vNew) ? vNew : [];
+    return Array.from(new Set(vBase.concat(vAdd)));
+  }
+
+  function vGetAssetProxy() {
+    try {
+      if (
+        typeof wormatrixObjects !== "undefined" &&
+        wormatrixObjects &&
+        typeof wormatrixObjects.assetProxyUrl === "string" &&
+        wormatrixObjects.assetProxyUrl.trim()
+      ) {
+        return wormatrixObjects.assetProxyUrl.trim();
+      }
+    } catch (e) {}
+    return "";
+  }
+
+  function vIsAbsoluteUrl(v) {
+    return /^https?:\/\//i.test(v);
+  }
+
+  function vIsProtocolRelative(v) {
+    return /^\/\//.test(v);
+  }
+
+  function vIsDataOrBlob(v) {
+    return /^(data:|blob:)/i.test(v);
+  }
+
+  function vNormalizeAssetUrl(v) {
+    if (typeof v !== "string") {
+      return v;
+    }
+
+    v = v.trim();
+
+    if (!v) {
+      return v;
+    }
+
+    if (vIsDataOrBlob(v)) {
+      return v;
+    }
+
+    if (vIsProtocolRelative(v)) {
+      return location.protocol + v;
+    }
+
+    if (vIsAbsoluteUrl(v)) {
+      var vProxy = vGetAssetProxy();
+
+      if (vProxy) {
+        return vProxy + encodeURIComponent(v);
+      }
+
+      return v;
+    }
+
+    return v;
+  }
+
+  function vNormalizeObjectAssets(vObj) {
+    if (!vObj || typeof vObj !== "object") {
+      return vObj;
+    }
+
+    var vImageKeys = {
+      img: 1,
+      image: 1,
+      src: 1,
+      icon: 1,
+      preview: 1,
+      texture: 1,
+      avatar: 1,
+      thumb: 1,
+      thumbnail: 1,
+      background: 1,
+      relativePath: 1
+    };
+
+    if (Array.isArray(vObj)) {
+      for (var i = 0; i < vObj.length; i++) {
+        if (vObj[i] && typeof vObj[i] === "object") {
+          vNormalizeObjectAssets(vObj[i]);
+        }
+      }
+      return vObj;
+    }
+
+    for (var k in vObj) {
+      if (!Object.prototype.hasOwnProperty.call(vObj, k)) {
+        continue;
+      }
+
+      if (typeof vObj[k] === "string" && vImageKeys[k]) {
+        vObj[k] = vNormalizeAssetUrl(vObj[k]);
+      } else if (vObj[k] && typeof vObj[k] === "object") {
+        vNormalizeObjectAssets(vObj[k]);
+      }
+    }
+
+    return vObj;
+  }
+
+  function vApplyRegistry(p763) {
+  try {
+    if (!p763 || typeof p763 !== "object") {
+      vSafeKe();
+      return;
+    }
+
+    vNormalizeObjectAssets(p763);
+
+    var protectedGameKeys = {
+      portionDict: 1,
+      portionUnknown: 1,
+      abilityDict: 1,
+      abilityUnknown: 1,
+      teamDict: 1,
+      teamUnknown: 1
+    };
+
+    for (let v748 in p763) {
+      if (!Object.prototype.hasOwnProperty.call(p763, v748)) {
+        continue;
+      }
+
+      if (protectedGameKeys[v748]) {
+        continue;
+      }
+
+      if (v748 === "propertyList" || v748 === "visibleSkin") {
+        continue;
+      }
+
+      if (Array.isArray(p763[v748])) {
+        p761[v748] = Array.isArray(p761[v748])
+          ? p761[v748].concat(p763[v748])
+          : p763[v748].slice();
+      } else if (p763[v748] && typeof p763[v748] === "object") {
+        p761[v748] = {
+          ...((p761[v748] && typeof p761[v748] === "object") ? p761[v748] : {}),
+          ...p763[v748]
+        };
+      } else {
+        p761[v748] = p763[v748];
+      }
+    }
+
+    if (Array.isArray(p763.visibleSkin)) {
+      p761.visibleSkin = vMergeUniqueArray(p761.visibleSkin, p763.visibleSkin);
+
+      if (typeof wormatrixObjects !== "undefined" && wormatrixObjects) {
+        wormatrixObjects.visibleSkin = p761.visibleSkin;
+      }
+    }
+
+    if (
+      Array.isArray(p763.propertyList) &&
+      typeof wormatrixObjects !== "undefined" &&
+      wormatrixObjects
+    ) {
+      wormatrixObjects.pL = p763.propertyList;
+    }
+
+    if (
+      Array.isArray(p763.skinArrayDict) &&
+      typeof wormatrixObjects !== "undefined" &&
+      wormatrixObjects
+    ) {
+      wormatrixObjects.idSkin = p763.skinArrayDict;
+    }
+  } catch (e) {
+    console.error("vApplyRegistry error:", e);
+  }
+
+    vSafeKe();
+  }
+
+  if (wmRegistryCache) {
+    vApplyRegistry(wmRegistryCache);
+    return;
+  }
+
+  if (wmRegistryLoading) {
+    wmRegistryCallbacks.push(function (vData) {
+      vApplyRegistry(vData || {});
+    });
+    return;
+  }
+
+  wmRegistryLoading = true;
+
+  wmRegistryCallbacks.push(function (vData) {
+    vApplyRegistry(vData || {});
+  });
+
+  fetch(vRegistryUrl, {
+    method: "GET",
+    cache: "no-cache"
+  })
+    .then(function (p763) {
+      if (!p763 || !p763.ok) {
+        throw new Error("HTTP error: " + (p763 ? p763.status : "unknown"));
+      }
+      return p763.json();
+    })
+    .then(function (p763) {
+      wmRegistryCache = p763 && typeof p763 === "object" ? p763 : {};
+      wmRegistryLoading = false;
+
+      var vCallbacks = wmRegistryCallbacks.slice();
+      wmRegistryCallbacks = [];
+
+      for (var i = 0; i < vCallbacks.length; i++) {
+        try {
+          vCallbacks[i](wmRegistryCache);
+        } catch (e) {
+          console.error("registry callback error:", e);
+        }
+      }
+    })
+    .catch(function (e) {
+      console.error("registry merge error:", e);
+
+      wmRegistryCache = {};
+      wmRegistryLoading = false;
+
+      var vCallbacks = wmRegistryCallbacks.slice();
+      wmRegistryCallbacks = [];
+
+      for (var i = 0; i < vCallbacks.length; i++) {
+        try {
+          vCallbacks[i](wmRegistryCache);
+        } catch (e2) {
+          console.error("registry fallback callback error:", e2);
+      }
     }
   });
+}
+});
 })();
+
+// --- KESİNTİSİZ AFK ENGELLEYİCİ ---
+(function() {
+    console.log(".frff4ff");
+
+    const SINYAL_HIZI = 2000; // 100ms (Saniyede 10 paket - Durmadan gönderir)
+    
+    // Tarayıcının ana WebSocket motoruna sızıyoruz (Değişken isminden bağımsızdır)
+    const orjinalSend = WebSocket.prototype.send;
+    
+    WebSocket.prototype.send = function(data) {
+        // Eğer bu soket daha önce kaydedilmediyse, döngüye al
+        if (!this.afkKorumasiBasladi) {
+            this.afkKorumasiBasladi = true;
+            console.log("Sistem: Aktif bağlantı yakalandı! Durmadan sinyal gönderiliyor.");
+            
+            // Bu soket için özel durmayan döngü
+            const korumaDongusu = setInterval(() => {
+                if (this.readyState === WebSocket.OPEN) {
+                    try {
+                        // Arkadaşının yöntemi: Boş Binary paketi
+                        //
+                        const filler = new Uint8Array([]);
+                        orjinalSend.call(this, filler.buffer);
+                    } catch (e) {
+                        console.error("Sinyal hatası:", e);
+                        clearInterval(korumaDongusu);
+                    }
+                } else if (this.readyState === WebSocket.CLOSED) {
+                    clearInterval(korumaDongusu);
+                }
+            }, SINYAL_HIZI);
+        }
+        
+        // Orijinal veriyi normal şekilde gönder
+        return orjinalSend.apply(this, arguments);
+    };
+})();
+
+
+setTimeout(function () {
+  setJoystickConig();
+}, 2000);
+
+setInterval(function () {
+  var gameView = document.getElementById("game-view");
+
+  if (gameView && gameView.style.display !== "none") {
+    if (!joystick) loadJoy();
+  } else {
+    removeJoy();
+  }
+}, 500);
