@@ -8694,42 +8694,7 @@ var vF40 = async function (p747, p748) {
           Z.saveLocal();
         };
       })();
-v736 = {};
-
-function wmLoadJqueryUI(callback) {
-  function done() {
-    if (typeof callback === "function") {
-      callback();
-    }
-  }
-
-  if (window.jQuery && $.fn.dialog && $.fn.tabs) {
-    done();
-    return;
-  }
-
-  if (!document.getElementById("wm-jquery-ui-css")) {
-    $("head").append("<link id=\"wm-jquery-ui-css\" rel=\"stylesheet\" href=\"https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css\">");
-  }
-
-  if (!document.getElementById("wm-jquery-ui-js")) {
-    var vJQUI = document.createElement("script");
-    vJQUI.id = "wm-jquery-ui-js";
-    vJQUI.src = "https://code.jquery.com/ui/1.13.2/jquery-ui.min.js";
-    vJQUI.onload = done;
-    vJQUI.onerror = function () {
-      console.warn("jQuery UI failed to load");
-    };
-    document.head.appendChild(vJQUI);
-  } else {
-    var vJQUIWait = setInterval(function () {
-      if (window.jQuery && $.fn.dialog && $.fn.tabs) {
-        clearInterval(vJQUIWait);
-        done();
-      }
-    }, 100);
-  }
-}
+  v736 = {};
 
 await fetch(xUrl + "/load-page", {
   headers: {
@@ -8741,7 +8706,7 @@ await fetch(xUrl + "/load-page", {
   p754.text().then(function (p755) {
     let v747 = vO3.L;
 
-    $(".description-text").html(p755).find("a.wm-room, .selecionar-sala-v2, [data-con], [data-wormy]").off("click").on("click", function (p756) {
+    $(".description-text").html(p755).find("a.wm-room, .selecionar-sala-v2, [data-con], [data-wormy]").click(function (p756) {
       p756.preventDefault();
 
       let vWormy = this.dataset.wormy || this.dataset.con;
@@ -8762,78 +8727,56 @@ await fetch(xUrl + "/load-page", {
       }
     });
 
-    fetch(xUrl + "/wormatrix-settings/" + encodeURIComponent(p747.userId), {
-      headers: {
-        "Content-Type": "application/json"
-      },
-      method: "POST",
-      body: JSON.stringify({})
-    }).then(function (p757) {
-      p757.text().then(function (p758) {
-        if (!document.getElementById("z-setting")) {
-          $("#mm-store").after("<div style=\"height: 50px;line-height: 50px;width: 120px;background: #769321;border-radius: 5px;float: right;margin-right: 10px;font-size: 18px;cursor:pointer;text-align:center;color:#fff;font-weight:bold;\" id=\"z-setting\"><img alt=\"\" src=\"https://wormy.wormatrix.fun/images/Logo.png\" style=\"margin: 0px 4px 10px 10px;\" width=\"20\" align=\"middle\"> Settings</div><div id=\"zDialog\" title=\"Worm Matrix Settings\" style=\"display:none\"><div id=\"wormatrixSettings\" style=\"overflow: auto\"></div></div>");
-        }
+          fetch(xUrl + "/wormatrix-settings/" + p747.userId, {
+            headers: {
+              "Content-Type": "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify({})
+          }).then(function (p757) {
+            p757.text().then(function (p758) {
+              if (!document.getElementById("z-setting")) {
+                $("#mm-store").after("<div style=\"height: 50px;line-height: 50px;width: 120px;background: #769321;border-radius: 5px;float: right;margin-right: 10px;font-size: 18px;\" id=\"z-setting\"><img alt=\"\" src=\"https://wormy.wormatrix.fun/images/Logo.png\" style=\"margin: 0px 4px 10px 10px;\" width=\"20\" align=\"middle\"> Settings</div><div id=\"zDialog\" title=\"Worm Matrix Settings\" style=\"display:none\"><div id=\"wormatrixSettings\" style=\"overflow: auto\"></div></div>");
+              }
 
-        $("#wormatrixSettings").html(p758);
+              $("#wormatrixSettings").html(p758);
 
-        $("#z-setting").off("click").on("click", function () {
-          wmLoadJqueryUI(function () {
-            $("#zDialog").dialog({
-              resizable: false,
-              height: "auto",
-              width: Math.max(320, $(document).width() - 200),
-              modal: true
+              $("#z-setting").off("click").on("click", function () {
+                $("#zDialog").dialog({
+                  resizable: false,
+                  height: "auto",
+                  width: $(document).width() - 200,
+                  modal: true
+                });
+
+                $("#wm-settings-tabs").tabs();
+              });
+
+              function _0x9f75x30(p759) {
+                var f84 = new FileReader();
+                f84.onload = f85;
+                f84.readAsText(p759.target.files[0]);
+              }
+
+              function f85(p760) {
+                if (p760.target.result.indexOf("\"wear\":") !== -1) {
+                  localStorage.setItem("customWear", p760.target.result);
+                } else {
+                  localStorage.setItem("customSkin", p760.target.result);
+                }
+
+                window.location.reload();
+              }
+
+              var vFileSkin = document.getElementById("fileSkin");
+              if (vFileSkin) {
+                vFileSkin.removeEventListener("change", _0x9f75x30);
+                vFileSkin.addEventListener("change", _0x9f75x30);
+              }
             });
-
-            $("#wm-settings-tabs").tabs();
           });
         });
-
-        function _0x9f75x30(p759) {
-          try {
-            if (!p759.target.files || !p759.target.files[0]) {
-              return;
-            }
-
-            var f84 = new FileReader();
-            f84.onload = f85;
-            f84.readAsText(p759.target.files[0]);
-          } catch (e2) {
-            console.error("File read error:", e2);
-          }
-        }
-
-        function f85(p760) {
-          try {
-            if (p760.target.result.indexOf("\"wear\":") !== -1) {
-              localStorage.setItem("customWear", p760.target.result);
-            } else {
-              localStorage.setItem("customSkin", p760.target.result);
-            }
-
-            window.location.reload();
-          } catch (e3) {
-            console.error("Custom file save error:", e3);
-          }
-        }
-
-        var vFileSkin = document.getElementById("fileSkin");
-        if (vFileSkin) {
-          vFileSkin.removeEventListener("change", _0x9f75x30);
-          vFileSkin.addEventListener("change", _0x9f75x30);
-        }
       });
-    }).catch(function (e4) {
-      console.error("Settings fetch error:", e4);
-    });
+    };
   });
-}).catch(function (e5) {
-  console.error("Load page fetch error:", e5);
-  $(".description-text").html("Error loading servers!");
-        }
-      });
-    });
-  });
-}; 
-});
-})();
+})(); 
