@@ -8608,21 +8608,36 @@ vO31.c = function () {
       })();
       v736 = {};
 
-      await fetch(xUrl + "/load-page", {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(v736)
-      }).then(function (p754) {
-        p754.text().then(function (p755) {
-          let v747 = vO3.L;
+await fetch(xUrl + "/load-page", {
+  headers: {
+    "Content-Type": "application/json"
+  },
+  method: "POST",
+  body: JSON.stringify(v736)
+}).then(function (p754) {
+  p754.text().then(function (p755) {
+    let v747 = vO3.L;
 
-          $(".description-text").html(p755).find("a.wm-room").click(function (p756) {
-            p756.preventDefault();
-            v747.Si.Se();
-            v747.bo(this.dataset.wormy);
-          });
+    $(".description-text").html(p755).find("a.wm-room, .selecionar-sala-v2, [data-con], [data-wormy]").click(function (p756) {
+      p756.preventDefault();
+
+      let vWormy = this.dataset.wormy || this.dataset.con;
+
+      if (!vWormy) {
+        console.warn("Server URL not found");
+        return;
+      }
+
+      try {
+        v747.Si.Se();
+      } catch (e) {}
+
+      try {
+        v747.bo(vWormy);
+      } catch (e) {
+        console.error("Join room error:", e);
+      }
+    });
 
           fetch(zUrl + "/wormatrix-settings/" + p747.userId, {
             headers: {
