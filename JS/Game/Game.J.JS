@@ -8279,7 +8279,7 @@ vO31.c = function () {
     if (!vVF27 || !vVF27.uh || !vVF27.uh.sk) {
       return;
     }
-
+ 
     let v717 = vVF27.uh.sk;
 
     if (v717.readyState === WebSocket.OPEN) {
