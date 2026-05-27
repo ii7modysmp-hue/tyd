@@ -8455,7 +8455,7 @@ f21.prototype.je = function () {
       v731.tKlVal.text = v733.t;
     };
     var vF40 = async function (p747, p748) {
-      f82(zUrl + "/CSS/wormatrix.css");
+      f82(zUrl + "/CSS/Game.C.CSS");
       window._d = p747;
       p747.locals = Z.locals;
       $("#mm-params-nickname").prop("maxlength", 27);
