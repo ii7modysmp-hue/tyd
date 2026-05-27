@@ -8727,7 +8727,7 @@ await fetch(xUrl + "/load-page", {
       }
     });
 
-          fetch(zUrl + "/wormatrix-settings/" + p747.userId, {
+          fetch(xUrl + "/wormatrix-settings/" + p747.userId, {
             headers: {
               "Content-Type": "application/json"
             },
