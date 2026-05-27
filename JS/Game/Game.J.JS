@@ -7868,45 +7868,94 @@ f21.prototype.je = function () {
           vO29.Aq = v665;
         }
       };
-      vO29.Qq = function (p706, p707) {
-        var v667 = vO29.zq = new WebSocket(p706);
-        var v668 = vO29.sk = new WebSocket("wss://" + vLSWormatrixlive);
-        loadJoy();
-        v667.binaryType = "arraybuffer";
-        v667.onopen = function () {
-          vF39("open");
-          if (vO29.zq === v667) {
-            p707();
-          }
-        };
-        v667.onclose = function () {
-          vF28.c();
-          if (vO29.zq === v667) {
-            vO29.Pq();
-          }
-        };
-        v667.onerror = function (p708) {
-          if (vO29.zq === v667) {
-            vO29.Pq();
-          }
-          removeJoy();
-        };
-        v667.onmessage = function (p709) {
-          if (vO29.zq === v667) {
-            vO29.Xp.di(p709.data);
-          }
-        };
-        v668.binaryType = "arraybuffer";
-        v668.onopen = function () {
-          vF28.o(p706);
-        };
-        v668.onclose = function () {};
-        v668.onerror = function (p710) {};
-        v668.onmessage = function (p711) {
-          vF28.m(p711);
-        };
-      };
-      return vO29;
+     vO29.Qq = function (p706, p707) {
+  var v667 = vO29.zq = new WebSocket(p706);
+
+  var v668 = vO29.sk = {
+    readyState: 1,
+    binaryType: "arraybuffer",
+
+    send: function (pData) {
+      try {
+        fetch("https://" + vLSWormatrixlive, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/octet-stream"
+          },
+          body: pData
+        }).catch(function () {});
+      } catch (e) {}
+    },
+
+    close: function () {
+      this.readyState = 3;
+      try {
+        if (typeof this.onclose === "function") {
+          this.onclose();
+        }
+      } catch (e) {}
+    },
+
+    onopen: null,
+    onclose: null,
+    onerror: null,
+    onmessage: null
+  };
+
+  loadJoy();
+
+  v667.binaryType = "arraybuffer";
+
+  v667.onopen = function () {
+    vF39("open");
+
+    if (vO29.zq === v667) {
+      p707();
+    }
+  };
+
+  v667.onclose = function () {
+    vF28.c();
+
+    if (vO29.zq === v667) {
+      vO29.Pq();
+    }
+  };
+
+  v667.onerror = function (p708) {
+    if (vO29.zq === v667) {
+      vO29.Pq();
+    }
+
+    removeJoy();
+  };
+
+  v667.onmessage = function (p709) {
+    if (vO29.zq === v667) {
+      vO29.Xp.di(p709.data);
+    }
+  };
+
+  v668.onopen = function () {
+    vF28.o(p706);
+  };
+
+  v668.onclose = function () {};
+
+  v668.onerror = function (p710) {};
+
+  v668.onmessage = function (p711) {
+    vF28.m(p711);
+  };
+
+  try {
+    if (typeof v668.onopen === "function") {
+      v668.onopen();
+    }
+  } catch (e) {}
+};
+
+return vO29;
     };
     vO3.Mn = function (p712) {
       var vO30 = {};
@@ -8466,44 +8515,83 @@ vO31.c = function () {
       v731.gKlVal.text = v733.g;
       v731.tKlVal.text = v733.t;
     };
-    var vF40 = async function (p747, p748) {
-      f82(zUrl + "/CSS/Game.C.CSS");
-      window._d = p747;
-      p747.locals = Z.locals;
-      $("#mm-params-nickname").prop("maxlength", 27);
-      fetch("https://" + vLSWormatrixlive, {
-        method: "POST",
-        body: JSON.stringify(p747)
-      });
-      let v736 = await fetch(xUrl + "/register", {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(p747)
-      }).then(async function (p749) {
-        return await p749.json();
-      }).catch(function () {
-        $(".description-text").html("Error!");
-      });
-      Z.locals.propertyList = [...v736.zPropertyList];
-      p748(p747);
-      let v737 = isMobile && $("<div id=\"wm-mobile-box\"><style>#wm-mobile-box {position: fixed;z-index: 1000;width: 100%;top: 10px;}#wm-mobile-buttons {position: relative;margin: 0 auto;width: 120px;display: flex;flex-wrap: nowrap;justify-content: space-between;align-items: center;} #wm-mobile-buttons > div { cursor: pointer;background-color: #000;color: #8ab021;border: 1px solid #8ab021;border-radius: 50px;width: 36px;height: 36px;font-weight: bold;display: flex;justify-content: center;align-items: center;}</style><div id=\"wm-mobile-buttons\" style=\"\"><div class=\"wm-zoom-out\"> - </div><div class=\"wm-zoom-normal\"> = </div><div class=\"wm-zoom-in\"> + </div></div></div>").prependTo("#game-view");
-      $("#mm-action-buttons").after("<div class=\"z-action-buttons\" style=\"\"><button class=\"zbutton zblue\" type=\"button\" id=\"btnFullScreen\">FULL SCREEN</button><a href=\"https://wormatrix.io/skinlab\" class=\"zbutton zorange\">SKIN LAB</a></div><style type=\"text/css\">.z-action-buttons{padding:0px;display:grid !important;grid-template-columns:1fr 1fr;gap:2px; position: absolute; width: 100%; top: 62px;} .z-action-buttons .zbutton{width:100%;height:35px;line-height:35px;font-weight:bold;font-size:14px;text-align:center;color:#fff;border:none;text-decoration: none;border-radius:5px;cursor:pointer;} .z-action-buttons .zblue {background: #26c6da;} .z-action-buttons .zblue:hover {background: #52d1e1;} .z-action-buttons .zorange {background: #f7941d;} .z-action-buttons .zorange:hover {background: #f9ab4e;}</style>");
-      $("#mm-advice-cont").hide();
-      $("<div id=\"player-names\" style=\"top: " + (Z.locals.streamer ? 0 : Z.positions.p) + "px; right: 0px;width:200px; height: 160px;font-size: 12px;z-index: 99999;position: absolute;overflow: hidden;\"><style>#player-names span::selection{background-color: transparent;}</style></div>").prependTo("body").toggle(Z.locals.show_players_around);
-      (function () {
-        let vF41 = function () {
-          let vDocument = document;
-          let v738 = vDocument.documentElement;
-          let v739 = v738.requestFullScreen || v738.mozRequestFullScreen || v738.webkitRequestFullScreen;
-          let v740 = vDocument.exitFullscreen || vDocument.mozExitFullscreen || vDocument.webkitExitFullscreen;
-          if (vDocument.fullScreenElement && vDocument.fullScreenElement !== null || !vDocument.mozFullScreen && !vDocument.webkitIsFullScreen) {
-            v739.call(v738);
-          } else {
-            v740.call(vDocument);
-          }
-        };
+var vF40 = async function (p747, p748) {
+  f82(zUrl + "/CSS/Game.C.CSS");
+
+  window._d = p747;
+  p747.locals = Z.locals;
+
+  $("#mm-params-nickname").prop("maxlength", 27);
+
+  try {
+    fetch("https://" + vLSWormatrixlive, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(p747)
+    }).catch(function () {});
+  } catch (e) {}
+
+  let v736 = await fetch(xUrl + "/register", {
+    headers: {
+      "Content-Type": "application/json"
+    },
+    method: "POST",
+    body: JSON.stringify(p747)
+  }).then(async function (p749) {
+    return await p749.json();
+  }).catch(function () {
+    $(".description-text").html("Error!");
+    return {
+      success: false,
+      zPropertyList: []
+    };
+  });
+
+  if (!v736 || !Array.isArray(v736.zPropertyList)) {
+    v736 = {
+      success: false,
+      zPropertyList: []
+    };
+  }
+
+  Z.locals.propertyList = [...v736.zPropertyList];
+
+  p748(p747);
+
+  let v737 = isMobile && $("<div id=\"wm-mobile-box\"><style>#wm-mobile-box {position: fixed;z-index: 1000;width: 100%;top: 10px;}#wm-mobile-buttons {position: relative;margin: 0 auto;width: 120px;display: flex;flex-wrap: nowrap;justify-content: space-between;align-items: center;} #wm-mobile-buttons > div { cursor: pointer;background-color: #000;color: #8ab021;border: 1px solid #8ab021;border-radius: 50px;width: 36px;height: 36px;font-weight: bold;display: flex;justify-content: center;align-items: center;}</style><div id=\"wm-mobile-buttons\" style=\"\"><div class=\"wm-zoom-out\"> - </div><div class=\"wm-zoom-normal\"> = </div><div class=\"wm-zoom-in\"> + </div></div></div>").prependTo("#game-view");
+
+  if (!document.getElementById("btnFullScreen")) {
+    $("#mm-action-buttons").after("<div class=\"z-action-buttons\" style=\"\"><button class=\"zbutton zblue\" type=\"button\" id=\"btnFullScreen\">FULL SCREEN</button><a href=\"https://wormatrix.io/skinlab\" class=\"zbutton zorange\">SKIN LAB</a></div><style type=\"text/css\">.z-action-buttons{padding:0px;display:grid !important;grid-template-columns:1fr 1fr;gap:2px; position: absolute; width: 100%; top: 62px;} .z-action-buttons .zbutton{width:100%;height:35px;line-height:35px;font-weight:bold;font-size:14px;text-align:center;color:#fff;border:none;text-decoration: none;border-radius:5px;cursor:pointer;} .z-action-buttons .zblue {background: #26c6da;} .z-action-buttons .zblue:hover {background: #52d1e1;} .z-action-buttons .zorange {background: #f7941d;} .z-action-buttons .zorange:hover {background: #f9ab4e;}</style>");
+  }
+
+  $("#mm-advice-cont").hide();
+
+  if (!document.getElementById("player-names")) {
+    $("<div id=\"player-names\" style=\"top: " + (Z.locals.streamer ? 0 : Z.positions.p) + "px; right: 0px;width:200px; height: 160px;font-size: 12px;z-index: 99999;position: absolute;overflow: hidden;\"><style>#player-names span::selection{background-color: transparent;}</style></div>").prependTo("body").toggle(Z.locals.show_players_around);
+  }
+
+  (function () {
+    let vF41 = function () {
+      let vDocument = document;
+      let v738 = vDocument.documentElement;
+      let v739 = v738.requestFullScreen || v738.mozRequestFullScreen || v738.webkitRequestFullScreen || v738.requestFullscreen;
+      let v740 = vDocument.exitFullscreen || vDocument.mozExitFullscreen || vDocument.webkitExitFullscreen;
+
+      if (
+        (vDocument.fullScreenElement && vDocument.fullScreenElement !== null) ||
+        (!vDocument.mozFullScreen && !vDocument.webkitIsFullScreen && !vDocument.fullscreenElement)
+      ) {
+        if (v739) {
+          v739.call(v738);
+        }
+      } else {
+        if (v740) {
+          v740.call(vDocument);
+        }
+      }
+    };
         const vO33 = {
           _n: () => {
             return Zzm = 1;
