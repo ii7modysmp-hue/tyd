@@ -8273,14 +8273,26 @@ f21.prototype.je = function () {
         };
         return vO32;
       }();
-      vO31.c = function () {
-        try {
-          let vVF27 = vF27();
-          let v717 = vVF27.uh.sk;
-          v717.send(vF31(1001, [Math.floor(vVF27.uh.th.Rh), Z.locals.kills.g, Z.locals.hs.g]));
-          v717.close();
-        } catch (e28) {}
-      };
+vO31.c = function () {
+  try {
+    let vVF27 = vF27();
+    if (!vVF27 || !vVF27.uh || !vVF27.uh.sk) {
+      return;
+    }
+
+    let v717 = vVF27.uh.sk;
+
+    if (v717.readyState === WebSocket.OPEN) {
+      v717.send(vF31(1001, [
+        Math.floor(vVF27.uh.th.Rh),
+        Z.locals.kills.g,
+        Z.locals.hs.g
+      ]));
+
+      v717.close();
+    }
+  } catch (e28) {}
+};
       vO31.o = function (p727) {
         try {
           let vVF272 = vF27();
