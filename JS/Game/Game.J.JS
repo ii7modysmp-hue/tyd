@@ -8834,6 +8834,6 @@ await fetch(xUrl + "/load-page", {
       });
     });
   });
-};
+}; 
 });
 })();
