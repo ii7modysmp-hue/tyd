@@ -1742,7 +1742,11 @@ f21.prototype.je = function () {
         for (var v140 in p252.textureDict) {
           if (p252.textureDict.hasOwnProperty(v140)) {
             var v141 = p252.textureDict[v140];
-            var v142 = (v141.custom ? zUrl : vO3.A.D) + v141.relativePath;
+            var vPath = v141.relativePath || "";
+
+var v142 = /^https?:\/\//i.test(vPath) || /^data:/i.test(vPath)
+  ? vPath
+  : (v141.custom ? zUrl : vO3.A.D) + (vPath.charAt(0) === "/" ? vPath : "/" + vPath);
             var v143 = v141.fileSize;
             var v144 = v141.sha256;
             var v145 = new f21.le(v140, v142, v143, v144);
