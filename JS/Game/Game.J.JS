@@ -1691,38 +1691,40 @@ var GoogleAuth;
           vThis4.je();
         });
       };
-      f21.prototype.je = function () {
-        function _0x9f75x19(f23) {
-          var v138 = f21.Zd._d;
-          vThis5.ge(v138, f21.de.tc(v138).Dc(f23));
+f21.prototype.je = function () {
+  function _0x9f75x19(f23) {
+    var v138 = f21.Zd._d;
+    vThis5.ge(v138, f21.de.tc(v138).Dc(f23));
+  }
+
+  var vThis5 = this;
+
+  if (this.Wd) {
+    this.ee();
+    return;
+  }
+
+  $.ajax({
+    type: "GET",
+    url: vO3.A.D + "/dynamic/assets/registry.json",
+    xhrFields: {
+      onprogress: function (p250) {
+        if (p250.lengthComputable) {
+          _0x9f75x19(p250.loaded / p250.total);
         }
-        var vThis5 = this;
-        if (this.Wd) {
-          this.ee();
-          return;
-        }
-        ;
-        $.ajax({
-          type: "GET",
-          url: vO3.A.D + "/dynamic/assets/registry.json",
-          xhrFields: {
-            onprogress: function (p250) {
-              if (p250.lengthComputable) {
-                _0x9f75x19(p250.loaded / p250.total);
-              }
-            }
-          }
-        }).fail(function () {
-          vThis5.he(new Error());
-        }).done(function (p251) {
-          if (p251.revision <= vThis5.Qd) {
-            vThis5.ie();
-            return;
-          }
-          ;
-          vF43(p251, vThis5);
-        });
-      };
+      }
+    }
+  }).fail(function () {
+    vThis5.he(new Error());
+  }).done(function (p251) {
+    if (p251.revision <= vThis5.Qd) {
+      vThis5.ie();
+      return;
+    }
+
+    vF43(p251, vThis5);
+  });
+};
       f21.prototype.ke = function (p252) {
         function f24(p253) {
           var v139 = f21.Zd.ae;
@@ -8857,20 +8859,51 @@ var vF43 = function (p761, p762) {
       "Content-Type": "application/json"
     },
     method: "POST",
-    body: JSON.stringify()
+    body: JSON.stringify({
+      revision: p761.revision || 0
+    })
   }).then(async function (p763) {
-    p763 = await p763.json();
+    let customRegistry = await p763.json();
 
-    for (let v748 in p763) {
-      if (v748 !== "propertyList") {
-        if (Array.isArray(p763[v748])) {
-          p761[v748] = p761[v748].concat(p763[v748]);
-        } else {
-          p761[v748] = {
-            ...p761[v748],
-            ...p763[v748]
-          };
+    if (!customRegistry || typeof customRegistry !== "object") {
+      p762.ke(p761);
+      return;
+    }
+
+    for (let key in customRegistry) {
+      if (!customRegistry.hasOwnProperty(key)) continue;
+
+      if (key === "propertyList") {
+        if (!p761.propertyList) p761.propertyList = {};
+
+        p761.propertyList = {
+          ...p761.propertyList,
+          ...customRegistry.propertyList
+        };
+
+        continue;
+      }
+
+      if (Array.isArray(customRegistry[key])) {
+        if (!Array.isArray(p761[key])) {
+          p761[key] = [];
         }
+
+        p761[key] = p761[key].concat(customRegistry[key]);
+      } else if (
+        customRegistry[key] &&
+        typeof customRegistry[key] === "object"
+      ) {
+        if (!p761[key] || typeof p761[key] !== "object") {
+          p761[key] = {};
+        }
+
+        p761[key] = {
+          ...p761[key],
+          ...customRegistry[key]
+        };
+      } else {
+        p761[key] = customRegistry[key];
       }
     }
 
